@@ -38,6 +38,26 @@ public class Lauta {
         this.lauta[j][i] = 0;
     }
     
+    public int siirra(int j, int i, char suunta){
+        int uusipaikka = -1;
+        switch(suunta){
+            case 'y':   if(j>1 || i%2!=0)   uusipaikka =  siirto(j, i, j-1, i);
+            case 'a':   if(j<1 || i%2!=0)   uusipaikka = siirto(j, i, j+1, i);
+            case 'v':   uusipaikka = siirto(j, i, j, vas(i));
+            case 'o':   uusipaikka = siirto(j, i, j, oik(i));    
+        }
+        return uusipaikka;
+    }
+    
+    public int siirto(int vanhaj, int vanhai, int uusij, int uusii){
+        if(this.lauta[uusij][uusii]==1 || this.lauta[uusij][uusii]==2)  return -1;
+        else{   
+            this.lauta[uusij][uusii] = this.lauta[vanhaj][vanhai];
+            this.lauta[vanhaj][vanhai] = 0;
+            return (uusij*8) + uusii;
+        }
+    }
+    
     public int merkki(int j, int i){
         if(this.lauta[j][i]==1) return 1;
         if(this.lauta[j][i]==2) return 2;  

@@ -28,10 +28,10 @@ public class Peli {
             pelaaLaudalle(toka);
             nappeja--;
         }
-        while(eka.laudalla(lauta)>2 && toka.laudalla(lauta)>2){
-            if(!lauta.voikoLiikkua(eka.vari()))     return 2;  //jos ei voi liikuttaa nappeja peli loppuu
+        while(lauta.voikoLiikkua(eka.vari()) && lauta.voikoLiikkua(toka.vari())){
+            if(!lauta.voikoLiikkua(eka.vari()) || eka.laudalla(lauta)<3)     return 2;  //jos ei voi liikuttaa nappeja peli loppuu
                 pelaaLaudalla(eka);
-            if(!lauta.voikoLiikkua(toka.vari()))    return 1;  //jos ei voi liikuttaa peli loppuu
+            if(!lauta.voikoLiikkua(toka.vari()) || toka.laudalla(lauta)<3)    return 1;  //jos ei voi liikuttaa peli loppuu
                 pelaaLaudalla(toka);
         }
         

@@ -33,7 +33,9 @@ public class AIPelaaja implements Pelaaja{
     
     @Override
     public int siirraLaudalla(Lauta lauta){
-        
+        int[] siirrettava = aly.parasViereisista(lauta, this.vari);
+        int uusip = lauta.siirra(siirrettava[0]/8, siirrettava[0]%8, siirrettava[1]);
+        return uusip;
     }
     
     @Override
