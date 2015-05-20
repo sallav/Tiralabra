@@ -11,24 +11,32 @@ import java.util.*;
  * @author Käyttäjä
  */
 public class Tekoaly {
+    int syvyys;
+    
+    public Tekoaly(int syvyys){
+        this.syvyys = syvyys;       //kuinka pitkälle puuta generoidaan;
+    }
     
     public int parasTyhjista(Lauta lauta, int vari){      //kutsutaan kun kaikki napit ei vielä laudalla
         int paras = -10;        
         int parasp = -1;        //paras paikka mihin laittaa nappula
         for(int i=0; i<24; i++){
-            if(lauta.merkki(i/8, i%8)!=0)   continue;
-            lauta.laitaMerkki(i/8, i%8, vari);
-            int tulos = vastaPuoli(lauta, vari);
-            if(tulos>paras){
-                paras = tulos;
-                parasp = i;
-            }
-            lauta.poista(i/8, i%8);
+            try{
+                lauta.laitaMerkki(i/8, i%8, vari);
+                int tulos = vastaPuoli(lauta, vari);
+                if(tulos>paras){
+                    paras = tulos;
+                    parasp = i;
+                }
+                lauta.poista(i/8, i%8, vari);
+            }catch(Exception e){        //heittää poikkeuksen jos paikka ei tyhjä
+                continue;               //jatketaan seuraavaan...
+                }
         }
         return parasp;
     }
     
-    public int[] parasViereisista(Lauta lauta, int vari){
+    public String parasViereisista(Lauta lauta, int vari){
         int paras = -10;
         int parasn = -1;        //sijainti, jossa paras nappula, jota siirtää
         char parass = 'x';      //paras suunta siirrolle
@@ -36,8 +44,8 @@ public class Tekoaly {
         for(int i=0; i<24; i++){
             if(lauta.merkki(i/8, i%8)==vari){   //jos paikassa on nappi, jota voidaan siirtää
                 for(int j=0; j<4; j++){         //kokeillaan siirtää kaikkiin suuntiin
-                    int uusip = lauta.siirra(i/8, i%8, suunnat[j]); //paikka mihin on siirretty
-                    if(uusip!=-1){                      //jos siirto ei onnistu palauuttaa -1
+                    try{
+                        int uusip = lauta.siirra(i/8, i%8, suunnat[j]); //paikka mihin on siirretty
                         int tulos = vastaPuoli(lauta, vari);
                         if(tulos>paras) {
                             paras = tulos;
@@ -45,14 +53,14 @@ public class Tekoaly {
                             parass = suunnat[j];
                         }
                         lauta.siirra(uusip/8, uusip%8, vastakohta(suunnat[j])); //perutaan siirto
+                    }catch(Exception e){
+                        continue;
                     }
                 }
             }
         }
-        int[] pv = new int[2];
-        pv[0] = parasn;
-        pv[1] = parass;
-        return pv;
+        
+        return parasn + " " + parass;
     }
     
     public char vastakohta(char suunta){
@@ -74,11 +82,14 @@ public class Tekoaly {
         
         int paras = -10;
         for(int i=0; i<24; i++){
-            if(lauta.merkki(i/8, i%8)!=0)   continue;
-            lauta.laitaMerkki(i/8, i%8, vari);
-            int tulos = vastaPuoli(lauta, vari);
-            if(tulos>paras) paras = tulos;
-            lauta.poista(i/8, i%8);
+            try{
+                lauta.laitaMerkki(i/8, i%8, vari);
+                int tulos = vastaPuoli(lauta, vari);
+                if(tulos>paras) paras = tulos;
+                lauta.poista(i/8, i%8, vari);
+            }catch(Exception e){
+                continue;
+            }
         }
         return paras;
     }
@@ -92,11 +103,14 @@ public class Tekoaly {
         
         int huonoin = 10;
         for(int i=0; i<24; i++){
-            if(lauta.merkki(i/8, i%8)!=0)   continue;
-            lauta.laitaMerkki(i/8, i%8, 3-vari);
-            int tulos = omaSiirto(lauta, vari);
-            if(tulos<huonoin)   huonoin = tulos;
-            lauta.poista(i/8, i%8);
+            try{
+                lauta.laitaMerkki(i/8, i%8, 3-vari);
+                int tulos = omaSiirto(lauta, vari);
+                if(tulos<huonoin)   huonoin = tulos;
+                lauta.poista(i/8, i%8, 3-vari);
+            }catch(Exception e){
+                continue;
+            }
         }
         return huonoin;
     }

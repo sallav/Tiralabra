@@ -27,14 +27,24 @@ public class AIPelaaja implements Pelaaja{
     @Override
     public int siirraLaudalle(Lauta lauta){
         int paikka = aly.parasTyhjista(lauta, this.vari);
-        lauta.laitaMerkki(paikka/8, paikka%8, this.vari);
+        try{
+            lauta.laitaMerkki(paikka/8, paikka%8, this.vari);   //ei periaatteessa pitäisi tulla virhettä
+        }catch(Exception e){
+            
+        }
         return paikka;
     }
     
     @Override
     public int siirraLaudalla(Lauta lauta){
-        int[] siirrettava = aly.parasViereisista(lauta, this.vari);
-        int uusip = lauta.siirra(siirrettava[0]/8, siirrettava[0]%8, siirrettava[1]);
+        String[] siirto = aly.parasViereisista(lauta, this.vari).split(" ");
+        int uusip, paikka;
+        try{
+            paikka = Integer.valueOf(siirto[0]);
+            uusip = lauta.siirra(paikka/8, paikka%8, siirto[1].charAt(0));  //ei pitäisi heittää poikkeusta
+        }catch(Exception e){
+            uusip = 0; //??
+        }
         return uusip;
     }
     
