@@ -15,9 +15,15 @@ public class Peli {
     Pelaaja toka;
     Lauta lauta;
     
+    /**
+     * Konstruktori asettaa ekan ja tokan arvoiksi parametreina saadut Pelaaja -oliot sekä
+     * luo uuden Lauta -olion peliä varten.
+     * @param eka   pelaaja joka aloittaa
+     * @param toka  toisena vuorossa oleva pelaaja
+     */
     Peli(Pelaaja eka, Pelaaja toka){
-        this.eka = eka;
-        this.toka = toka;
+        this.eka = eka;                 
+        this.toka = toka;               
         this.lauta = new Lauta();
     }
     
@@ -29,27 +35,27 @@ public class Peli {
     public String pelaa(){
         int nappeja = 9;
         
-        while(nappeja>0){
+        while(nappeja>0){       //9 nappulaa laudalle!
             pelaaLaudalle(eka);
             pelaaLaudalle(toka);
             nappeja--;
         }
-        int tulos = selvitaVoittaja();
-        return voittaja(tulos);
+        int tulos = selvitaVoittaja();  //pelataan peli loppuun
+        return voittaja(tulos);         //palautetaan voittajan väri
     }
         
     /**
      * selvitaVoittaja -metodia kutsutaan, kun molemmat pelaajat ovat asettaneet kaikki merkkinsä 
-     * pelilaudalle. Pelaajat tekevät vuorotellen siirtonsa laudalla, niin kauan kunnes jompi kumpi voittaa
-     * tai peli päättyy tasapeliin.
+     * pelilaudalle. Pelaajat tekevät vuorotellen siirtoja laudalla, niin kauan kunnes jompi 
+     * kumpi voittaa tai peli päättyy tasapeliin.
      * @return 1 jos ensimmäinen pelaaja voitti, 2 jos toinen pelaaja voitti, 0 jos peli päättyi tasapeliin
      */
     public int selvitaVoittaja(){
         
-        while(lauta.voikoLiikkua(eka.vari()) && lauta.voikoLiikkua(toka.vari())){
-            if(!lauta.voikoLiikkua(eka.vari()) || eka.laudalla(lauta)<3)     return 2;  //jos ei voi liikuttaa nappeja tai toisella vain kaksi peli loppuu
+        while(lauta.voikoLiikkua(eka.vari()) || lauta.voikoLiikkua(toka.vari())){   //jatketaan kunnes pelaajat eivät voi enää liikkua
+            if(!lauta.voikoLiikkua(eka.vari()) || eka.laudalla(lauta)<3)     return 2;  //jos pelaaja ei voi liikuttaa nappeja tai merkkejä jäljellä vain kaksi peli loppuu
                 pelaaLaudalla(eka);
-            if(!lauta.voikoLiikkua(toka.vari()) || toka.laudalla(lauta)<3)    return 1;  //jos ei voi liikuttaa nappeja tai toisella vain kaksi peli loppuu
+            if(!lauta.voikoLiikkua(toka.vari()) || toka.laudalla(lauta)<3)    return 1;  //jos pelaaja ei voi liikuttaa nappeja tai merkkejä jäljellä vain kaksi peli loppuu
                 pelaaLaudalla(toka);
         }
         
@@ -64,8 +70,8 @@ public class Peli {
      * @param pelaaja
      */
     public void pelaaLaudalle(Pelaaja pelaaja){
-        int sij = pelaaja.siirraLaudalle(lauta);
-        if(lauta.mylly(pelaaja.vari(), sij))    pelaaja.poistaLaudalta(lauta);
+        int sij = pelaaja.siirraLaudalle(lauta);        //siirretään uusi nappula laudalle
+        if(lauta.mylly(pelaaja.vari(), sij))    pelaaja.poistaLaudalta(lauta); // poistetaan vastapuolen nappi
     }
     
     /**
@@ -78,9 +84,9 @@ public class Peli {
      */
     public void pelaaLaudalla(Pelaaja pelaaja){
         int sij;
-        if(pelaaja.laudalla(lauta)>3)   sij = pelaaja.siirraLaudalla(lauta);
-        else sij = pelaaja.lenna(lauta);
-        if(lauta.mylly(pelaaja.vari(), sij))    pelaaja.poistaLaudalta(lauta);
+        if(pelaaja.laudalla(lauta)>3)   sij = pelaaja.siirraLaudalla(lauta); //siirretään jotain laudalla jo olevaa nappia
+        else sij = pelaaja.lenna(lauta);                //kun vain 3 nappia jäljellä
+        if(lauta.mylly(pelaaja.vari(), sij))    pelaaja.poistaLaudalta(lauta); // poistetaan vastapuolen nappi
     }
     
     /**
@@ -92,15 +98,15 @@ public class Peli {
      * @return musta, valkoinen tai tasapeli
      */
     public String voittaja(int numero){
-        int vari = 0;
-        if(numero==1){
+        int vari = 0;       
+        if(numero==1){          //eka voitti
             vari = eka.vari();
-        }if(numero==2){
+        }if(numero==2){         //toka voitti
             vari = toka.vari();
         }
         if(vari==1) return "musta";
         if(vari==2) return "valkoinen";
-        else    return "tasapeli";
+        else    return "tasapeli";      //numeron ollessa 0 myos vari on 0 
     }
     
 }
