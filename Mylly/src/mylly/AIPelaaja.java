@@ -100,9 +100,10 @@ public class AIPelaaja implements Pelaaja{
      * poistaLaudalta -metodi arvioi tekoälyn avulla, mikä vastustajan merkeistä kannattaisi
      * poistaa, kun tähän on mahdollisuus (kun on saatu mylly), ja tekee arvion mukaisen poiston.
      * @param lauta pelilauta jossa pelataan
+     * @return sijainti josta vastustajan nappi poistettiin
      */
     @Override
-    public void poistaLaudalta(Lauta lauta){
-        
+    public int poistaLaudalta(Lauta lauta){
+        return 0;
     }
 }

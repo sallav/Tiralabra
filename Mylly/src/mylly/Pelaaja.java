@@ -15,5 +15,5 @@ public interface Pelaaja {
     public abstract int siirraLaudalla(Lauta l);
     public abstract int lenna(Lauta l);
     public abstract int laudalla(Lauta l);
-    public abstract void poistaLaudalta(Lauta l);
+    public abstract int poistaLaudalta(Lauta l);
 }
