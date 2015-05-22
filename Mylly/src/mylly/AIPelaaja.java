@@ -79,7 +79,7 @@ public class AIPelaaja implements Pelaaja{
      */
     @Override
     public int lenna(Lauta lauta){
-        
+        return 0;
     }
     
     /**

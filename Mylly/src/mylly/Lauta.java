@@ -34,6 +34,14 @@ public class Lauta {
         this.mustia = 0;
         this.valkoisia = 0;
     }
+
+    /**
+     * getLauta -metodi palauttaa pelilautaa edustavan matriisin, joka sisältää pelimerkkien sijainnit.
+     * @return matriisiesitys pelilaudan sisällöstä
+     */
+    public int[][] getLauta() {
+        return lauta;
+    }
     
     /**
      * laitaMerkki metodissa laitetaan parametrina annettuun sijaintiin parametrina annetun 
@@ -56,10 +64,9 @@ public class Lauta {
     
     /**
      * poista -metodi poistaa parametrina annetun värisen nappulan parametrina annetusta 
-     * sijainnista, sekä vähentää sen väristen nappuloiden määrää laudalla yhdellä, toisin 
-     * sanoen mustia tai valkoisia saa arvokseen yhden vähemmän. Metodi heittää poikkeuksen, 
-     * jos annetussa sijainnissa ei ole annetun väristä nappulaa. Muuten metodi asettaa kyseisen 
-     * paikan arvoksi 0.
+     * sijainnista, sekä vähentää sen väristen nappuloiden määrää laudalla yhdellä. Metodi heittää 
+     * poikkeuksen, jos annetussa sijainnissa ei ole annetun väristä nappulaa. Muuten metodi asettaa 
+     * kyseisen paikan arvoksi 0.
      * @param j rivi, jolta merkki poistetaan
      * @param i paikka rivillä, josta poistetaan
      * @param vari poistettavan merkin väri
@@ -137,26 +144,6 @@ public class Lauta {
         if(vari==1) return mustia;
         if(vari==2) return valkoisia;
         else throw new Exception();     //virheellinen parametri
-    }
-    
-    public ArrayList<Integer> sijainnit(int vari){      //tarvitaanko??
-        ArrayList<Integer> paikat = new ArrayList<Integer>();
-        for(int j=0; j<this.lauta.length; j++){
-            for(int i=0; i<this.lauta[0].length; i++) {
-                if (this.lauta[j][i] == vari)   paikat.add((8*j)+i);
-            }
-        }
-        return paikat;
-    }
-    
-    public ArrayList<Integer> tyhjia(){     //tarvitaanko??
-        ArrayList<Integer> paikat = new ArrayList<Integer>();
-        for(int j=0; j<this.lauta.length; j++){
-            for(int i=0; i<this.lauta[0].length; i++) {
-                if (this.lauta[j][i]!=1 && this.lauta[j][i]!=2)   paikat.add((8*j)+i);
-            }
-        }
-        return paikat;
     }
     
     /**
