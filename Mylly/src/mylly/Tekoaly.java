@@ -7,7 +7,7 @@ package mylly;
 import java.util.*;
 
 /**
- * Tekoaly -luokka toeuttaa tekoälyn Myllyn pelaamista varten, jota AIPelaaja -luokan oliot
+ * Tekoaly -luokka toteuttaa tekoälyn Myllyn pelaamista varten, jota AIPelaaja -luokan oliot
  * voivat hyödyntää tedessään siirtoja pelilaudalle.
  * @author Salla
  */
