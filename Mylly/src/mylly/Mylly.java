@@ -6,8 +6,8 @@
 package mylly;
 
 /**
- *
- * @author Käyttäjä
+ * Mylly -peli
+ * @author Salla 
  */
 public class Mylly {
 

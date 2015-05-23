@@ -6,8 +6,8 @@
 package mylly;
 
 /**
- *
- * @author Käyttäjä
+ * Pelaaja -rajapinta määrittelee pelaajan toiminnallisuudet pelissä
+ * @author Salla
  */
 public interface Pelaaja {
     public abstract int vari();
