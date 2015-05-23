@@ -12,6 +12,10 @@ import java.util.*;
  * @author Salla
  */
 public class Lauta {
+    /**
+     * lauta -matriisi sisältää pelilaudan kaikki sijainnit, joiden arvo voi olla 0(=tyhjä), 
+     * 1(=musta) tai 2(=valkoinen)
+     */
     int[][] lauta;
 
     /**
@@ -25,9 +29,10 @@ public class Lauta {
     public int valkoisia;
     
     /**
-     * Pelilauta muodostuu 24 paikasta, jotka on jaettu kolmelle riville. Kukin rivi edustaa 
-     * yhtä myllyn pelilaudalla olevaa neliötä. Aluksi mustien sekä valkoisten määräksi 
-     * alustetaan nollaksi.
+     * Konstruktori alustaa laudan 3x8 matriisiksi, joka edustaa myllyn pelilautaa. Pelilauta 
+     * muodostuu siis 24 paikasta, jotka on jaettu kolmelle riville. Kukin rivi edustaa 
+     * yhtä pelilaudalla olevaa neliötä. Aluksi mustien sekä valkoisten määrä alustetaan 
+     * nollaksi.
      */
     public Lauta(){
         this.lauta = new int[3][8];     //yhdessä neliössä on 8 paikkaa

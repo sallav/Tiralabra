@@ -23,6 +23,7 @@ public class AIPelaajaTest {
     private Tekoaly AI;
     private AIPelaaja pelaaja;
     private Lauta pelilauta;
+    private int ekapaikka;
     
     public AIPelaajaTest() {
         AI = new Tekoaly(0);
@@ -40,6 +41,7 @@ public class AIPelaajaTest {
     
     @Before
     public void setUp() {
+        ekapaikka = pelaaja.siirraLaudalle(pelilauta);
     }
     
     @After
@@ -66,11 +68,26 @@ public class AIPelaajaTest {
     }
     
     @Test
+    public void siirraLaudalle23nappiaTest(){
+        int uusipaikka;
+        int vanha = ekapaikka;
+        for(int i=0; i<23; i++){
+            uusipaikka = pelaaja.siirraLaudalle(pelilauta);
+            Assert.assertTrue(uusipaikka!=ekapaikka);
+            Assert.assertTrue(uusipaikka!=vanha);
+            Assert.assertTrue(uusipaikka>=0);
+            Assert.assertTrue(uusipaikka<24);
+            vanha = uusipaikka;
+        }
+    }
+    
+    @Test
     public void siirraLaudallaTest(){
         int uusipaikka = pelaaja.siirraLaudalla(pelilauta);
         Assert.assertTrue(uusipaikka>=0);
         Assert.assertTrue(uusipaikka<24);
         Assert.assertEquals(1, pelilauta.merkki(uusipaikka/8, uusipaikka%8));
+        Assert.assertFalse(uusipaikka==ekapaikka);
     }
     
     @Test
@@ -89,7 +106,9 @@ public class AIPelaajaTest {
     @Test
     public void laudallaTest2(){
         AIPelaaja toinen = new AIPelaaja(2, AI);
-        Assert.assertEquals(toinen.laudalla(pelilauta), 0);
+        Assert.assertEquals(0, toinen.laudalla(pelilauta));
+        toinen.siirraLaudalle(pelilauta);
+        Assert.assertEquals(1, toinen.laudalla(pelilauta));
     }
     
     @Test
@@ -99,5 +118,6 @@ public class AIPelaajaTest {
         Assert.assertFalse(poistopaikka<0);
         Assert.assertFalse(poistopaikka>23);
         Assert.assertEquals(0, pelilauta.merkki(poistopaikka/8, poistopaikka%8));
+        Assert.assertEquals(0, pelaaja.laudalla(pelilauta));
     }
 }

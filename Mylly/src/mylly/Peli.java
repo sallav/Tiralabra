@@ -21,18 +21,26 @@ public class Peli {
      * @param eka   pelaaja joka aloittaa
      * @param toka  toisena vuorossa oleva pelaaja
      */
-    Peli(Pelaaja eka, Pelaaja toka){
+    public Peli(Pelaaja eka, Pelaaja toka){
         this.eka = eka;                 
         this.toka = toka;               
         this.lauta = new Lauta();
     }
     
+    /**
+     * getLauta -metodi palauttaa pelilautaa edustavan Lauta -olion.
+     * @return pelilautaa edustava Lauta -olio, jolla peliä pelataan
+     */
+    public Lauta getLauta(){
+        return this.lauta;
+    }
+    
     /** 
      * pelaa -metodi aloittaa pelin. Pelaajat asettavat vuorotellen 9 nappia laudalle
      * ja sen jälkeen selvitetään pelin voittaja.
-     * @return pelin voittaja: musta, valkoinen tai tasapeli
+     * @return pelin voittaja: musta=1, valkoinen=2 tai tasapeli=0
      */
-    public String pelaa(){
+    public int pelaa(){
         int nappeja = 9;
         
         while(nappeja>0){       //9 nappulaa laudalle!
@@ -41,7 +49,7 @@ public class Peli {
             nappeja--;
         }
         int tulos = selvitaVoittaja();  //pelataan peli loppuun
-        return voittaja(tulos);         //palautetaan voittajan väri
+        return voittaja(tulos);         //palautetaan voittajan väriä vastaava numero
     }
         
     /**
@@ -93,20 +101,18 @@ public class Peli {
      * voittaja -metodi selvittää voittajan värin tai vaihtoehtoisesti ilmoittaa tasapelistä.
      * Parametsina metodi saa voittajan numeron, joka on 1 jos pelaaja aloitti pelin, 2 jos 
      * pelaaja oli toisena pelivuorossa tai 0, jos peli päättyi tasapeliin. Metodi palauttaa
-     * voittajan pelinappuloiden värin String muotoisena tai vaihtoehtoisesti "tasapeli" ilmoituksen.
+     * 1 jos voittaja on musta, 2 jos voittaja on valkoinen tai 0 jos peli päättyi tasan.
      * @param numero voittajan numero, joka on 1 tai 2 tai tasapelin kohdalla 0
-     * @return musta, valkoinen tai tasapeli
+     * @return voittajan värin numero(1/2) tai 0 jos tasapeli
      */
-    public String voittaja(int numero){
+    public int voittaja(int numero){
         int vari = 0;       
         if(numero==1){          //eka voitti
             vari = eka.vari();
         }if(numero==2){         //toka voitti
             vari = toka.vari();
         }
-        if(vari==1) return "musta";
-        if(vari==2) return "valkoinen";
-        else    return "tasapeli";      //numeron ollessa 0 myos vari on 0 
+        return vari;
     }
     
 }
