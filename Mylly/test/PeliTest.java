@@ -56,22 +56,14 @@ public class PeliTest {
     // public void hello() {}
     
     @Test
-    public void pelaa() throws Exception{
+    public void pelaaTest() throws Exception{
             int voittajanvari = peli.pelaa();
             Lauta lauta = peli.getLauta();
             int mustia = lauta.montakoNappia(1);
             int valkoisia = lauta.montakoNappia(2);
             int voittavavari = Math.max(mustia, valkoisia);
-            Assert.assertTrue(voittajanvari==voittavavari);
+            Assert.assertTrue(voittajanvari==voittavavari || voittajanvari==0);
             Assert.assertTrue(lauta.voikoLiikkua(3-voittajanvari) || lauta.montakoNappia(3-voittajanvari)<3 || voittajanvari==0);
-    }
-    
-    @Test
-    public void pelaa10peliaTest(){
-        for(int i=0; i<10; i++){
-            int vv = peli.pelaa();
-            Assert.assertTrue(vv>=0 && vv<3);
-        }
     }
     
     @Test
@@ -141,9 +133,5 @@ public class PeliTest {
         Assert.assertEquals(2, peli.voittaja(valkoinen.vari()));
         Assert.assertEquals(0, peli.voittaja(0));
     }
-    
-    @Test
-    public void voittajaTest2(){
-        Assert.assertFalse(1==peli.voittaja(0) && 2==peli.voittaja(0));
-    }
+
 }
