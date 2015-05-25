@@ -29,13 +29,15 @@ public class Tekoaly {
      * @param vari pelaajan väri(1=musta, 2=valkoinen) jonka siirtoa arvioidaan
      * @return paras sijainti (0-23) johon merkki kannattaa sijoittaa
      */
-    public int parasTyhjista(Lauta lauta, int vari){      //kutsutaan kun kaikki napit ei vielä laudalla
+    public int parasTyhjista(Lauta lauta, int vari, int laudalla){      //kutsutaan kun kaikki napit ei vielä laudalla
         int paras = -10;        
         int parasp = -1;        //paras paikka mihin laittaa nappula
         for(int i=0; i<24; i++){
             try{
                 lauta.laitaMerkki(i/8, i%8, vari);
-                int tulos = vastaPuoli(lauta, vari);
+                int tulos;
+                if(laudalla>8) tulos = vastaPuoli2(lauta, vari, 1);
+                else tulos = vastaPuoli(lauta, vari, 1);
                 if(tulos>paras){
                     paras = tulos;
                     parasp = i;
@@ -68,7 +70,7 @@ public class Tekoaly {
                 for(int j=0; j<4; j++){         //kokeillaan siirtää kaikkiin suuntiin
                     try{
                         int uusip = lauta.siirra(i/8, i%8, suunnat[j]); //paikka mihin on siirretty
-                        int tulos = vastaPuoli(lauta, vari);
+                        int tulos = vastaPuoli2(lauta, vari, 1);
                         if(tulos>paras) {
                             paras = tulos;
                             parasn = i;
@@ -108,24 +110,43 @@ public class Tekoaly {
      * @return paras mahdollinen tulos johon pelissä päädytään arvioituna asteikolla (-1)-(+1) 
      * (tai joku muu asteikko...)
      */
-    public int omaSiirto(Lauta lauta, int vari){
-        if(lauta.myllyja(vari))    return 1;
-        if(lauta.myllyja(3-vari))  return -1;
-        if(!lauta.voikoLiikkua(vari) && !lauta.voikoLiikkua(vari))  return 0;
-        if(!lauta.voikoLiikkua(vari))   return -1;
-        if(!lauta.voikoLiikkua(3-vari)) return 1;
+    public int omaSiirto(Lauta lauta, int vari, int k){
+        if(k==syvyys)   return arvioiTilanne(lauta, vari);
         
         int paras = -10;
         for(int i=0; i<24; i++){
             try{
                 lauta.laitaMerkki(i/8, i%8, vari);
-                int tulos = vastaPuoli(lauta, vari);
+                int tulos = vastaPuoli(lauta, vari, k+1);
                 if(tulos>paras) paras = tulos;
                 lauta.poista(i/8, i%8, vari);
             }catch(Exception e){
                 continue;
             }
         }
+        return paras;
+    }
+    
+    public int omaSiirto2(Lauta lauta, int vari, int k){
+        if(k==syvyys)   return arvioiTilanne(lauta, vari);
+        
+        int paras = -10;
+        char[] suunnat = {'y', 'a', 'v', 'o'};  //ylös, alas, vasemmalle, oikealle
+        for(int i=0; i<24; i++){
+            if(lauta.merkki(i/8, i%8)==vari){
+                for(int j=0; j<4; j++){
+                    try{
+                        int uusip = lauta.siirra(i/8, i%8, suunnat[j]);
+                        int tulos = vastaPuoli2(lauta, vari, k+1);
+                        if(tulos>paras)   paras = tulos;
+                        lauta.siirra(uusip/8, uusip%8, vastakohta(suunnat[j]));     //perutaan siirto
+                    }catch(Exception e){
+                        continue;
+                    }
+                }
+            }
+        }
+        
         return paras;
     }
     
@@ -137,18 +158,14 @@ public class Tekoaly {
      * @return huonoin mahdollinen tulos, johon pelissä päädytään arvioituna asteikolla (-1)-(+1)
      * (tai joku muu..)
      */
-    public int vastaPuoli(Lauta lauta, int vari){
-        if(lauta.myllyja(vari))    return 1;
-        if(lauta.myllyja(3-vari))  return -1;
-        if(!lauta.voikoLiikkua(vari) && !lauta.voikoLiikkua(vari))  return 0;
-        if(!lauta.voikoLiikkua(vari))   return -1;
-        if(!lauta.voikoLiikkua(3-vari)) return 1;        
+    public int vastaPuoli(Lauta lauta, int vari, int k){
+        if(k==syvyys)   return arvioiTilanne(lauta, vari);
         
         int huonoin = 10;
         for(int i=0; i<24; i++){
             try{
                 lauta.laitaMerkki(i/8, i%8, 3-vari);
-                int tulos = omaSiirto(lauta, vari);
+                int tulos = omaSiirto(lauta, vari, k+1);
                 if(tulos<huonoin)   huonoin = tulos;
                 lauta.poista(i/8, i%8, 3-vari);
             }catch(Exception e){
@@ -157,4 +174,36 @@ public class Tekoaly {
         }
         return huonoin;
     }
+    
+    public int vastaPuoli2(Lauta lauta, int vari, int k){
+        if(k==syvyys)   return arvioiTilanne(lauta, vari);
+        
+        int huonoin = 10;
+        char[] suunnat = {'y', 'a', 'v', 'o'};  //ylös, alas, vasemmalle, oikealle
+        for(int i=0; i<24; i++){
+            if(lauta.merkki(i/8, i%8)==vari){
+                for(int j=0; j<4; j++){
+                    try{
+                        int uusip = lauta.siirra(i/8, i%8, suunnat[j]);
+                        int tulos = omaSiirto2(lauta, vari, k+1);
+                        if(tulos<huonoin)   huonoin = tulos;
+                        lauta.siirra(uusip/8, uusip%8, vastakohta(suunnat[j]));     //perutaan siirto
+                    }catch(Exception e){
+                        continue;
+                    }
+                }
+            }
+        }
+        
+        return huonoin;
+    }
+    
+    public int arvioiTilanne(Lauta lauta, int vari){
+        if(lauta.myllyja(vari))    return 2;
+        if(lauta.myllyja(3-vari))  return -2;
+        if(!lauta.voikoLiikkua(vari) && !lauta.voikoLiikkua(vari))  return 0;
+        if(!lauta.voikoLiikkua(vari))   return -2;
+        if(!lauta.voikoLiikkua(3-vari)) return 2;
+    }
+    
 }
