@@ -20,9 +20,10 @@ public interface Pelaaja {
     /**
      * siirraLaudalle -metodi siirtää uuden pelimerkin laudalle
      * @param l Lauta -luokan ilmentymä, jossa peliä pelataan
+     * @param nappejajalj kuinka monta nappia pelaajalla on vielä siirtämättä laudalle
      * @return sijainti, johon siirto tehtiin (0-23)
      */
-    public abstract int siirraLaudalle(Lauta l);
+    public abstract int siirraLaudalle(Lauta l, int nappejajalj);
 
     /**
      * siirraLaudalla -metodi siirtää jotain jo laudalla olevista pelimerkeistä

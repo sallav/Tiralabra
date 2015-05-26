@@ -38,12 +38,14 @@ public class AIPelaaja implements Pelaaja{
      * siirraLaudalle -metodi arvioi tekoalyn avulla parhaan paikan mihin siirtää uusi nappula 
      * ja tekee arvion mukaisen siirron. 
      * @param lauta pelilauta, jossa siirto tehdään
+     * @param nappeja kuinka monta nappia pelaajalla on siirtämätä laudalle
      * @return  sijainti johon siirto tehtiin
      */
     @Override
-    public int siirraLaudalle(Lauta lauta){
-        int paikka = aly.parasTyhjista(lauta, this.vari); //paras tyhjistä laudalla olevista sijainneista
+    public int siirraLaudalle(Lauta lauta, int nappeja){
+        int paikka = 0;
         try{
+            paikka = aly.parasTyhjista(lauta, this.vari, nappeja); //paras tyhjistä laudalla olevista sijainneista
             lauta.laitaMerkki(paikka/8, paikka%8, this.vari);   //laitetaan uusi merkki valittuun sijaintiin
         }catch(Exception e){        //ei periaatteessa pitäisi tulla virhettä
             

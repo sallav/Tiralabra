@@ -44,11 +44,11 @@ public class Peli {
         int nappeja = 9;
         
         while(nappeja>0){       //9 nappulaa laudalle!
-            pelaaLaudalle(eka);
-            pelaaLaudalle(toka);
+            pelaaLaudalle(eka, nappeja);
+            pelaaLaudalle(toka, nappeja);
             nappeja--;
         }
-        int tulos = selvitaVoittaja();  //pelataan peli loppuun
+        int tulos = pelaaLoppuun();  //pelataan peli loppuun
         return voittaja(tulos);         //palautetaan voittajan väriä vastaava numero
     }
         
@@ -58,7 +58,7 @@ public class Peli {
      * kumpi voittaa tai peli päättyy tasapeliin.
      * @return 1 jos ensimmäinen pelaaja voitti, 2 jos toinen pelaaja voitti, 0 jos peli päättyi tasapeliin
      */
-    public int selvitaVoittaja(){
+    public int pelaaLoppuun(){
         
         while(lauta.voikoLiikkua(eka.vari()) || lauta.voikoLiikkua(toka.vari())){   //jatketaan kunnes pelaajat eivät voi enää liikkua
             if(!lauta.voikoLiikkua(eka.vari()) || eka.laudalla(lauta)<3)     return 2;  //jos pelaaja ei voi liikuttaa nappeja tai merkkejä jäljellä vain kaksi peli loppuu
@@ -66,7 +66,10 @@ public class Peli {
             if(!lauta.voikoLiikkua(toka.vari()) || toka.laudalla(lauta)<3)    return 1;  //jos pelaaja ei voi liikuttaa nappeja tai merkkejä jäljellä vain kaksi peli loppuu
                 pelaaLaudalla(toka);
         }
-        
+    return selvitaVoittaja();    
+}
+    
+    public int selvitaVoittaja(){
         if(eka.laudalla(lauta)>toka.laudalla(lauta)) return 1;  //eka voitti
         if(eka.laudalla(lauta)<toka.laudalla(lauta))  return 2; //toka voitti
         else return 0;                                          //tasapeli
@@ -77,8 +80,8 @@ public class Peli {
      * onko syntynyt mylly. Jos pelaaja saa myllyn, tulee hänen poistaa yksi vastapuolen napeista.
      * @param pelaaja
      */
-    public void pelaaLaudalle(Pelaaja pelaaja){
-        int sij = pelaaja.siirraLaudalle(lauta);        //siirretään uusi nappula laudalle
+    public void pelaaLaudalle(Pelaaja pelaaja, int pelaamatta){
+        int sij = pelaaja.siirraLaudalle(lauta, pelaamatta);        //siirretään uusi nappula laudalle
         if(lauta.mylly(pelaaja.vari(), sij))    pelaaja.poistaLaudalta(lauta); // poistetaan vastapuolen nappi
     }
     
@@ -103,7 +106,7 @@ public class Peli {
      * pelaaja oli toisena pelivuorossa tai 0, jos peli päättyi tasapeliin. Metodi palauttaa
      * 1 jos voittaja on musta, 2 jos voittaja on valkoinen tai 0 jos peli päättyi tasan.
      * @param numero voittajan numero, joka on 1 tai 2 tai tasapelin kohdalla 0
-     * @return voittajan värin numero(1/2) tai 0 jos tasapeli
+     * @return voittajan värin numero(1=musta, 2=valkoinen) tai 0 jos tasapeli
      */
     public int voittaja(int numero){
         int vari = 0;       
