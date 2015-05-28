@@ -53,14 +53,14 @@ public class TekoalyTest {
     public void parasTyhjista() throws Exception, Exception{
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(2, 1, 1);
-        Assert.assertEquals(9, AI.parasTyhjista(lauta, 1));
+        Assert.assertEquals(9, AI.parasTyhjista(lauta, 1, 16));
     }
     
     @Test
     public void parasTyhjista2() throws Exception{
         lauta.laitaMerkki(0, 1, 2);
         lauta.laitaMerkki(1, 1, 2);
-        Assert.assertEquals(17, AI.parasTyhjista(lauta, 1));
+        Assert.assertEquals(17, AI.parasTyhjista(lauta, 1, 18));
     }
     
     @Test
@@ -97,7 +97,7 @@ public class TekoalyTest {
     public void omaSiirtoTest() throws Exception{
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(1, 1, 1);
-        Assert.assertEquals(1, AI.omaSiirto(lauta, 1));
+        Assert.assertEquals(1, AI.omaSiirto(lauta, 1, AI.getSyvyys(), 16));
     }
     
     @Test
@@ -105,6 +105,6 @@ public class TekoalyTest {
         lauta.laitaMerkki(0, 1, 2);
         lauta.laitaMerkki(1, 1, 2);
         lauta.laitaMerkki(2, 2, 2);
-        Assert.assertEquals(-1, AI.vastaPuoli(lauta, 1));
+        Assert.assertEquals(-1, AI.vastaPuoli(lauta, 1, AI.getSyvyys(), 15));
     }
 }

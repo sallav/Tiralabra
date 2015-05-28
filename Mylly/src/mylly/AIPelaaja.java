@@ -105,7 +105,14 @@ public class AIPelaaja implements Pelaaja{
      * @return sijainti josta vastustajan nappi poistettiin
      */
     @Override
-    public int poistaLaudalta(Lauta lauta){
-        return 0;
+    public int poistaLaudalta(Lauta lauta, int nappeja){
+        int poistettava;
+        try{
+            poistettava = aly.parasPoistettava(lauta, this.vari, nappeja);
+            lauta.poista(poistettava/8, poistettava%8, 3-this.vari);
+        }catch(Exception e){
+            return -1;
+        }
+        return poistettava;
     }
 }

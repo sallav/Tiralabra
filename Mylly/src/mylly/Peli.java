@@ -41,10 +41,11 @@ public class Peli {
      * @return pelin voittaja: musta=1, valkoinen=2 tai tasapeli=0
      */
     public int pelaa(){
-        int nappeja = 9;
+        int nappeja = 18;
         
         while(nappeja>0){       //9 nappulaa laudalle!
             pelaaLaudalle(eka, nappeja);
+            nappeja--;
             pelaaLaudalle(toka, nappeja);
             nappeja--;
         }
@@ -82,7 +83,7 @@ public class Peli {
      */
     public void pelaaLaudalle(Pelaaja pelaaja, int pelaamatta){
         int sij = pelaaja.siirraLaudalle(lauta, pelaamatta);        //siirretään uusi nappula laudalle
-        if(lauta.mylly(pelaaja.vari(), sij))    pelaaja.poistaLaudalta(lauta); // poistetaan vastapuolen nappi
+        if(lauta.mylly(pelaaja.vari(), sij))    pelaaja.poistaLaudalta(lauta, pelaamatta-1); // poistetaan vastapuolen nappi
     }
     
     /**
@@ -97,7 +98,7 @@ public class Peli {
         int sij;
         if(pelaaja.laudalla(lauta)>3)   sij = pelaaja.siirraLaudalla(lauta); //siirretään jotain laudalla jo olevaa nappia
         else sij = pelaaja.lenna(lauta);                //kun vain 3 nappia jäljellä
-        if(lauta.mylly(pelaaja.vari(), sij))    pelaaja.poistaLaudalta(lauta); // poistetaan vastapuolen nappi
+        if(lauta.mylly(pelaaja.vari(), sij))    pelaaja.poistaLaudalta(lauta, 0); // poistetaan vastapuolen nappi
     }
     
     /**

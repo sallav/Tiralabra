@@ -86,7 +86,7 @@ public class PeliTest {
     @Test
     public void pelaaLaudalleTest() throws Exception{
         for(int i=0; i<4; i++){
-            peli.pelaaLaudalle(musta);
+            peli.pelaaLaudalle(musta, 18-i);
         }
         Assert.assertEquals(3, peli.getLauta().montakoNappia(1));
     }
@@ -97,7 +97,7 @@ public class PeliTest {
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(2, 1, 1);
         lauta.laitaMerkki(2, 4, 2);
-        peli.pelaaLaudalle(musta);
+        peli.pelaaLaudalle(musta, 15);
         Assert.assertEquals(3, peli.getLauta().montakoNappia(1));
         Assert.assertEquals(0, peli.getLauta().montakoNappia(2));
         Assert.assertTrue(peli.getLauta().myllyja(1));

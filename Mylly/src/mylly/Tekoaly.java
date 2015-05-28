@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class Tekoaly {
     int syvyys;
+    char[] suunnat = {'y', 'a', 'v', 'o'};
     
     /**
      * Luokan Tekoaly konstruktori algortimin generointisyvyydeksi parametrinaan
@@ -21,6 +22,10 @@ public class Tekoaly {
      */
     public Tekoaly(int syvyys){
         this.syvyys = syvyys;       //kuinka pitkälle puuta generoidaan;
+    }
+    
+    public int getSyvyys(){
+        return this.syvyys;
     }
     
     /**
@@ -56,17 +61,27 @@ public class Tekoaly {
      */
     public String parasViereisista(Lauta lauta, int vari){
         int paras = -10;
-        int parasn = -1;        //sijainti, jossa paras nappula, jota siirtää
-        char parass = 'x';      //paras suunta, eli suunta mihin kannattaa siirtää nappulaa
+        String parass = "";           //paras siirto: mikä nappi ja mihin suuntaan
         for(int i=0; i<24; i++){
-            String[] tulos = kokeileSiirtoa(lauta, i/8, 1%8, vari, 1, true).split(" ");
-                        if(tulos[0]>paras) {
-                            paras = tulos[0];
-                            parasn = i;
-                            parass = tulos[1];
+            if(lauta.merkki(i/8, i%8)!=vari)    continue;       //kokeillaan siirtää vain omia nappeja
+            String[] tulos = kokeileSiirtoaOma(lauta, i/8, 1%8, vari, 1).split(" ");
+               int siirront = Integer.valueOf(tulos[0]);
+                        if(siirront>paras) {
+                            paras = siirront;
+                            parass = i + " " + tulos[1];    //paikka, jossa olevaa nappia siirretään ja suunta mihin siirretään
                         }
         }
-        return parasn + " " + parass;
+        return parass;
+    }
+    
+    public int parasPoistettava(Lauta lauta, int vari, int pelaamatta){
+        
+        for(int i=0; i<24; i++){
+            if(lauta.merkki(i/8, i%8)!=(3-vari))    continue;
+            lauta.poista(i/8, i%8, 3-vari);
+            int tulos = vastaPuoli(lauta, vari, 1, pelaamatta);
+            lauta.laitaMerkki(i/8, i%8, 3-vari);
+        }
     }
     
     /**
@@ -94,11 +109,10 @@ public class Tekoaly {
      */
     public int omaSiirto(Lauta lauta, int vari, int k, int pelaamatta){
         if(k==syvyys)   return arvioiTilanne(lauta, vari);        
+        if(pelaamatta==0)   return omaSiirto2(lauta, vari, k);      //jos kaikki nappulat on jo käytetty
         int paras = -10;
         for(int i=0; i<24; i++){
-            int tulos;
-                if(pelaamatta>0) tulos = kokeileSijainti(lauta, i/8, i%8, vari, k, true, pelaamatta);
-                else tulos = kokeileSiirtoa(lauta, i/8, i%8, vari, k, true);    
+            int tulos = kokeileSijainti(lauta, i/8, i%8, vari, k, true, pelaamatta);
                 if(tulos>paras) paras = tulos;
         }
         return paras;
@@ -106,24 +120,12 @@ public class Tekoaly {
     
     public int omaSiirto2(Lauta lauta, int vari, int k){
         if(k==syvyys)   return arvioiTilanne(lauta, vari);
-        
         int paras = -10;
-        char[] suunnat = {'y', 'a', 'v', 'o'};  //ylös, alas, vasemmalle, oikealle
         for(int i=0; i<24; i++){
-            if(lauta.merkki(i/8, i%8)==vari){
-                for(int j=0; j<4; j++){
-                    try{
-                        int uusip = lauta.siirra(i/8, i%8, suunnat[j]);
-                        int tulos = vastaPuoli2(lauta, vari, k+1);
-                        if(tulos>paras)   paras = tulos;
-                        lauta.siirra(uusip/8, uusip%8, vastakohta(suunnat[j]));     //perutaan siirto
-                    }catch(Exception e){
-                        continue;
-                    }
-                }
-            }
+            if(lauta.merkki(i/8, i%8)!=vari)    continue;
+            int tulos = Integer.valueOf(kokeileSiirtoaOma(lauta, i/8, i%8, vari, k).split(" ")[0]);    
+                if(tulos>paras) paras = tulos;
         }
-        
         return paras;
     }
     
@@ -137,11 +139,10 @@ public class Tekoaly {
      */
     public int vastaPuoli(Lauta lauta, int vari, int k, int pelaamatta){
         if(k==syvyys)   return arvioiTilanne(lauta, vari);        //halutulla syvyydellä tehdään arvio tilanteen hyvyydestä
+        if(pelaamatta==0)   return vastaPuoli2(lauta, vari, k);     //jos kaikki nappulat on jo käytetty
         int huonoin = 10;
         for(int i=0; i<24; i++){                    //kokeillaan asettaa merkki jokaiseen laudan paikkaan
-            int tulos;
-                if(pelaamatta>0) tulos = kokeileSijainti(lauta, i/8, i%8, 3-vari, k, false, pelaamatta); //lasketaan tulos mihin kyseinen siirto johtaisi
-                else tulos = kokeileSiirtoa(lauta, i/8, i%8, 3-vari, k, false);   
+            int tulos = kokeileSijainti(lauta, i/8, i%8, 3-vari, k, false, pelaamatta); //lasketaan tulos mihin kyseinen siirto johtaisi   
                 if(tulos<huonoin)   huonoin = tulos;    //jos tulos huonompi kuin aiemmat, pistetään se muistiin
         }
         return huonoin;         //palautetaan huonoin mahdollinen lopputulos
@@ -149,25 +150,13 @@ public class Tekoaly {
     
     public int vastaPuoli2(Lauta lauta, int vari, int k){
         if(k==syvyys)   return arvioiTilanne(lauta, vari);
-        
         int huonoin = 10;
-        char[] suunnat = {'y', 'a', 'v', 'o'};  //ylös, alas, vasemmalle, oikealle
-        for(int i=0; i<24; i++){
-            if(lauta.merkki(i/8, i%8)==vari){
-                for(int j=0; j<4; j++){
-                    try{
-                        int uusip = lauta.siirra(i/8, i%8, suunnat[j]);
-                        int tulos = omaSiirto2(lauta, vari, k+1);
-                        if(tulos<huonoin)   huonoin = tulos;
-                        lauta.siirra(uusip/8, uusip%8, vastakohta(suunnat[j]));     //perutaan siirto
-                    }catch(Exception e){
-                        continue;
-                    }
-                }
-            }
+        for(int i=0; i<24; i++){                    //kokeillaan kaikkia sijainteja
+            if(lauta.merkki(i/8, i%8)!=vari)    continue;
+            int tulos = Integer.valueOf(kokeileSiirtoaVastaP(lauta, i/8, i%8, 3-vari, k).split(" ")[0]);   
+                if(tulos<huonoin)   huonoin = tulos;    //jos tulos huonompi kuin aiemmat, pistetään se muistiin
         }
-        
-        return huonoin;
+        return huonoin;         //palautetaan huonoin mahdollinen lopputulos
     }
     
         public int kokeileSijainti(Lauta lauta, int j, int i, int vari, int k, boolean omavuoro, int pelaamatta){
@@ -175,7 +164,7 @@ public class Tekoaly {
         try{
             lauta.laitaMerkki(j, i, vari);                  //kokeillaan sijaintia laittamalla siihen merkki
             if(omavuoro) tulos = vastaPuoli(lauta, vari, k+1, pelaamatta-1);   //jos oma vuoro kutsutaan vastapuolen metodia
-            else    tulos = omaSiirto(lauta, vari, k+1, pelaamatta);    //jos vastapuolen vuoro kutsutaan oman värin metodia
+            else    tulos = omaSiirto(lauta, vari, k+1, pelaamatta-1);    //jos vastapuolen vuoro kutsutaan oman värin metodia
             lauta.poista(j, i, vari);                       //perutaan siirto
         }catch(Exception e){    //jos paikka on epäsopiva, esim. varattu, heitetään poikkeus merkkiä laitettaessa
             if(omavuoro)tulos = -10;
@@ -184,30 +173,41 @@ public class Tekoaly {
         return tulos;                       //kuinka hyvään lopputulokseen kys. sijainti johtaisi
     }
         
-        public String kokeileSiirtoa(Lauta lauta, int j, int i, int vari, int k, boolean omavuoro){
-            String tulos;
-            if(omavuoro)    tulos = -10;
-            else            tulos = 10;
-            if(lauta.merkki(j, i)==vari){
-                char[] suunnat = {'y', 'a', 'v', 'o'};
-                for(int l=0; l<4; l++){
-                   int suunnantulos = kokeileSuunta(lauta, j, i, suunnat[l], vari, k, omavuoro);
-                    if(omavuoro)    tulos = Math.max(tulos, suunnantulos);
-                    else    tulos = Math.min(tulos, suunnantulos);
+        public String kokeileSiirtoaOma(Lauta lauta, int j, int i, int vari, int k){
+            String tulos = "";
+            int paras = -10;
+                for(int l=0; l<4; l++){ // kokeillaan kaikkiin 4 eri suuntaan
+                   int suunnantulos = kokeileSuunta(lauta, j, i, suunnat[l], vari, k, true);
+                    if(suunnantulos>paras){
+                        paras = suunnantulos;
+                        tulos = suunnantulos + " " + suunnat[l];
+                    }
                 }
-            }
             return tulos;
         }
         
-        public int kokeileSuunta(Lauta lauta, int j, int i, char suunta, int vari, int k, int omavuoro){
+        public String kokeileSiirtoaVastaP(Lauta lauta, int j, int i, int vari, int k){
+            String tulos = "";
+            int huonoin = 10;
+                for(int l=0; l<4; l++){     //kokeillaan kaikkiin 4 eri suuntaan
+                   int suunnantulos = kokeileSuunta(lauta, j, i, suunnat[l], vari, k, false);
+                    if(suunnantulos<huonoin){
+                        huonoin = suunnantulos;
+                        tulos = suunnantulos + " " + suunnat[l];
+                    }
+                }
+            return tulos;    
+        }
+        
+        public int kokeileSuunta(Lauta lauta, int j, int i, char suunta, int vari, int k, boolean omavuoro){
             int tulos;
             try{
-                int uusip = lauta.siirra(j, i, suunta);
-                    if(omavuoro)    tulos = vastaPuoli(lauta, vari, k+1, 0);
-                    else            tulos = omaSiirto(lauta, vari, k+1, 0);
-                lauta.siirra(uusip/8, uusip%8, vastakohta(suunnat[l]));
-                }catch(Exception e){
-                    if(omavuoro)    tulos = -10
+                int uusip = lauta.siirra(j, i, suunta);                 //kokeillaan siirtää annettuun suuntaan
+                    if(omavuoro)    tulos = vastaPuoli(lauta, vari, k+1, 0);    //jos on oma vuoro kutsutaan vastapuolen siirtoa
+                    else            tulos = omaSiirto(lauta, vari, k+1, 0);     //jos on vastapuolen vuoro kutsutaan omaa siirtoa
+                lauta.siirra(uusip/8, uusip%8, vastakohta(suunta));     //perutaan siirto
+                }catch(Exception e){                //jos sijainti on epäsopiva, esim. varattu
+                    if(omavuoro)    tulos = -10;
                     else    tulos = 10;
                     }
             return tulos;
