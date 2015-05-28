@@ -38,7 +38,7 @@ public class AIPelaaja implements Pelaaja{
      * siirraLaudalle -metodi arvioi tekoalyn avulla parhaan paikan mihin siirtää uusi nappula 
      * ja tekee arvion mukaisen siirron. 
      * @param lauta pelilauta, jossa siirto tehdään
-     * @param nappeja kuinka monta nappia pelaajalla on siirtämätä laudalle
+     * @param nappeja kuinka monta nappia on vielä siirtämätä laudalle
      * @return  sijainti johon siirto tehtiin
      */
     @Override
@@ -102,6 +102,7 @@ public class AIPelaaja implements Pelaaja{
      * poistaLaudalta -metodi arvioi tekoälyn avulla, mikä vastustajan merkeistä kannattaisi
      * poistaa, kun tähän on mahdollisuus (kun on saatu mylly), ja tekee arvion mukaisen poiston.
      * @param lauta pelilauta jossa pelataan
+     * @param nappeja kuinka monta nappia on vielä siirtämättä laudalle
      * @return sijainti josta vastustajan nappi poistettiin
      */
     @Override
