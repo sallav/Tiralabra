@@ -87,10 +87,10 @@ public class TekoalyTest {
     
     @Test
     public void vastakohtaTest(){
-        Assert.assertEquals('v', AI.vastakohta('o'));
-        Assert.assertEquals('o', AI.vastakohta('v'));
-        Assert.assertEquals('a', AI.vastakohta('y'));
-        Assert.assertEquals('y', AI.vastakohta('a'));
+        Assert.assertEquals('v', AI.vastaSuunta('o'));
+        Assert.assertEquals('o', AI.vastaSuunta('v'));
+        Assert.assertEquals('a', AI.vastaSuunta('y'));
+        Assert.assertEquals('y', AI.vastaSuunta('a'));
     }
     
     @Test
