@@ -165,34 +165,30 @@ public class Lauta {
                 if(this.lauta[j][i]!=vari)  continue;   //jos paikassa ei ole haetun väristä merkkiä siirrytään seuraavaan
                 if(merkki(j, vas(i))==0 || merkki(j, oik(i))==0)  return true;  //jos voidaan siirtää oikealle tai vasemmalle
                 if(i%2!=0){                             //ei kulmapaikoilla!
-                    if(j==0 || j==1){                   //rivit 0 ja 1
-                        if(merkki(j+1, i)==0) return true;  //jos alapaikka on tyhjä
-                    }if(j==1 || j==2){                  //rivit 1 ja 2    
-                        if(merkki(j-1, i)==0) return true;  //jos yläpaikka on tyhjä
+                    if(j<2 && merkki(j+1, i)==0) return true;  //riveillä 0 ja 1: jos alapaikka on tyhjä
+                    if(j>0 && merkki(j-1, i)==0) return true;  //riveillä 1 ja 2: jos yläpaikka on tyhjä
+                    }
                 }
-                }
-            }
         return false;
     }
     
     /**
      * myllyja -metodi tarkistaa onko parametrina annetun väriselle pelaajalle syntynyt laudalle 
-     * myllyä eli onko laudalla kolmen samanvärisen merkin suoraa. Metodi käy läpi kaikki 
-     * mahdolliset paikat myllyille ja palauttaa true, jos havaitsee laudalla myllyn. Jos myllyjä 
-     * ei löytynyt metodi palauttaa false.
+     * myllyjä ja laskee sekä palauttaa niiden määrän.
      * @param vari minkä värisiä nappeja tarkastellaan
-     * @return true jos löytyy mylly, false jos ei ole myllyä
+     * @return laudalla oleva myllyjen määrä
      */
-    public boolean myllyja(int vari){
+    public int myllyja(int vari){
+        int myllyt = 0;
         for(int k=1; k<24; k=k+2){              //riittää että käydään läpi laudan keskipaikat
             if(this.lauta[k/8][k%8]==vari){     //jos haettu väri
-                int j = k/8;        //rivi
-                int i = k%8;        //paikka rivillä
-                if(lauta[j][vas(i)]==vari && lauta[j][oik(i)]==vari)    return true;    //rivillä mylly
-                if(j==0 && lauta[j+1][i]==vari && lauta[j+2][i]==vari)    return true;  //rivillä 0 tarkastetaan onko keskipaikoille syntynyt rivien välinen mylly
+                int j = k/8;                    //rivi
+                int i = k%8;                    //paikka rivillä
+                if(lauta[j][vas(i)]==vari && lauta[j][oik(i)]==vari)    myllyt++;    //rivillä mylly
+                if(j==0 && lauta[j+1][i]==vari && lauta[j+2][i]==vari)  myllyt++;  //rivillä 0 tarkastetaan onko keskipaikoille syntynyt rivien välinen mylly
             }
         }
-        return false;
+        return myllyt;
     }
     
     /**
@@ -208,18 +204,31 @@ public class Lauta {
         if(paikka<0 || paikka>23)   return false;       //paikka laudan ulkopuolella
         int j = paikka/8;   //rivi
         int i = paikka%8;   //sarake ts. paikka rivillä
-        
-            if(i%2==0){     //kulmapaikka
-                if(lauta[j][vas(i)]==vari && lauta[j][vvas(i)]==vari)   return true;    //vasemmalla mylly
-                if(lauta[j][oik(i)]==vari && lauta[j][ooik(i)]==vari)   return true;    //oikealla mylly
-            }  
-            else{           //keskipaikka
-                if(lauta[j][vas(i)]==vari && lauta[j][oik(i)]==vari)    return true;    //rivillä mylly
-                if(j==0 && lauta[j+1][i]==vari && lauta[j+2][i]==vari)    return true;  //rivien välinen mylly kun rivi 0
-                if(j==1 && lauta[j-1][i]==vari && lauta[j+1][i]==vari)    return true;  //rivien välinen mylly kun rivi 1
-                if(j==2 && lauta[j-1][i]==vari && lauta[j-2][i]==vari)    return true;  //rivien välinen mylly kun rivi 2
-            }
-            return false;       //ei myllyä kyseisessä kohdassa
+        if(i%2==0)  return myllynKulmassa(j, i, vari);     //onko kulmapaikalla mylly?
+        else        return keskellaMyllya(j ,i, vari);     //onko keskipaikalla mylly?
+    }
+    
+    public boolean myllynKulmassa(int j, int i, int vari){
+        if(lauta[j][i]!=vari)   return false;
+        if(lauta[j][vas(i)]==vari && lauta[j][vvas(i)]==vari)   return true;    //vasemmalla mylly
+        if(lauta[j][oik(i)]==vari && lauta[j][ooik(i)]==vari)   return true;    //oikealla mylly
+        else return false;
+    }  
+    
+    public boolean keskellaMyllya(int j, int i, int vari){          
+        if(lauta[j][i]!=vari)   return false;
+        if(lauta[j][vas(i)]==vari && lauta[j][oik(i)]==vari)    return true;    //rivillä mylly
+        if(lauta[ala(j)][i]==vari && lauta[yla(j)][i]==vari)    return true;  //rivien välinen mylly         
+        else return false;       //ei myllyä kyseisessä kohdassa
+    }
+    
+    public boolean melkeinMylly(int paikka, int vari){
+        if(paikka<0 || paikka>23)   return false;
+        int j = paikka/8;
+        int i = paikka%8;
+        if(lauta[j][oik(i)]==vari || lauta[j][vas(i)]==vari)   return true;
+        if(i%2!=0 && lauta[ala(j)][i]==vari || lauta[yla(j)][i]==vari)  return true;  
+        return false;
     }
     
     /**
@@ -264,5 +273,15 @@ public class Lauta {
         if(i==7)    return 1;   //indeksin 7 oikean oikea on 1
         if(i==6)    return 0;   //indeksin 6 oikean oikea on 0
         else        return i+2; //muuten +2
+    }
+    
+    public int yla(int j){
+        if(j==2)    return 0;
+        else return j+1;
+    }
+    
+    public int ala(int j){
+        if(j==0)    return 2;
+        else return j-1;
     }
 }

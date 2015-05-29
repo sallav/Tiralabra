@@ -4,7 +4,9 @@
  * and open the template in the editor.
  */
 
+import mylly.Heuristiikka;
 import mylly.Lauta;
+import mylly.Perus;
 import mylly.Tekoaly;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -21,10 +23,12 @@ import static org.junit.Assert.*;
 public class TekoalyTest {
     Lauta lauta;
     Tekoaly AI;
+    Heuristiikka h;
     
     public TekoalyTest() {
         lauta = new Lauta();
-        AI = new Tekoaly(0);
+        h = new Perus();
+        AI = new Tekoaly(h, 0);
     }
     
     @BeforeClass
@@ -64,29 +68,53 @@ public class TekoalyTest {
     }
     
     @Test
-    public void parasViereisistaTest() throws Exception{
+    public void parasSiirtoTest() throws Exception{
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(1, 1, 1);
         lauta.laitaMerkki(2, 2, 1);
-        String[] paras = AI.parasViereisista(lauta, 1).split(" ");
+        String[] paras = AI.parasSiirto(lauta, 1).split(" ");
         int paikka = Integer.valueOf(paras[0]);
         Assert.assertEquals(18, paikka);
         Assert.assertEquals("v", paras[1]);
     }
     
     @Test
-    public void parasViereisistaTest2() throws Exception{
+    public void parasSiirtoTest2() throws Exception{
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(1, 1, 1);
         lauta.laitaMerkki(2, 2, 2);
-        String[] paras = AI.parasViereisista(lauta, 2).split(" ");
+        String[] paras = AI.parasSiirto(lauta, 2).split(" ");
         int paikka = Integer.valueOf(paras[0]);
         Assert.assertEquals(18, paikka);
         Assert.assertEquals("v", paras[1]);
     }
     
+    @Test 
+    public void parasPoistettavaTest() throws Exception{
+        lauta.laitaMerkki(0, 1, 2);
+        lauta.laitaMerkki(1, 1, 2);
+        lauta.laitaMerkki(2, 2, 2);
+        lauta.laitaMerkki(0, 6, 2);
+        int poistop = AI.parasPoistettava(lauta, 1, 13);
+        Assert.assertFalse(poistop==6);
+        String[] siirto = AI.parasSiirto(lauta, 2).split(" ");
+        lauta.siirra(Integer.valueOf(siirto[0])/8, Integer.valueOf(siirto[0])%8, siirto[1].charAt(0));
+        Assert.assertFalse(lauta.mylly(1, 1));
+    }
+    
     @Test
-    public void vastakohtaTest(){
+    public void parasPoistettavaTest2() throws Exception{
+        lauta.laitaMerkki(0, 1, 1);
+        lauta.laitaMerkki(1, 1, 1);
+        lauta.laitaMerkki(2, 2, 1);
+        lauta.laitaMerkki(2, 0, 2);
+        lauta.laitaMerkki(0, 4, 2);
+        int poistop = AI.parasPoistettava(lauta, 1, 12);
+        Assert.assertFalse(poistop==4);
+    }
+    
+    @Test
+    public void vastaSuuntaTest(){
         Assert.assertEquals('v', AI.vastaSuunta('o'));
         Assert.assertEquals('o', AI.vastaSuunta('v'));
         Assert.assertEquals('a', AI.vastaSuunta('y'));
@@ -94,17 +122,133 @@ public class TekoalyTest {
     }
     
     @Test
-    public void omaSiirtoTest() throws Exception{
+    public void omaSiirtoLaudalleTest() throws Exception{
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(1, 1, 1);
         Assert.assertEquals(1, AI.omaSiirtoLaudalle(lauta, 1, AI.getSyvyys(), 16));
     }
     
     @Test
-    public void vastaPuoliTest() throws Exception{
+    public void omaSiirtoLaudallaTest() throws Exception{
+        lauta.laitaMerkki(0, 1, 1);
+        lauta.laitaMerkki(1, 1, 1);
+        lauta.laitaMerkki(2, 2, 1);
+        Assert.assertEquals(1, AI.omaSiirtoLaudalla(lauta, 1, 2));
+    }
+    
+    @Test
+    public void omaSiirtoLaudalla2Test() throws Exception{
+        lauta.laitaMerkki(0, 1, 1);
+        lauta.laitaMerkki(1, 1, 1);
+        lauta.laitaMerkki(0, 0, 1);
+        Assert.assertEquals(-1, AI.omaSiirtoLaudalla(lauta, 2, 2));
+    }
+    
+    @Test
+    public void vastaPuoliLaudalleTest() throws Exception{
         lauta.laitaMerkki(0, 1, 2);
         lauta.laitaMerkki(1, 1, 2);
         lauta.laitaMerkki(2, 2, 2);
         Assert.assertEquals(-1, AI.vastaPuoliLaudalle(lauta, 1, AI.getSyvyys(), 15));
     }
+    
+    @Test
+    public void vastaPuoliLaudallaTest() throws Exception{
+        lauta.laitaMerkki(0, 1, 1);
+        lauta.laitaMerkki(1, 1, 1);
+        lauta.laitaMerkki(2, 2, 1);
+        Assert.assertEquals(1, AI.vastaPuoliLaudalla(lauta, 1, 2));
+    }
+    
+    @Test
+    public void vastaPuoliLaudalla2Test() throws Exception{
+        lauta.laitaMerkki(0, 1, 1);
+        lauta.laitaMerkki(1, 1, 1);
+        lauta.laitaMerkki(2, 2, 1);
+        Assert.assertEquals(-1, AI.vastaPuoliLaudalla(lauta, 2, 2));
+    }
+    
+    @Test
+    public void kokeileSijaintiTest() throws Exception{
+        lauta.laitaMerkki(0, 1, 1);
+        lauta.laitaMerkki(1, 1, 1);
+        Assert.assertEquals(1, AI.kokeileSijainti(lauta, 2, 1, 1, 2, true, 16));
+    }
+    
+    @Test
+    public void kokeileSijainti2Test() throws Exception{
+        lauta.laitaMerkki(0, 1, 2);
+        lauta.laitaMerkki(1, 1, 2);
+        lauta.laitaMerkki(2, 2, 2);
+        Assert.assertEquals(-1, AI.kokeileSijainti(lauta, 0, 6, 1, 2, true, 15));
+    }
+    
+    @Test
+    public void kokeileSiirtoaOmaTest() throws Exception{
+        lauta.laitaMerkki(0, 1, 2);
+        lauta.laitaMerkki(1, 1, 2);
+        lauta.laitaMerkki(2, 2, 2);
+        Assert.assertEquals(1, AI.kokeileSiirtoaOma(lauta, 2, 2, 2, 2));
+    }
+            
+    @Test
+    public void kokeileSiirtoaOma2Test() throws Exception{
+        lauta.laitaMerkki(0, 1, 2);
+        lauta.laitaMerkki(1, 1, 2);
+        lauta.laitaMerkki(2, 2, 2);
+        lauta.laitaMerkki(2, 0, 1);
+        lauta.laitaMerkki(0, 6, 1);
+        Assert.assertTrue(Integer.valueOf(AI.kokeileSiirtoaOma(lauta, 2, 0, 1, 2).split(" ")[0])>Integer.valueOf(AI.kokeileSiirtoaOma(lauta, 0, 6, 1, 2).split(" ")[0]));        
+        Assert.assertTrue(Integer.valueOf(AI.kokeileSiirtoaOma(lauta, 2, 2, 2, 2).split(" ")[0])>Integer.valueOf(AI.kokeileSiirtoaOma(lauta, 2, 0, 1, 2).split(" ")[0]));
+    }
+    
+    @Test
+    public void kokeileSiirtoaVastapTest() throws Exception{
+        lauta.laitaMerkki(0, 1, 2);
+        lauta.laitaMerkki(1, 1, 2);
+        lauta.laitaMerkki(2, 2, 2);
+        lauta.laitaMerkki(2, 0, 1);
+        lauta.laitaMerkki(0, 6, 1);
+        Assert.assertTrue(Integer.valueOf(AI.kokeileSiirtoaVastaP(lauta, 2, 0, 2, 2).split(" ")[0])<Integer.valueOf(AI.kokeileSiirtoaVastaP(lauta, 0, 6, 2, 2).split(" ")[0]));        
+        Assert.assertTrue(Integer.valueOf(AI.kokeileSiirtoaVastaP(lauta, 2, 2, 1, 2).split(" ")[0])<Integer.valueOf(AI.kokeileSiirtoaVastaP(lauta, 2, 0, 2, 2).split(" ")[0]));
+    }
+    
+    @Test
+    public void kokeileSuuntaTest() throws Exception{
+        lauta.laitaMerkki(0, 2, 2);
+        lauta.laitaMerkki(0, 3, 2);
+        lauta.laitaMerkki(0, 5, 2);
+        Assert.assertTrue(AI.kokeileSuunta(lauta, 0, 5, 'v', 2, 2, true)>AI.kokeileSuunta(lauta, 0, 5, 'o', 2, 2, true));
+    }
+    
+    @Test
+    public void poistoTest() throws Exception{
+        lauta.laitaMerkki(0, 2, 2);
+        lauta.laitaMerkki(0, 3, 2);
+        lauta.laitaMerkki(0, 5, 2);   
+        lauta.laitaMerkki(2, 2, 1);
+        lauta.laitaMerkki(2, 3, 1);
+        lauta.laitaMerkki(2, 4, 1);
+        Assert.assertTrue(AI.poisto(lauta, 1, 2, 12, true)<AI.poisto(lauta, 2, 2, 12, true));
+    }
+    
+    @Test
+    public void kokeilePoistaa() throws Exception{
+        lauta.laitaMerkki(0, 2, 2);
+        lauta.laitaMerkki(0, 3, 2);
+        lauta.laitaMerkki(0, 5, 2);
+        lauta.laitaMerkki(2, 0, 2);
+        Assert.assertTrue(AI.kokeilePoistaa(lauta, 0, 5, 1, 2, 14, true)>AI.kokeilePoistaa(lauta, 2, 0, 1, 2, 14, true));
+    }
+           
+    @Test
+    public void arvioiTilanneTest() throws Exception{
+        int tulos = AI.arvioiTilanne(lauta, 1);
+        lauta.laitaMerkki(0, 2, 2);
+        lauta.laitaMerkki(0, 3, 2);
+        lauta.laitaMerkki(0, 5, 2);        
+        Assert.assertTrue(tulos>AI.arvioiTilanne(lauta, 1));
+        Assert.assertTrue(AI.arvioiTilanne(lauta, 2)>AI.arvioiTilanne(lauta, 1));
+    }
+    
 }

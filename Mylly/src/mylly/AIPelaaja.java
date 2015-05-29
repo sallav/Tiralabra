@@ -61,7 +61,7 @@ public class AIPelaaja implements Pelaaja{
      */
     @Override
     public int siirraLaudalla(Lauta lauta){
-        String[] siirto = aly.parasViereisista(lauta, this.vari).split(" ");    //arvioidaan paras siirto: taulukossa ovat arvot mistä ja mihin suuntaan
+        String[] siirto = aly.parasSiirto(lauta, this.vari).split(" ");    //arvioidaan paras siirto: taulukossa ovat arvot mistä ja mihin suuntaan
         int uusip, paikka;      
         try{
             paikka = Integer.valueOf(siirto[0]);        //paikka jossa olevaa nappulaa siirretään

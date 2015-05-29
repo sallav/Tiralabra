@@ -5,7 +5,9 @@
  */
 
 import mylly.AIPelaaja;
+import mylly.Heuristiikka;
 import mylly.Lauta;
+import mylly.Perus;
 import mylly.Tekoaly;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -24,9 +26,11 @@ public class AIPelaajaTest {
     private AIPelaaja pelaaja;
     private Lauta pelilauta;
     private int ekapaikka;
+    private Heuristiikka h;
     
     public AIPelaajaTest() {
-        AI = new Tekoaly(0);
+        h = new Perus();
+        AI = new Tekoaly(h, 0);
         pelaaja = new AIPelaaja(1, AI);
         pelilauta = new Lauta();
     }
@@ -41,7 +45,7 @@ public class AIPelaajaTest {
     
     @Before
     public void setUp() {
-        ekapaikka = pelaaja.siirraLaudalle(pelilauta);
+        ekapaikka = pelaaja.siirraLaudalle(pelilauta, 18);
     }
     
     @After
@@ -61,7 +65,7 @@ public class AIPelaajaTest {
     
     @Test
     public void siirraLaudalleTest(){
-        int uusipaikka = pelaaja.siirraLaudalle(pelilauta);
+        int uusipaikka = pelaaja.siirraLaudalle(pelilauta, 17);
         Assert.assertTrue(uusipaikka>=0);
         Assert.assertTrue(uusipaikka<24);
         Assert.assertEquals(1, pelilauta.merkki(uusipaikka/8, uusipaikka%8));
@@ -71,8 +75,10 @@ public class AIPelaajaTest {
     public void siirraLaudalle23nappiaTest(){
         int uusipaikka;
         int vanha = ekapaikka;
+        int nappeja = 24;
         for(int i=0; i<23; i++){
-            uusipaikka = pelaaja.siirraLaudalle(pelilauta);
+            nappeja = nappeja--;
+            uusipaikka = pelaaja.siirraLaudalle(pelilauta, nappeja);
             Assert.assertTrue(uusipaikka!=ekapaikka);
             Assert.assertTrue(uusipaikka!=vanha);
             Assert.assertTrue(uusipaikka>=0);
@@ -107,14 +113,14 @@ public class AIPelaajaTest {
     public void laudallaTest2(){
         AIPelaaja toinen = new AIPelaaja(2, AI);
         Assert.assertEquals(0, toinen.laudalla(pelilauta));
-        toinen.siirraLaudalle(pelilauta);
+        toinen.siirraLaudalle(pelilauta, 17);
         Assert.assertEquals(1, toinen.laudalla(pelilauta));
     }
     
     @Test
     public void poistaLaudaltaTest(){
         AIPelaaja toinen = new AIPelaaja(2, AI);
-        int poistopaikka = toinen.poistaLaudalta(pelilauta);
+        int poistopaikka = toinen.poistaLaudalta(pelilauta, 17);
         Assert.assertFalse(poistopaikka<0);
         Assert.assertFalse(poistopaikka>23);
         Assert.assertEquals(0, pelilauta.merkki(poistopaikka/8, poistopaikka%8));
