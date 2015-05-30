@@ -243,12 +243,12 @@ public class TekoalyTest {
            
     @Test
     public void arvioiTilanneTest() throws Exception{
-        int tulos = AI.arvioiTilanne(lauta, 1);
+        int tulos = AI.arvioiTilanne(lauta, 1, 18);
         lauta.laitaMerkki(0, 2, 2);
         lauta.laitaMerkki(0, 3, 2);
         lauta.laitaMerkki(0, 5, 2);        
-        Assert.assertTrue(tulos>AI.arvioiTilanne(lauta, 1));
-        Assert.assertTrue(AI.arvioiTilanne(lauta, 2)>AI.arvioiTilanne(lauta, 1));
+        Assert.assertTrue(tulos>AI.arvioiTilanne(lauta, 1, 15));
+        Assert.assertTrue(AI.arvioiTilanne(lauta, 2, 15)>AI.arvioiTilanne(lauta, 1, 15));
     }
     
 }

@@ -100,7 +100,7 @@ public class PeliTest {
         peli.pelaaLaudalle(musta, 15);
         Assert.assertEquals(3, peli.getLauta().montakoNappia(1));
         Assert.assertEquals(0, peli.getLauta().montakoNappia(2));
-        Assert.assertTrue(peli.getLauta().myllyja(1));
+        Assert.assertTrue(1==peli.getLauta().myllyja(1));
     }
     
     @Test
@@ -112,7 +112,7 @@ public class PeliTest {
         lauta.laitaMerkki(0, 4, 2);
         peli.pelaaLaudalla(musta);
         Assert.assertEquals(0, peli.getLauta().montakoNappia(2));
-        Assert.assertTrue(peli.getLauta().myllyja(1));        
+        Assert.assertTrue(1==peli.getLauta().myllyja(1));        
     }
     
     @Test
@@ -124,7 +124,7 @@ public class PeliTest {
         lauta.laitaMerkki(0, 4, 2);
         peli.pelaaLaudalla(musta);
         Assert.assertEquals(0, peli.getLauta().montakoNappia(2));
-        Assert.assertTrue(peli.getLauta().myllyja(1));        
+        Assert.assertTrue(1==peli.getLauta().myllyja(1));        
     }
     
     @Test

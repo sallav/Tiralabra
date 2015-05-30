@@ -28,6 +28,9 @@ public class Lauta {
      */
     public int valkoisia;
     
+    int msyoty;     //montako mustaa on syöty
+    int vsyoty;     //montako valkoista on syöty
+    
     /**
      * Konstruktori alustaa laudan 3x8 matriisiksi, joka edustaa myllyn pelilautaa. Pelilauta 
      * muodostuu siis 24 paikasta, jotka on jaettu kolmelle riville. Kukin rivi edustaa 
@@ -38,6 +41,8 @@ public class Lauta {
         this.lauta = new int[3][8];     //yhdessä neliössä on 8 paikkaa
         this.mustia = 0;
         this.valkoisia = 0;
+        this.msyoty = 0;
+        this.vsyoty = 0;
     }
 
     /**
@@ -46,6 +51,18 @@ public class Lauta {
      */
     public int[][] getLauta() {
         return lauta;
+    }
+    
+    /**
+     * syoty -metodi palauttaa kuinka monta parametrina annetun väristä nappulaa pelilaudalta
+     * on syöty.
+     * @param vari minkä väristen merkkien määrää tutkitaan
+     * @return kuinka monta parametrina annetun väristä merkkiä on syöty pelilaudalta.
+     */
+    public int syoty(int vari){
+        if(vari==1) return this.msyoty;
+        if(vari==2) return this.vsyoty;
+        else return 0;
     }
     
     /**
@@ -82,6 +99,56 @@ public class Lauta {
         if(vari==1) mustia--;
         if(vari==2) valkoisia--;
         this.lauta[j][i] = 0;
+    }
+    
+    /**
+     * syo -metodi poistaa parametrina annetun värisen nappulan parametrina annetusta
+     * sijainnista, vähentää sen väristen nappuloiden määrää laudalla yhdellä ja merkitsee
+     * yhden sen värisen nappulan syödyksi lisäämällä mustien syötyjen nappejen määrää yhdellä.
+     * Metodi heittää poikkeuksen, jos annetussa sijainnissa ei ole annetun väristä nappulaa. 
+     * Muuten metodi asettaa kyseisen paikan arvoksi 0.
+     * @param j rivi, jolta merkki syödään
+     * @param i paikka rivillä, josta merkki syödään
+     * @param vari minkä värinen merkki on tarkoitus syödä
+     * @throws Exception jos paikassa ei ole oikean väristä merkkiä
+     */
+    public void syo(int j, int i, int vari) throws Exception{
+        if(this.lauta[j][i]!=vari)  throw new Exception();  //ei oikean väristä merkkiä
+        if(vari==1){
+            mustia--;
+            msyoty++;
+        }if(vari==2){
+            valkoisia--;
+            vsyoty++;
+        }
+        this.lauta[j][i] = 0;
+    }
+    
+    /**
+     * peruSyonti -metodi peruu syo metodin tekemät toimet eli lisää parametrina annetun 
+     * väristen merkkien määrää yhdellä ja vähentää sen väristen syötyjen nappien määrää.
+     * Lopuksi metodi asettaa parametrina annetun kohdan arvoksi laudalla parametrina
+     * annetun väriä ilmaisevan kokonaisluvun (1 tai 2). Jos luku on väärä eli <1 tai >2
+     * metodi heittää poikkeuksen. Samoin jos laudalla on kyseisessä kohdassa jo merkki
+     * metodi heittää poikkeuksen.
+     * @param j rivi, jolta syönti perutaan
+     * @param i paikka rivillä, josta syönti perutaan
+     * @param vari minkä värisen merkin syönti perutaan
+     * @throws Exception jos vari parametri on virheellinen tai parametrina annetun paikan
+     * arvo on 1 tai 2
+     */
+    public void peruSyonti(int j, int i, int vari) throws Exception{
+        if(this.lauta[j][i]==1 || this.lauta[j][i]==2)  throw new Exception();
+        if(vari==1){
+            mustia++;
+            msyoty--;
+        }if(vari==2){
+            valkoisia--;
+            vsyoty++;
+        }else{
+            throw new Exception();
+        }
+        this.lauta[j][i] = vari;
     }
     
     /**
@@ -204,30 +271,65 @@ public class Lauta {
         if(paikka<0 || paikka>23)   return false;       //paikka laudan ulkopuolella
         int j = paikka/8;   //rivi
         int i = paikka%8;   //sarake ts. paikka rivillä
-        if(i%2==0)  return myllynKulmassa(j, i, vari);     //onko kulmapaikalla mylly?
+        if(i%2==0)  return myllyKulmassa(j, i, vari);     //onko kulmapaikalla mylly?
         else        return keskellaMyllya(j ,i, vari);     //onko keskipaikalla mylly?
     }
     
-    public boolean myllynKulmassa(int j, int i, int vari){
+    /**
+     * myllyKulmassa metodi tutkii onko parametrina annetun paikan vasemmalla puolella 
+     * kahta parametrina annetun väristä merkkiä tai onko paikan oikealla puolella kahta
+     * parametrina annetun väristä merkkiä. Metodi palauttaa arvonaan true jos näin on 
+     * ja muuten false.
+     * @param j rivi, jolla olevaa paikkaa tutkitaan
+     * @param i paikka rivillä, jossa olevaa paikkaa tutkitaan
+     * @param vari minkä värisiä merkkejä etsitään (1=musta, 2=valkoinen)
+     * @return true jos kaksi parametrina annetun väristä merkkiä löytyy parametrina annetun 
+     * paikan oikealta tai vasemmalta puolelta
+     */
+    public boolean myllyKulmassa(int j, int i, int vari){
         if(lauta[j][i]!=vari)   return false;
         if(lauta[j][vas(i)]==vari && lauta[j][vvas(i)]==vari)   return true;    //vasemmalla mylly
         if(lauta[j][oik(i)]==vari && lauta[j][ooik(i)]==vari)   return true;    //oikealla mylly
         else return false;
     }  
     
+    /**
+     * keskellaMyllya -metodi tutkii onko parametrina annettu paikka laudalla kahden
+     * parametrina annetun värisen merkin välissä ja palauttaa true, jos näin on. Muuten 
+     * metodi palauttaa false.
+     * @param j rivi, jolla olevaa paikkaa tutkitaan
+     * @param i paikka rivillä eli indeksi, jota tutkitaan
+     * @param vari minkä värisiä merkkejä etsitään (1=musta, 2=valkoinen)
+     * @return true, jos parametrina annettu paikka laudalla on kahden parametrina annetun
+     * värisen merkin ympäröimä
+     */
     public boolean keskellaMyllya(int j, int i, int vari){          
         if(lauta[j][i]!=vari)   return false;
-        if(lauta[j][vas(i)]==vari && lauta[j][oik(i)]==vari)    return true;    //rivillä mylly
+        if(lauta[j][vas(i)]==vari && lauta[j][oik(i)]==vari)    return true;  //rivillä mylly
         if(lauta[ala(j)][i]==vari && lauta[yla(j)][i]==vari)    return true;  //rivien välinen mylly         
         else return false;       //ei myllyä kyseisessä kohdassa
     }
     
+    /**
+     * melkeinMylly -metodi tutkii onko neliön sivulla, jossa parametrina annettu paikka 
+     * laudalla sijaitsee, kahta samanväristä nappulaa, toisin sanoen onko laudalla 
+     * melkein mylly kyseisessä paikassa.
+     * @param paikka (0-23) sijainti pelilaudalla 
+     * @param vari minkä värisiä merkkejä tutkitaan
+     * @return true, jos neliön sivulla on melkein mylly eli kaksi saman väristä nappulaa, 
+     * muuten false
+     */
     public boolean melkeinMylly(int paikka, int vari){
         if(paikka<0 || paikka>23)   return false;
         int j = paikka/8;
         int i = paikka%8;
-        if(lauta[j][oik(i)]==vari || lauta[j][vas(i)]==vari)   return true;
-        if(i%2!=0 && lauta[ala(j)][i]==vari || lauta[yla(j)][i]==vari)  return true;  
+        if(lauta[j][i]==vari){
+            if(lauta[j][oik(i)]==vari || lauta[j][vas(i)]==vari)   return true;
+            if(i%2!=0 && lauta[ala(j)][i]==vari || lauta[yla(j)][i]==vari)  return true;
+        }else{
+            if(lauta[j][oik(i)]==vari && lauta[j][vas(i)]==vari) return true;
+            if(i%2!=0 && lauta[ala(j)][i]==vari && lauta[yla(j)][i]==vari)  return true;
+        }
         return false;
     }
     
@@ -275,11 +377,23 @@ public class Lauta {
         else        return i+2; //muuten +2
     }
     
+    /**
+     * yla -metodi palauttaa rivin yläpuolisen rivin, tai jos on kyseessä ylin rivi,
+     * taulukon ensimmäisen rivin.
+     * @param j rivi jonka yläpuolista paikkaa etsitään
+     * @return riviä ylemmän rivin numero tai alin, jos parametrina on annettu ylin rivi
+     */
     public int yla(int j){
         if(j==2)    return 0;
         else return j+1;
     }
     
+    /**
+     * ala -metodi palauttaa rivin alapuolisen rivin, tai jos on kyseessä alin rivi,
+     * taulukon viimeisen rivin.
+     * @param j rivi, jonka alapuolista paikkaa etsitään
+     * @return riviä alemman rivin numero tai ylin, jos parametrina on annettu alin rivi
+     */
     public int ala(int j){
         if(j==0)    return 2;
         else return j-1;

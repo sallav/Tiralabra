@@ -73,6 +73,40 @@ public class LautaTest {
     }
     
     @Test
+    public void syoTest() throws Exception{
+        pelilauta.syo(2, 0, 1);
+        Assert.assertEquals(0, pelilauta.getLauta()[2][0]);
+        Assert.assertEquals(1, pelilauta.syoty(1));
+        Assert.assertEquals(0, pelilauta.montakoNappia(1));
+    }
+    
+    @Test 
+    public void syoTestVaarallaSyotteella() throws Exception{
+        pelilauta.syo(2, 0, 1);
+        Assert.assertFalse(1==pelilauta.getLauta()[2][0]);
+        Assert.assertFalse(0==pelilauta.syoty(1));
+        Assert.assertTrue(0==pelilauta.syoty(2));
+    }
+    
+    @Test
+    public void peruSyontiTest() throws Exception{
+        pelilauta.syo(2, 0, 1);
+        pelilauta.peruSyonti(2, 0, 1);
+        Assert.assertEquals(1, pelilauta.getLauta()[2][0]);
+        Assert.assertEquals(0, pelilauta.syoty(1));
+        Assert.assertEquals(1, pelilauta.montakoNappia(1));
+    }
+    
+    @Test
+    public void peruSyontiTestVaarallaSyotteella() throws Exception{
+        pelilauta.syo(2, 0, 1);
+        pelilauta.peruSyonti(2, 0, 1);
+        Assert.assertFalse(0==pelilauta.getLauta()[2][0]);
+        Assert.assertFalse(0<pelilauta.syoty(1));
+        Assert.assertFalse(0==pelilauta.montakoNappia(1));
+    }
+    
+    @Test
     public void siirraTest() throws Exception{
         pelilauta.siirra(2, 0, 'y');
         Assert.assertEquals(0, pelilauta.getLauta()[2][0]);
@@ -154,16 +188,16 @@ public class LautaTest {
     
     @Test
     public void myllyjaTest(){
-        Assert.assertFalse(pelilauta.myllyja(1));
-        Assert.assertFalse(pelilauta.myllyja(2));
+        Assert.assertFalse(0<pelilauta.myllyja(1));
+        Assert.assertFalse(0<pelilauta.myllyja(2));
     }
     
     @Test
     public void myllyjaTest2() throws Exception{
         pelilauta.laitaMerkki(2, 1, 1);
         pelilauta.laitaMerkki(2, 2, 1);
-        Assert.assertTrue(pelilauta.myllyja(1));
-        Assert.assertFalse(pelilauta.myllyja(2));
+        Assert.assertTrue(1==pelilauta.myllyja(1));
+        Assert.assertFalse(0==pelilauta.myllyja(2));
     }
     
     @Test
@@ -171,8 +205,8 @@ public class LautaTest {
         pelilauta.laitaMerkki(0, 7, 2);
         pelilauta.laitaMerkki(1, 7, 2);
         pelilauta.laitaMerkki(2, 7, 2);
-        Assert.assertTrue(pelilauta.myllyja(2));
-        Assert.assertFalse(pelilauta.myllyja(1));
+        Assert.assertTrue(1==pelilauta.myllyja(2));
+        Assert.assertFalse(0==pelilauta.myllyja(1));
     }
     
     @Test
@@ -200,6 +234,64 @@ public class LautaTest {
     }
     
     @Test
+    public void myllyKulmassaTest() throws Exception{
+        Assert.assertFalse(pelilauta.myllyKulmassa(2, 0, 1));
+        Assert.assertFalse(pelilauta.myllyKulmassa(2, 2, 1));
+        pelilauta.laitaMerkki(2, 1, 1);
+        pelilauta.laitaMerkki(2, 2, 1);
+        Assert.assertTrue(pelilauta.myllyKulmassa(2, 0, 1));
+        Assert.assertTrue(pelilauta.myllyKulmassa(2, 2, 1));
+    }
+    
+    @Test
+    public void myllyKulmassaTest2() throws Exception{
+        pelilauta.laitaMerkki(2, 1, 1);
+        pelilauta.laitaMerkki(1, 1, 1);
+        pelilauta.laitaMerkki(0, 1, 1);
+        Assert.assertFalse(pelilauta.myllyKulmassa(2, 0, 1));
+    }
+    
+    @Test
+    public void keskellaMyllyaTest() throws Exception{
+        Assert.assertFalse(pelilauta.keskellaMyllya(2, 1, 1));
+        pelilauta.laitaMerkki(2, 1, 1);
+        pelilauta.laitaMerkki(1, 1, 1);
+        pelilauta.laitaMerkki(0, 1, 1);
+        Assert.assertTrue(pelilauta.keskellaMyllya(2, 1, 1));
+        Assert.assertTrue(pelilauta.keskellaMyllya(1, 1, 1));
+        Assert.assertTrue(pelilauta.keskellaMyllya(0, 1, 1));
+    }
+    
+        @Test
+    public void keskellaMyllyaTestVaarallaSyotteella() throws Exception{
+        Assert.assertFalse(pelilauta.keskellaMyllya(2, 1, 2));
+        pelilauta.laitaMerkki(2, 1, 1);
+        pelilauta.laitaMerkki(1, 1, 1);
+        pelilauta.laitaMerkki(0, 1, 1);
+        Assert.assertFalse(pelilauta.keskellaMyllya(2, 1, 2));
+        Assert.assertFalse(pelilauta.keskellaMyllya(1, 1, 2));
+        Assert.assertFalse(pelilauta.keskellaMyllya(0, 1, 3));
+    }
+    
+    @Test
+    public void melkeinMyllyTest() throws Exception{
+        Assert.assertFalse(pelilauta.melkeinMylly(16, 1));
+        pelilauta.laitaMerkki(2, 1, 1);
+        Assert.assertTrue(pelilauta.melkeinMylly(16, 1));
+        Assert.assertTrue(pelilauta.melkeinMylly(17, 1));
+        Assert.assertTrue(pelilauta.melkeinMylly(18, 1));
+    }
+    
+    @Test
+    public void melkeinMyllyTest2() throws Exception{
+        Assert.assertFalse(pelilauta.melkeinMylly(16, 1));
+        pelilauta.laitaMerkki(2, 2, 1);
+        Assert.assertTrue(pelilauta.melkeinMylly(16, 1));
+        Assert.assertTrue(pelilauta.melkeinMylly(17, 1));
+        Assert.assertTrue(pelilauta.melkeinMylly(18, 1));        
+    }
+    
+    @Test
     public void vasTest(){
         Assert.assertEquals(7, pelilauta.vas(0));
         Assert.assertEquals(0, pelilauta.vas(1));        
@@ -221,5 +313,19 @@ public class LautaTest {
     public void ooikTest(){
         Assert.assertEquals(1, pelilauta.ooik(7));
         Assert.assertEquals(0, pelilauta.ooik(6));        
+    }
+    
+    @Test
+    public void ylaTest(){
+        Assert.assertEquals(0, pelilauta.yla(2));
+        Assert.assertEquals(2, pelilauta.yla(1));
+        Assert.assertEquals(1, pelilauta.yla(0));
+    }
+    
+    @Test
+    public void alaTest(){
+        Assert.assertEquals(0, pelilauta.ala(1));
+        Assert.assertEquals(1, pelilauta.ala(2));
+        Assert.assertEquals(2, pelilauta.ala(0));
     }
 }

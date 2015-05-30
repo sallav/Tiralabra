@@ -357,10 +357,10 @@ public class Tekoaly {
     public int kokeilePoistaa(Lauta lauta, int j, int i, int vari, int k, int pelaamatta, boolean omavuoro){
             int tulos;
             try{
-                lauta.poista(j, i, 3-vari);         //kokeillaan poistaa vastapuolen merkki
+                lauta.syo(j, i, 3-vari);         //kokeillaan poistaa vastapuolen merkki
                 if(omavuoro) tulos = vastaPuoliLaudalle(lauta, vari, k+1, pelaamatta);  //jos oli oma vuoro, seuraa vastapuolen siirto
                 else    tulos = omaSiirtoLaudalle(lauta, 3-vari, k+1, pelaamatta);      //jos oli vastapuolen poisto, seuraa oma siirto
-                lauta.laitaMerkki(j, i, 3-vari);    //perutaan tehty siirto    
+                lauta.peruSyonti(j, i, 3-vari);    //perutaan tehty siirto    
             }catch(Exception e){                    //jos yritetään poistaa jotain muuta kuin pitäisi
                 if(omavuoro)tulos = -100;            //"tätä ei haluta poistaa"
                 else tulos = 100;
