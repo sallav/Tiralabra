@@ -6,8 +6,8 @@
 package mylly;
 
 /**
- * Heuristiikka määrittelee heuristiikan, jolla arvioidaan pelitilanteiden edullisuutta
- * pelaajalle.
+ * Heuristiikka -rajapinnan ilmentymä määrittelee heuristiikan, jolla arvioidaan 
+ * pelitilanteiden edullisuutta pelaajalle.
  * @author Salla
  */
 public interface Heuristiikka {
