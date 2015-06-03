@@ -14,6 +14,7 @@ public class Peli {
     Pelaaja eka;
     Pelaaja toka;
     Lauta lauta;
+    Kayttoliittyma kayttol;
     
     /**
      * Konstruktori asettaa ekan ja tokan arvoiksi parametreina saadut Pelaaja -oliot sekä
@@ -21,10 +22,18 @@ public class Peli {
      * @param eka   pelaaja joka aloittaa
      * @param toka  toisena vuorossa oleva pelaaja
      */
-    public Peli(Pelaaja eka, Pelaaja toka){
+    public Peli(Pelaaja eka, Pelaaja toka, Kayttoliittyma kl){
         this.eka = eka;                 
         this.toka = toka;               
         this.lauta = new Lauta();
+        this.kayttol = kl;
+    }
+    
+    public Peli(Pelaaja eka, Pelaaja toka){
+        this.eka = eka;
+        this.toka = toka;
+        this.lauta = new Lauta();
+        this.kayttol = null;
     }
     
     /**
