@@ -8,7 +8,8 @@ package mylly;
 import java.util.Scanner;
 
 /**
- *
+ * TKayttoliittyma -luokka määrittelee mylly -pelille tekstikäyttöliittymän, jolla peliä
+ * voi pelata tai kahden tekoälyn peliä seurata.
  * @author Salla
  */
 public class TKayttoliittyma implements Kayttoliittyma{
@@ -29,6 +30,12 @@ public class TKayttoliittyma implements Kayttoliittyma{
                          "o---------o---------o\n";
     int edel; 
     
+    /**
+     * TKayttoliittyma -luokan konstruktori asettaa lukija muuttujan arvoksi parametrina
+     * annetun Scanner -olion sekä pelilauta muuttujan arvoksi uuden StringBuilder -olion 
+     * johon lisätään pelilautaa esittävä merkkijono.
+     * @param lukija Scanner -luokan ilmentymä
+     */
     public TKayttoliittyma(Scanner lukija){
         this.lukija = lukija;
         this.pelilauta = new StringBuilder();
@@ -48,12 +55,36 @@ public class TKayttoliittyma implements Kayttoliittyma{
             return 1;
         }
     }
+    
+    /**
+     * getLauta -metodi palauttaa pelilautaa kuvastavan merkkijonoesityksen
+     * @return pelilautaa kuvastava String -olio
+     */
+    public String getLauta(){
+        String merkit = pelilauta.toString();
+        return merkit;
+    }
 
+    /**
+     * tulostaLauta -metodi tulostaa merkkijonoesityksen pelin pelilaudasta ja sen 
+     * sen hetkisestä tilasta, jossa näkyvät merkkien sijainnit.
+     */
     public void tulostaLauta(){
         String merkit = pelilauta.toString();
         System.out.println(merkit);
     }
     
+    /**
+     * paivitaLauta -metodi päivittää laudalla tehdyn siirron pelilautaa vastaavaan 
+     * merkkijonoesitykseen, joka on StringBuilder muuttujassa pelilauta. Kirjain m
+     * edustaa mustaa nappulaa ja v valkoista. Uusi siirto merkitään isolla kirjaimella
+     * ja metodin alussa edellinen siirto muutetan pieneksi kirjaimeksi. Jos on kyseessä
+     * poisto, sijainti pelilaudalla tyhjenee ja merkkijonoesityksessä se merkitään o 
+     * -kirjaimella. 
+     * @param siirto sijainti laudalla, johon siirto tehtiin (0-23)
+     * @param vari minkä värinen nappula siirrettiin tai halutaan poistaa
+     * @param poisto true jos on kyseessä poisto, false jos on kyseessä tavallinen siirto
+     */
     public void paivitaLauta(int siirto, int vari, boolean poisto){
         char merkki = 'o';
         int ind = indeksi(siirto%8, siirto/8);
@@ -65,6 +96,13 @@ public class TKayttoliittyma implements Kayttoliittyma{
         edel = ind;
     }
 
+    /**
+     * indeksi -metodi palauttaa parametrina annettua pelilaudan paikkaa vastaavan 
+     * indeksin pelilautaa kuvaavasta merkkijonoesityksestä. 
+     * @param paikka monesko paikka rivillä
+     * @param rivi millä rivillä paikka on
+     * @return merkkijonon indeksi, joka vastaa parametrina annettua paikkaa
+     */
     public int indeksi(int paikka, int rivi){
         if(paikka<3)    return rivi*44 + paikka*10 + rivi*3 - paikka*3;
         if(paikka>3 && paikka<7)    return 286 - (rivi*44) - 2 - ((-4 + paikka)*10) - (rivi*3) + ((-4+paikka)*3*rivi);
