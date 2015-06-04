@@ -18,21 +18,21 @@ public class Peli {
     
     /**
      * Konstruktori asettaa ekan ja tokan arvoiksi parametreina saadut Pelaaja -oliot sekä
-     * luo uuden Lauta -olion peliä varten.
+     * asettaa pelin käyttöliittymäksi parametrina annetun Käyttöliittymä -olion.
      * @param eka   pelaaja joka aloittaa
      * @param toka  toisena vuorossa oleva pelaaja
      */
     public Peli(Pelaaja eka, Pelaaja toka, Kayttoliittyma kl){
         this.eka = eka;                 
-        this.toka = toka;               
-        this.lauta = new Lauta();
+        this.toka = toka;
+        this.lauta = null;
         this.kayttol = kl;
     }
     
     public Peli(Pelaaja eka, Pelaaja toka){
         this.eka = eka;
         this.toka = toka;
-        this.lauta = new Lauta();
+        this.lauta = null;
         this.kayttol = null;
     }
     
@@ -44,12 +44,33 @@ public class Peli {
         return this.lauta;
     }
     
+    /**
+     * getKayttoLiittyma -metodi palauttaa pelin käyttöliittymän
+     * @return peliin kuuluva Kayttoliittyma -olio
+     */
+    public Kayttoliittyma getKayttoliittyma(){
+        return this.kayttol;
+    }
+    
+    /**
+     * getPelaaja -metodi palauttaa parametrina annetun numeron mukaisen 
+     * pelaaja -olion
+     * @param nro sen pelaajan vuoronumero(1 tai 2), joka halutaan palautettavan 
+     * @return vuoroltaan ensimmäinen tai toinen pelaaja
+     */
+    public Pelaaja getPelaaja(int nro){
+        if(nro==1)  return this.eka;
+        if(nro==2)  return this.toka;
+        else    return null;
+    }
+    
     /** 
      * pelaa -metodi aloittaa pelin. Pelaajat asettavat vuorotellen 9 nappia laudalle
      * ja sen jälkeen selvitetään pelin voittaja.
      * @return pelin voittaja: musta=1, valkoinen=2 tai tasapeli=0
      */
     public int pelaa(){
+        this.lauta = new Lauta();
         int nappeja = 18;
         
         while(nappeja>0){       //9 nappulaa laudalle!
@@ -92,7 +113,11 @@ public class Peli {
      */
     public void pelaaLaudalle(Pelaaja pelaaja, int pelaamatta){
         int sij = pelaaja.siirraLaudalle(lauta, pelaamatta);        //siirretään uusi nappula laudalle
-        if(lauta.mylly(pelaaja.vari(), sij))    pelaaja.poistaLaudalta(lauta, pelaamatta-1); // poistetaan vastapuolen nappi
+        this.kayttol.tulostaLauta();
+        if(lauta.mylly(pelaaja.vari(), sij)){
+            pelaaja.poistaLaudalta(lauta, pelaamatta-1); // poistetaan vastapuolen nappi
+            this.kayttol.tulostaLauta();
+        }
     }
     
     /**
@@ -107,7 +132,11 @@ public class Peli {
         int sij;
         if(pelaaja.laudalla(lauta)>3)   sij = pelaaja.siirraLaudalla(lauta); //siirretään jotain laudalla jo olevaa nappia
         else sij = pelaaja.lenna(lauta);                //kun vain 3 nappia jäljellä
-        if(lauta.mylly(pelaaja.vari(), sij))    pelaaja.poistaLaudalta(lauta, 0); // poistetaan vastapuolen nappi
+        this.kayttol.tulostaLauta();
+        if(lauta.mylly(pelaaja.vari(), sij)){
+            pelaaja.poistaLaudalta(lauta, 0);           // poistetaan vastapuolen nappi
+            this.kayttol.tulostaLauta();
+        }
     }
     
     /**

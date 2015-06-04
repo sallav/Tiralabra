@@ -69,6 +69,7 @@ public class TKayttoliittyma implements Kayttoliittyma{
      * tulostaLauta -metodi tulostaa merkkijonoesityksen pelin pelilaudasta ja sen 
      * sen hetkisestä tilasta, jossa näkyvät merkkien sijainnit.
      */
+    @Override
     public void tulostaLauta(){
         String merkit = pelilauta.toString();
         System.out.println(merkit);
@@ -105,7 +106,7 @@ public class TKayttoliittyma implements Kayttoliittyma{
      */
     public int indeksi(int paikka, int rivi){
         if(paikka<3)    return rivi*44 + paikka*10 + rivi*3 - paikka*3;
-        if(paikka>3 && paikka<7)    return 286 - (rivi*44) - 2 - ((-4 + paikka)*10) - (rivi*3) + ((-4+paikka)*3*rivi);
+        if(paikka>3 && paikka<7)    return 298 - (rivi*44) - 2 - ((-4 + paikka)*10) - (rivi*3) + ((-4+paikka)*3*rivi);
         if(paikka==3)   return 132 + 20 - (rivi*3);
         else            return 132 + (rivi*3);
     }

@@ -34,6 +34,10 @@ public class AIPelaaja implements Pelaaja{
         return this.vari;
     }
     
+    public Tekoaly getAly(){
+        return this.aly;
+    }
+    
     /**
      * siirraLaudalle -metodi arvioi tekoalyn avulla parhaan paikan mihin siirtää uusi nappula 
      * ja tekee arvion mukaisen siirron. 

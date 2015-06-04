@@ -18,6 +18,9 @@ public interface Kayttoliittyma {
      */
     public abstract int pelinValinta();
     
+    
+    public abstract void tulostaLauta();
+    
     /**
      * kerroVoittaja -metodi ilmoittaa käyttäjälle voittajan värin tai tasapelin
      * sattuessa kertoo pelin päättyneen tasan.

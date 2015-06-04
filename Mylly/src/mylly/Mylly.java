@@ -52,8 +52,8 @@ public class Mylly {
     public static Peli tekoalyVsTekoaly(Kayttoliittyma kal){
         Heuristiikka h = new Perus();           //heuristiikan valinta
         Tekoaly taly = new Tekoaly(h, 5);       //uusi tekoäly -olio halutulla heuristiikalla ja syvyytenä 5
-        Pelaaja eka = new AIPelaaja(1, taly);   //pelaajat käyttävät samaa tekoälyä
-        Pelaaja toka = new AIPelaaja(2, taly);  //joten periaatteessa sama tekoäly pelaa itseään vastaan
+        AIPelaaja eka = new AIPelaaja(1, taly);   //pelaajat käyttävät samaa tekoälyä
+        AIPelaaja toka = new AIPelaaja(2, taly);  //joten periaatteessa sama tekoäly pelaa itseään vastaan
         return new Peli(eka, toka, kal);
     }
 }
