@@ -91,11 +91,11 @@ public class TekoalyTest {
     
     @Test 
     public void parasPoistettavaTest() throws Exception{
+        lauta.laitaMerkki(0, 6, 2);
         lauta.laitaMerkki(0, 1, 2);
         lauta.laitaMerkki(1, 1, 2);
         lauta.laitaMerkki(2, 2, 2);
-        lauta.laitaMerkki(0, 6, 2);
-        int poistop = AI.parasPoistettava(lauta, 1, 13);
+        int poistop = AI.parasPoistettava(lauta, 1, 13, 18);
         Assert.assertFalse(poistop==6);
         String[] siirto = AI.parasSiirto(lauta, 2).split(" ");
         lauta.siirra(Integer.valueOf(siirto[0])/8, Integer.valueOf(siirto[0])%8, siirto[1].charAt(0));
@@ -109,7 +109,7 @@ public class TekoalyTest {
         lauta.laitaMerkki(2, 2, 1);
         lauta.laitaMerkki(2, 0, 2);
         lauta.laitaMerkki(0, 4, 2);
-        int poistop = AI.parasPoistettava(lauta, 1, 12);
+        int poistop = AI.parasPoistettava(lauta, 1, 12, 18);
         Assert.assertFalse(poistop==4);
     }
     

@@ -88,12 +88,12 @@ public class Tekoaly {
      * @param pelaamatta kuinka monta pelinappulaa pelaajilla on siirtämättä laudalle
      * @return sijainti (0-23) mistä vastustajan pelimerkki kannattaa poistaa
      */
-    public int parasPoistettava(Lauta lauta, int vari, int pelaamatta){
+    public int parasPoistettava(Lauta lauta, int vari, int pelaamatta, int edel){
         int paras = -100;
         int parasp = -1;        //paras paikka, josta poistaa merkki
         for(int i=0; i<24; i++){    //käydään kaikki paikat läpi
             if(lauta.merkki(i/8, i%8)!=(3-vari) || lauta.mylly(3-vari, i))    continue; //jos ei vastapuolen merkkiä, tai vastapuolen merkki on myllyssä
-            int tulos = kokeilePoistaa(lauta, i/8, i%8, vari, 1, pelaamatta, true);     //kokeillaan poistaa merkki 
+            int tulos = kokeilePoistaa(lauta, i/8, i%8, vari, 1, pelaamatta, true, edel);     //kokeillaan poistaa merkki 
             if(tulos>paras){
                 paras = tulos;
                 parasp = i;         //jos tulos on parempi kuin aikaisemmissa, laitetaan poistopaikka muistiin
@@ -130,9 +130,9 @@ public class Tekoaly {
      * @return paras mahdollinen tulos johon pelissä päädytään arvioituna asteikolla (-1)-(+1) 
      * (tai joku muu asteikko...)
      */
-    public int omaSiirtoLaudalle(Lauta lauta, int vari, int k, int pelaamatta){
-        if(k==syvyys)   return arvioiTilanne(lauta, vari, pelaamatta);     //kun haluttu syvyys saavutettu palautetaan arvio tilanteesta        
-        if(pelaamatta==0)   return omaSiirtoLaudalla(lauta, vari, k);      //jos kaikki nappulat on jo käytetty kutsutaan toista metodia
+    public int omaSiirtoLaudalle(Lauta lauta, int vari, int k, int pelaamatta, int edel){
+        if(k==syvyys)   return arvioiTilanne(lauta, vari, pelaamatta, edel);     //kun haluttu syvyys saavutettu palautetaan arvio tilanteesta        
+        if(pelaamatta==0)   return omaSiirtoLaudalla(lauta, vari, k, edel);      //jos kaikki nappulat on jo käytetty kutsutaan toista metodia
         int paras = -100;
         for(int i=0; i<24; i++){                //käydään kaikki paikat läpi
             int tulos = kokeileSijainti(lauta, i/8, i%8, vari, k, true, pelaamatta);    //kokeillaan laittaa merkki laudalla olevaan paikkaan
@@ -151,8 +151,8 @@ public class Tekoaly {
      * @param k kuinka pitkälle pelipuuta on jo generoitu
      * @return arvio parhaasta mahdollisesta tilanteesta, johon pelissä päädytään
      */
-    public int omaSiirtoLaudalla(Lauta lauta, int vari, int k){
-        if(k==syvyys)   return arvioiTilanne(lauta, vari, 0);   //arvio tilanteesta kun haluttu syvyys saavutettu
+    public int omaSiirtoLaudalla(Lauta lauta, int vari, int k, int edel){
+        if(k==syvyys)   return arvioiTilanne(lauta, vari, 0, edel);   //arvio tilanteesta kun haluttu syvyys saavutettu
         int paras = -100;
         for(int i=0; i<24; i++){                                //kaikki paikat
             if(lauta.merkki(i/8, i%8)!=vari)    continue;       //jos ei oman väristä nappia paikassa ei tehdä siirtoja
@@ -173,9 +173,9 @@ public class Tekoaly {
      * @return huonoin mahdollinen tulos, johon pelissä päädytään arvioituna asteikolla (-1)-(+1)
      * (tai joku muu..)
      */
-    public int vastaPuoliLaudalle(Lauta lauta, int vari, int k, int pelaamatta){
-        if(k==syvyys)   return arvioiTilanne(lauta, vari, pelaamatta);     //halutulla syvyydellä tehdään arvio tilanteen hyvyydestä
-        if(pelaamatta==0)   return vastaPuoliLaudalla(lauta, vari, k);     //jos kaikki nappulat on jo käytetty
+    public int vastaPuoliLaudalle(Lauta lauta, int vari, int k, int pelaamatta, int edel){
+        if(k==syvyys)   return arvioiTilanne(lauta, vari, pelaamatta, edel);     //halutulla syvyydellä tehdään arvio tilanteen hyvyydestä
+        if(pelaamatta==0)   return vastaPuoliLaudalla(lauta, vari, k, edel);     //jos kaikki nappulat on jo käytetty
         int huonoin = 100;
         for(int i=0; i<24; i++){                                    //kokeillaan asettaa merkki jokaiseen laudan paikkaan
             int tulos = kokeileSijainti(lauta, i/8, i%8, 3-vari, k, false, pelaamatta); //lasketaan tulos mihin kyseinen siirto johtaisi   
@@ -195,8 +195,8 @@ public class Tekoaly {
      * @return huonoin mahdollinen tulos, johon pelissä päädytään arvioituna asteikolla (-1)-(+1)
      * (tai joku muu..)
      */
-    public int vastaPuoliLaudalla(Lauta lauta, int vari, int k){
-        if(k==syvyys)   return arvioiTilanne(lauta, vari, 0);      //arvio tilanteesta kun haluttu syvyys saavutettu
+    public int vastaPuoliLaudalla(Lauta lauta, int vari, int k, int edel){
+        if(k==syvyys)   return arvioiTilanne(lauta, vari, 0, edel);      //arvio tilanteesta kun haluttu syvyys saavutettu
         int huonoin = 100;
         for(int i=0; i<24; i++){                                //kokeillaan kaikkia sijainteja
             if(lauta.merkki(i/8, i%8)!=3-vari)    continue;     //kokeillaan vain niitä sijainteja jossa vastapuolen nappula
@@ -226,9 +226,9 @@ public class Tekoaly {
         int tulos = 100;
         try{
             lauta.laitaMerkki(j, i, vari);                  //kokeillaan sijaintia laittamalla siihen halutun värinen merkki
-            if(lauta.mylly(vari, (8*j)+i))  tulos = poisto(lauta, vari, k, pelaamatta-1, omavuoro); //jos syntyi mylly voidaan poistaa yksi vastapuolen merkeistä
-            else if(omavuoro) tulos = vastaPuoliLaudalle(lauta, vari, k+1, pelaamatta-1);           //jos  ei myllyä ja oma vuoro kutsutaan vastapuolen metodia
-            else    tulos = omaSiirtoLaudalle(lauta, 3-vari, k+1, pelaamatta-1);            //jos vastapuolen vuoro kutsutaan oman värin metodia
+            if(lauta.mylly(vari, (8*j)+i))  tulos = poisto(lauta, vari, k, pelaamatta-1, omavuoro, (j*8)+i); //jos syntyi mylly voidaan poistaa yksi vastapuolen merkeistä
+            else if(omavuoro) tulos = vastaPuoliLaudalle(lauta, vari, k+1, pelaamatta-1, (j*8)+i);           //jos  ei myllyä ja oma vuoro kutsutaan vastapuolen metodia
+            else    tulos = omaSiirtoLaudalle(lauta, 3-vari, k+1, pelaamatta-1, (j*8)+i);            //jos vastapuolen vuoro kutsutaan oman värin metodia
             lauta.poista(j, i, vari);                       //perutaan tehty siirto
         }catch(Exception e){                    //jos paikka on epäsopiva, esim. varattu, heitetään poikkeus merkkiä laitettaessa
             if(omavuoro)tulos = -100;            //"tätä paikkaa ei haluta käyttää"
@@ -307,9 +307,9 @@ public class Tekoaly {
             int tulos;
             try{
                 int uusip = lauta.siirra(j, i, suunta);                 //kokeillaan siirtää merkkiä annettuun suuntaan
-                    if(lauta.mylly(vari, uusip))    tulos = poisto(lauta, vari, k, 0, omavuoro);    //jos syntyi mylly saadaan poistaa vastapuolen merkki
-                    else if(omavuoro)    tulos = vastaPuoliLaudalle(lauta, vari, k+1, 0);           //jos ei myllyä jaon oma vuoro kutsutaan vastapuolen siirtoa
-                    else            tulos = omaSiirtoLaudalle(lauta, 3-vari, k+1, 0);       //jos on vastapuolen vuoro kutsutaan omaa siirtoa
+                    if(lauta.mylly(vari, uusip))    tulos = poisto(lauta, vari, k, 0, omavuoro, (j*8)+i);    //jos syntyi mylly saadaan poistaa vastapuolen merkki
+                    else if(omavuoro)    tulos = vastaPuoliLaudalle(lauta, vari, k+1, 0, (j*8)+i);  //jos ei myllyä jaon oma vuoro kutsutaan vastapuolen siirtoa
+                    else            tulos = omaSiirtoLaudalle(lauta, 3-vari, k+1, 0, (j*8)+i);      //jos on vastapuolen vuoro kutsutaan omaa siirtoa
                 lauta.siirra(uusip/8, uusip%8, vastaSuunta(suunta));     //perutaan tehty siirto
                 }catch(Exception e){                //jos sijainti on epäsopiva, esim. varattu
                     if(omavuoro)    tulos = -100;    //"tätä siirtoa ei haluta tehdä"
@@ -328,12 +328,12 @@ public class Tekoaly {
      * @param omavuoro onko vuorossa pelaaja, jonka mahdollisuuksia arvioidaan vai vastapuoli
      * @return arvio lopputuloksesta johon voidaan poistolla päätyä
      */
-    public int poisto(Lauta lauta, int vari, int k, int pelaamatta, boolean omavuoro){
+    public int poisto(Lauta lauta, int vari, int k, int pelaamatta, boolean omavuoro, int edel){
             int pal = 100;
             if(omavuoro) pal = -100 ;
             for(int i=0; i<24; i++){                        //käydään läpi kaikki pelilaudan paikat
                 if(lauta.merkki(i/8, i%8)!=(3-vari) || lauta.mylly(3-vari, i))    continue; //jos paikassa ei ole vastapuolen väriä, tai vastapuolen nappi on myllyssä
-                int tulos = kokeilePoistaa(lauta, i/8, i%8, vari, k, pelaamatta, omavuoro);
+                int tulos = kokeilePoistaa(lauta, i/8, i%8, vari, k, pelaamatta, omavuoro, edel);
                 if(omavuoro && tulos>pal) pal = tulos;      //jos vuorossa on pelaaja ja tulos parempi kuin aikaisemmat tulokset
                 if(!omavuoro && tulos<pal)  pal = tulos;    //jos vuorossa on vastapuoli ja tulos on huonompi kuin aikaisemmat tulokset
             }
@@ -354,12 +354,12 @@ public class Tekoaly {
      * jos on vastapuolen pelivuoro
      * @return arvio tilanteesta johon poistolla päädytään
      */
-    public int kokeilePoistaa(Lauta lauta, int j, int i, int vari, int k, int pelaamatta, boolean omavuoro){
+    public int kokeilePoistaa(Lauta lauta, int j, int i, int vari, int k, int pelaamatta, boolean omavuoro, int edel){
             int tulos;
             try{
                 lauta.syo(j, i, 3-vari);         //kokeillaan poistaa vastapuolen merkki
-                if(omavuoro) tulos = vastaPuoliLaudalle(lauta, vari, k+1, pelaamatta);  //jos oli oma vuoro, seuraa vastapuolen siirto
-                else    tulos = omaSiirtoLaudalle(lauta, 3-vari, k+1, pelaamatta);      //jos oli vastapuolen poisto, seuraa oma siirto
+                if(omavuoro) tulos = vastaPuoliLaudalle(lauta, vari, k+1, pelaamatta, edel);  //jos oli oma vuoro, seuraa vastapuolen siirto
+                else    tulos = omaSiirtoLaudalle(lauta, 3-vari, k+1, pelaamatta, edel);      //jos oli vastapuolen poisto, seuraa oma siirto
                 lauta.peruSyonti(j, i, 3-vari);    //perutaan tehty siirto    
             }catch(Exception e){                    //jos yritetään poistaa jotain muuta kuin pitäisi
                 if(omavuoro)tulos = -100;            //"tätä ei haluta poistaa"
@@ -378,8 +378,8 @@ public class Tekoaly {
      * @return kokonaislukumerkkinen arvo, joka kuvastaa sitä kuinka hyvä pelitilanne 
      * on annetun värisen pelaajan kannalta
      */
-    public int arvioiTilanne(Lauta lauta, int vari, int pelaamatta){
-        return this.heuristiikka.tilanneArvio(lauta, vari, pelaamatta);
+    public int arvioiTilanne(Lauta lauta, int vari, int pelaamatta, int edel){
+        return this.heuristiikka.tilanneArvio(lauta, vari, pelaamatta, edel);
     }
     
 }

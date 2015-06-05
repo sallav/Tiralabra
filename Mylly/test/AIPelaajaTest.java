@@ -120,7 +120,8 @@ public class AIPelaajaTest {
     @Test
     public void poistaLaudaltaTest(){
         AIPelaaja toinen = new AIPelaaja(2, AI);
-        int poistopaikka = toinen.poistaLaudalta(pelilauta, 17);
+        int sij = toinen.siirraLaudalle(pelilauta, 17);
+        int poistopaikka = toinen.poistaLaudalta(pelilauta, 17, sij);
         Assert.assertFalse(poistopaikka<0);
         Assert.assertFalse(poistopaikka>23);
         Assert.assertEquals(0, pelilauta.merkki(poistopaikka/8, poistopaikka%8));

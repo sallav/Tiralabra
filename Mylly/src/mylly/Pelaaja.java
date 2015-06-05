@@ -52,5 +52,5 @@ public interface Pelaaja {
      * @param l Lauta -luokan ilmentymä, jossa peliä pelataan
      * @return sijainti, josta pelimerkki poistettiin
      */
-    public abstract int poistaLaudalta(Lauta l, int nappeja);
+    public abstract int poistaLaudalta(Lauta l, int nappeja, int edel);
 }

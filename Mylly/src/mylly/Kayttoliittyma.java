@@ -18,6 +18,13 @@ public interface Kayttoliittyma {
      */
     public abstract int pelinValinta();
     
+    /**
+     * 
+     * @param siirto
+     * @param vari
+     * @param poisto 
+     */
+    public abstract void paivitaLauta(int siirto, int vari, boolean poisto);
     
     public abstract void tulostaLauta();
     

@@ -113,9 +113,11 @@ public class Peli {
      */
     public void pelaaLaudalle(Pelaaja pelaaja, int pelaamatta){
         int sij = pelaaja.siirraLaudalle(lauta, pelaamatta);        //siirretään uusi nappula laudalle
+        this.kayttol.paivitaLauta(sij, pelaaja.vari(), false);
         this.kayttol.tulostaLauta();
         if(lauta.mylly(pelaaja.vari(), sij)){
-            pelaaja.poistaLaudalta(lauta, pelaamatta-1); // poistetaan vastapuolen nappi
+            int psij = pelaaja.poistaLaudalta(lauta, pelaamatta-1, sij); // poistetaan vastapuolen nappi
+            this.kayttol.paivitaLauta(psij, 3-pelaaja.vari(), true);
             this.kayttol.tulostaLauta();
         }
     }
@@ -132,9 +134,11 @@ public class Peli {
         int sij;
         if(pelaaja.laudalla(lauta)>3)   sij = pelaaja.siirraLaudalla(lauta); //siirretään jotain laudalla jo olevaa nappia
         else sij = pelaaja.lenna(lauta);                //kun vain 3 nappia jäljellä
+        this.kayttol.paivitaLauta(sij, pelaaja.vari(), false);
         this.kayttol.tulostaLauta();
         if(lauta.mylly(pelaaja.vari(), sij)){
-            pelaaja.poistaLaudalta(lauta, 0);           // poistetaan vastapuolen nappi
+            int psij = pelaaja.poistaLaudalta(lauta, 0, sij);           // poistetaan vastapuolen nappi
+            this.kayttol.paivitaLauta(psij, 3-pelaaja.vari(), true);
             this.kayttol.tulostaLauta();
         }
     }

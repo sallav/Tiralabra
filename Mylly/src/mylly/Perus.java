@@ -12,10 +12,12 @@ package mylly;
 public class Perus implements Heuristiikka{
     
     @Override
-    public int tilanneArvio(Lauta lauta, int vari, int pelaamatta){
+    public int tilanneArvio(Lauta lauta, int vari, int pelaamatta, int edel){
         if(pelaamatta==0 && voikoLiikkua(lauta, vari)!=1) return voikoLiikkua(lauta, vari);
-        
-        
+        if(lauta.mylly(vari, edel))         return 90;
+        if(lauta.melkeinMylly(edel, vari))  return 80;
+        if(lauta.mylly(3-vari, edel))       return -90;
+        if(lauta.melkeinMylly(edel, 3-vari))return -80;
         return 0;
     }
     

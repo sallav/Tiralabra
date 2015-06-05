@@ -1,0 +1,9 @@
+
+-Sahamylly
+  mylly ja vieressä tyhjiä paikkoja
+-Vastustajan sahamylly
+
+-kaksi vierekkäin ja yksi seuraavalla rivillä -> melkein mylly
+ + vapaata vieressä ts. ei vastustajaa
+
+
