@@ -30,6 +30,9 @@ public class Lauta {
     
     int msyoty;     //montako mustaa on syöty
     int vsyoty;     //montako valkoista on syöty
+    Puu tyhjat;
+    Puu mustat;
+    Puu valkoiset;
     
     /**
      * Konstruktori alustaa laudan 3x8 matriisiksi, joka edustaa myllyn pelilautaa. Pelilauta 
@@ -43,6 +46,13 @@ public class Lauta {
         this.valkoisia = 0;
         this.msyoty = 0;
         this.vsyoty = 0;
+        int[] paikat = new int[24];
+        for(int i=0; i<24; i++){
+            paikat[i] = i;
+        }
+        this.tyhjat = new Puu(paikat);
+        this.mustat = new Puu();
+        this.valkoiset = new Puu();
     }
 
     /**
@@ -50,7 +60,19 @@ public class Lauta {
      * @return matriisiesitys pelilaudan sisällöstä
      */
     public int[][] getLauta() {
-        return lauta;
+        return this.lauta;
+    }
+    
+    public Puu getTyhjat(){
+        return this.tyhjat;
+    }
+    
+    public Puu getMustat(){
+        return this.mustat;
+    }
+    
+    public Puu getValkoiset(){
+        return this.valkoiset;
     }
     
     /**
@@ -79,9 +101,14 @@ public class Lauta {
      */
     public void laitaMerkki(int j, int i, int vari) throws Exception{
         if(this.lauta[j][i]==1 || this.lauta[j][i]==2) throw new Exception();   //jos paikassa on jo merkki
-        this.lauta[j][i] = vari;        //uudeksi arvoksi 1 tai 2 varista riippuen
-        if(vari==1) mustia++;
-        if(vari==2) valkoisia++;
+        else{ 
+            this.lauta[j][i] = vari;     //uudeksi arvoksi 1 tai 2 varista riippuen
+            if(vari==1){
+                puuSiirto((j*8)+i, this.tyhjat, this.mustat, mustia, +1);   //siirto tyhjistä mustiiin
+            }if(vari==2){
+                puuSiirto((j*8)+i, this.tyhjat, this.valkoiset, valkoisia, +1); //siirto tyhjistä valkoisiin
+            }
+        }
     }
     
     /**
@@ -96,9 +123,15 @@ public class Lauta {
      */
     public void poista(int j, int i, int vari) throws Exception{
         if(this.lauta[j][i]!=vari)  throw new Exception(); //ei oikean väristä merkkiä
-        if(vari==1) mustia--;
-        if(vari==2) valkoisia--;
-        this.lauta[j][i] = 0;
+        else{
+            if(vari==1){
+                puuSiirto((j*8)+i, this.mustat, this.tyhjat, this.mustia, -1);  //siirretään mustista tyhjiin ja vähennetään mustien määrää
+            }
+            if(vari==2){
+                puuSiirto((j*8)+i, this.valkoiset, this.tyhjat, this.valkoisia, -1);    //siirretään valkoisista tyhjiin ja vähennetään valkoisten määrää
+            }
+            this.lauta[j][i] = 0;
+        }
     }
     
     /**
@@ -115,10 +148,10 @@ public class Lauta {
     public void syo(int j, int i, int vari) throws Exception{
         if(this.lauta[j][i]!=vari)  throw new Exception();  //ei oikean väristä merkkiä
         if(vari==1){
-            mustia--;
+            puuSiirto((j*8)+i, this.mustat, this.tyhjat, this.mustia, -1);
             msyoty++;
         }if(vari==2){
-            valkoisia--;
+            puuSiirto((j*8)+i, this.valkoiset, this.tyhjat, this.valkoisia, -1);
             vsyoty++;
         }
         this.lauta[j][i] = 0;
@@ -140,15 +173,20 @@ public class Lauta {
     public void peruSyonti(int j, int i, int vari) throws Exception{
         if(this.lauta[j][i]==1 || this.lauta[j][i]==2)  throw new Exception();
         if(vari==1){
-            mustia++;
+            puuSiirto((j*8)+i, this.tyhjat, this.mustat, this.mustia, 1);
             msyoty--;
         }if(vari==2){
-            valkoisia--;
+            puuSiirto((j*8)+i, this.tyhjat, this.valkoiset, this.valkoisia, 1);
             vsyoty++;
         }else{
             throw new Exception();
         }
         this.lauta[j][i] = vari;
+    }
+    
+    public void puuSiirto(int avain, Puu poistettava, Puu lisattava, int nappulat, int muutos){
+        lisattava.lisaa(poistettava.poista(avain), lisattava.getJuuri());
+        nappulat = nappulat + muutos;
     }
     
     /**
@@ -311,7 +349,22 @@ public class Lauta {
     }
     
     /**
-     * melkeinMylly -metodi tutkii onko neliön sivulla, jossa parametrina annettu paikka 
+     * melkeinMyllyja -metodi palauttaa laudalle muodostuvien melkein myllyjen määrän, 
+     * eli niiden kolmen suorien määrän, joista puuttuu vielä yksi nappula.
+     * @param vari minkä värisiä nappuloita tarkastellaan
+     * @return myllyjen määrä, joista puuttuu vielä yksi nappula
+     */
+    public int melkeinMyllyja(int vari){
+        int mmyllyt = 0;
+        for(int i=1; i<24; i=i+2){      //käydään läpi vain keskipaikat
+            if(melkeinMyllySivulla(i, vari))   mmyllyt++;           //neliön sivulla olevat melkein myllyt
+            if(i<8 && melkeinMyllyKeskella(i, vari))  mmyllyt++;    //rivien väliset melkein myllyt        
+        }
+        return mmyllyt;     //melkein myllyjen määrä
+    }
+    
+    /**
+     * melkeinMyllySivulla -metodi tutkii onko neliön sivulla, jossa parametrina annettu paikka 
      * laudalla sijaitsee, kahta samanväristä nappulaa, toisin sanoen onko laudalla 
      * melkein mylly kyseisessä paikassa.
      * @param paikka (0-23) sijainti pelilaudalla 
@@ -319,17 +372,36 @@ public class Lauta {
      * @return true, jos neliön sivulla on melkein mylly eli kaksi saman väristä nappulaa, 
      * muuten false
      */
-    public boolean melkeinMylly(int paikka, int vari){
-        if(paikka<0 || paikka>23)   return false;
+    public boolean melkeinMyllySivulla(int paikka, int vari){
         int j = paikka/8;
         int i = paikka%8;
-        if(lauta[j][i]==vari){
+        if(lauta[j][i]==vari){  //jos kyseisessä paikassa on etsityn värinen nappula
             if(lauta[j][oik(i)]==vari || lauta[j][vas(i)]==vari)   return true;
-            if(i%2!=0 && lauta[ala(j)][i]==vari || lauta[yla(j)][i]==vari)  return true;
-        }else{
-            if(lauta[j][oik(i)]==vari && lauta[j][vas(i)]==vari) return true;
-            if(i%2!=0 && lauta[ala(j)][i]==vari && lauta[yla(j)][i]==vari)  return true;
+        }else{                  //jos paikassa ei ole etsityn väristä nappulaa
+            if(i%2!=0 &&lauta[j][oik(i)]==vari && lauta[j][vas(i)]==vari) return true;  //keskipaikat
+            else if((lauta[j][oik(i)]==vari && lauta[j][ooik(i)]==vari) || (lauta[j][vas(i)]==vari && lauta[j][vvas(i)]==vari)) return true;
         }
+        return false;
+    }
+    
+    /**
+     * melkeinMyllyKeskella -metodi tutkii onko parametrina annetussa sijainnissa
+     * rivien välisellä suoralla kahta saman väristä nappulaa, eli onko neliön 
+     * keskipaikoilla kahdella rivillä saman väriset nappulat samassa indeksissä.
+     * Metodi palauttaa true jos näin on ja false jos näin ei ole tai jos parametrina
+     * annettu sijainti on kulmapaikka.
+     * @param paikka sijainti laudalla (0-23)
+     * @param vari minkä värisiä nappuloita tutkitaan (1=musta, 2=valkoinen)
+     * @return true, jos kaksi samanväristä nappulaa ovat kahdella rivillä samoissa
+     * indekseissä neliön keskipaikoilla, false jos ei ole kahta samanväristä nappulaa
+     * tai sijainti on kulmapaikka
+     */
+    public boolean melkeinMyllyKeskella(int paikka, int vari){
+        int j = paikka/8;
+        int i = paikka%8;
+        if(i%2==0)  return false;   //kulmapaikoilla ei rivien välisiä myllyjä
+        else if(lauta[j][i]==vari && (lauta[ala(j)][i]==vari | lauta[yla(j)][i]==vari))  return true;
+        else if(lauta[j][i]!=vari && (lauta[ala(j)][i]==vari && lauta[yla(j)][i]==vari)) return true;
         return false;
     }
     

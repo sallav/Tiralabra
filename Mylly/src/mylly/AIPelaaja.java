@@ -47,12 +47,11 @@ public class AIPelaaja implements Pelaaja{
      */
     @Override
     public int siirraLaudalle(Lauta lauta, int nappeja){
-        int paikka = 0;
+        int paikka = aly.parasTyhjista(lauta, this.vari, nappeja); //paras tyhjistä laudalla olevista sijainneista
         try{
-            paikka = aly.parasTyhjista(lauta, this.vari, nappeja); //paras tyhjistä laudalla olevista sijainneista
             lauta.laitaMerkki(paikka/8, paikka%8, this.vari);   //laitetaan uusi merkki valittuun sijaintiin
         }catch(Exception e){        //ei periaatteessa pitäisi tulla virhettä
-            
+            System.out.println("virhe");
         }
         return paikka;
     }
@@ -65,11 +64,11 @@ public class AIPelaaja implements Pelaaja{
      */
     @Override
     public int siirraLaudalla(Lauta lauta){
-        String[] siirto = aly.parasSiirto(lauta, this.vari).split(" ");    //arvioidaan paras siirto: taulukossa ovat arvot mistä ja mihin suuntaan
-        int uusip, paikka;      
+        Solmu solmu = aly.parasSiirto(lauta, this.vari);    //arvioidaan paras siirto: taulukossa ovat arvot mistä ja mihin suuntaan
+        int uusip;      
         try{
-            paikka = Integer.valueOf(siirto[0]);        //paikka jossa olevaa nappulaa siirretään
-            uusip = lauta.siirra(paikka/8, paikka%8, siirto[1].charAt(0));  //tehdään siirto haluttuun suuntaan (ylös, alas, vasemmalle tai oikealle mahdollisuuksien mukaan) 
+            int sijainti = solmu.getAvain();        //paikka jossa olevaa nappulaa siirretään
+            uusip = lauta.siirra(sijainti/8, sijainti%8, solmu.getSuunta());  //tehdään siirto haluttuun suuntaan (ylös, alas, vasemmalle tai oikealle mahdollisuuksien mukaan) 
         }catch(Exception e){    //ei pitäisi tulla virhettä tässä tapauksessa, vaikka metodi heittää poikkeuksen
             uusip = -1;      
         }
@@ -113,7 +112,7 @@ public class AIPelaaja implements Pelaaja{
     public int poistaLaudalta(Lauta lauta, int nappeja, int edel){
         int poistettava;
         try{
-            poistettava = aly.parasPoistettava(lauta, this.vari, nappeja, int edel);
+            poistettava = aly.parasPoistettava(lauta, this.vari, nappeja, edel);
             lauta.syo(poistettava/8, poistettava%8, 3-this.vari);
         }catch(Exception e){
             return -1;

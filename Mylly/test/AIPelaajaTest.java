@@ -30,7 +30,7 @@ public class AIPelaajaTest {
     
     public AIPelaajaTest() {
         h = new Perus();
-        AI = new Tekoaly(h, 0);
+        AI = new Tekoaly(h, 3);
         pelaaja = new AIPelaaja(1, AI);
         pelilauta = new Lauta();
     }

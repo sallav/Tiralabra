@@ -13,12 +13,10 @@ public class Perus implements Heuristiikka{
     
     @Override
     public int tilanneArvio(Lauta lauta, int vari, int pelaamatta, int edel){
-        if(pelaamatta==0 && voikoLiikkua(lauta, vari)!=1) return voikoLiikkua(lauta, vari);
-        if(lauta.mylly(vari, edel))         return 90;
-        if(lauta.melkeinMylly(edel, vari))  return 80;
-        if(lauta.mylly(3-vari, edel))       return -90;
-        if(lauta.melkeinMylly(edel, 3-vari))return -80;
-        return 0;
+        if(pelaamatta==0 && voikoLiikkua(lauta, vari)!=1) return voikoLiikkua(lauta, vari); //jos jompikumpi ei voi liikkua->voitto tai häviö
+        int arvo = syodyt(lauta, vari);                     //kuinka monta napeista syöty
+            if(arvo==100 || arvo==-100) return arvo;        //voitto tai häviö
+            else return myllyt(lauta, vari, edel, arvo);    //lasketaan lopullinen arvo tilanteelle
     }
     
     /**
@@ -39,4 +37,21 @@ public class Perus implements Heuristiikka{
         else return 1;
     }
     
+    public int syodyt(Lauta lauta, int vari){
+        if(lauta.syoty(vari)>6)     return -100;
+        if(lauta.syoty(3-vari)>6)   return 100;
+        else    return (lauta.syoty(3-vari)-lauta.syoty(vari))*10;
+    }
+    
+    public int myllyt(Lauta lauta, int vari, int edel, int arvo){
+        if(lauta.mylly(vari, edel)){
+            arvo = arvo + (lauta.myllyja(vari) - 1 - lauta.myllyja(3-vari))*3 + 10;
+        }
+        if(lauta.mylly(3-vari, edel)){
+            arvo = arvo + (lauta.myllyja(vari) - lauta.myllyja(3-vari) + 1)*3 - 10;
+        }
+        else    arvo = arvo + (lauta.myllyja(vari)-lauta.myllyja(3-vari))*3;
+        arvo = arvo + (lauta.melkeinMyllyja(vari)-lauta.melkeinMyllyja(3-vari));
+        return arvo;
+    }
 }

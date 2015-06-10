@@ -197,7 +197,7 @@ public class LautaTest {
         pelilauta.laitaMerkki(2, 1, 1);
         pelilauta.laitaMerkki(2, 2, 1);
         Assert.assertTrue(1==pelilauta.myllyja(1));
-        Assert.assertFalse(0==pelilauta.myllyja(2));
+        Assert.assertTrue(0==pelilauta.myllyja(2));
     }
     
     @Test
@@ -206,7 +206,7 @@ public class LautaTest {
         pelilauta.laitaMerkki(1, 7, 2);
         pelilauta.laitaMerkki(2, 7, 2);
         Assert.assertTrue(1==pelilauta.myllyja(2));
-        Assert.assertFalse(0==pelilauta.myllyja(1));
+        Assert.assertTrue(0==pelilauta.myllyja(1));
     }
     
     @Test

@@ -96,6 +96,7 @@ public class TKayttoliittyma implements Kayttoliittyma{
         if(poisto)  merkki = 'O';        
         pelilauta.setCharAt(ind, merkki);
         edel = ind;
+        System.out.println(siirto + ": rivi " + siirto/8 + " paikka " + siirto%8);
     }
 
     /**
@@ -106,8 +107,8 @@ public class TKayttoliittyma implements Kayttoliittyma{
      * @return merkkijonon indeksi, joka vastaa parametrina annettua paikkaa
      */
     public int indeksi(int paikka, int rivi){
-        if(paikka<3)    return rivi*46 + paikka*10 + rivi*3 - rivi*paikka*3;
-        if(paikka>3 && paikka<7)    return 298 - (rivi*44) - 2 - rivi*((-4 + paikka)*10) - (rivi*3) + ((-4+paikka)*3*rivi);
+        if(paikka<3)    return rivi*44 + paikka*10 + rivi*3 - rivi*paikka*3;
+        if(paikka>3 && paikka<7)    return 286 - (rivi*46) - 2 - ((-4 + paikka)*10) - (rivi*3) + ((-4+paikka)*3*rivi);
         if(paikka==3)   return 132 + 20 - (rivi*3);
         else            return 132 + (rivi*3);
     }
