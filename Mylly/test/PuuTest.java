@@ -50,7 +50,7 @@ public class PuuTest {
     
     @Test
     public void getJuuriTest(){
-        Assert.assertEquals(4, puu.getJuuri());
+        Assert.assertEquals(4, puu.getJuuri().getAvain());
     }
     
     @Test
@@ -67,8 +67,8 @@ public class PuuTest {
     @Test
     public void lisaaTest(){
         Solmu uusi = new Solmu(3);
-        Assert.assertTrue(puu.lisaa(uusi, puu.etsi(8)));
-        Assert.assertEquals(uusi, puu.etsi(3));
+        Assert.assertTrue(puu.lisaa(uusi, puu.getJuuri()));
+        Assert.assertEquals(uusi.getAvain(), puu.etsi(3).getAvain());
     }
     
     @Test
@@ -80,16 +80,23 @@ public class PuuTest {
     @Test
     public void poistaTest(){
         Assert.assertTrue(puu.poista(8).getAvain()==8);
-        Assert.assertTrue(puu.etsi(8)==null);
-        Assert.assertEquals(3, puu.etsi(9).getVanhempi().getAvain());
+        Assert.assertNull(puu.etsi(8));
+        Assert.assertEquals(4, puu.etsi(9).getVanhempi().getAvain());
         Assert.assertEquals(9, puu.etsi(6).getVanhempi().getAvain());
     }
     
     @Test
     public void vanhemmanLapseksiTest(){
-        puu.vanhemmanLapseksi(puu.etsi(6), new Solmu(5), new Solmu(4), true);
-        Assert.assertTrue(puu.etsi(5).getVanhempi()==puu.etsi(6));
-        Assert.assertTrue(puu.etsi(4).getVanhempi()==puu.etsi(5));
+        puu.vanhemmanLapseksi(puu.etsi(9), new Solmu(10), new Solmu(11), false);
+        Assert.assertTrue(puu.etsi(11).getVanhempi()==puu.etsi(9));
+        Assert.assertTrue(puu.etsi(10).getVanhempi()==puu.etsi(11));
+    }
+    
+    @Test
+    public void vanhemmanLapseksiTest2(){
+        puu.vanhemmanLapseksi(puu.etsi(1), new Solmu(-2), new Solmu(-1), true);
+        Assert.assertTrue(puu.etsi(-2).getVanhempi()==puu.etsi(1));
+        Assert.assertTrue(puu.etsi(-1).getVanhempi()==puu.etsi(-2));
     }
     
     @Test
@@ -100,7 +107,7 @@ public class PuuTest {
     
     @Test
     public void etsiTest(){
-        Assert.assertTrue(puu.etsi(10)==null);
+        Assert.assertNull(puu.etsi(10));
         Assert.assertTrue(puu.etsi(1).getAvain()==1);
         Assert.assertTrue(puu.etsi(6).getAvain()==6);
     }

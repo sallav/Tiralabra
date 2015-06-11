@@ -98,6 +98,7 @@ public class Puu {
             Solmu vanh = p.getVanhempi();
             if(vanh!=null && vanh.getVasen()==p) vanhemmanLapseksi(vanh, vas, oik, true);
             else if(vanh!=null) vanhemmanLapseksi(vanh, vas, oik, false);
+            else vanhemmanLapseksi(null, vas, oik, true);
         }
         return p;
     }
@@ -114,11 +115,16 @@ public class Puu {
      * @param vasenlapsi true jos poistettu solmu oli isov solmun vasen lapsi, muuten false
      */
     public void vanhemmanLapseksi(Solmu isov, Solmu vasen, Solmu oikea, boolean vasenlapsi){
+        if(isov==null){
+            this.juuri = vasen;
+        }
         if(vasenlapsi){ //jos poistettu lapsi oli vanhempansa vasen lapsi
             isov.setVasen(vasen);   //vasen isovanhemman vasemaksi lapseksi
+            vasen.setVanhempi(isov);
             lisaa(oikea, vasen);    //lisätään oikea vasemmasta alkavaan alipuuhun
         }else{
             isov.setOikea(oikea);   //oikea isovanhemman oikeaksi lapseksi
+            oikea.setVanhempi(isov);
             lisaa(vasen, oikea);    //lisätään vasen oikeasta alkavaan alipuuhun
         }
     }
@@ -138,8 +144,10 @@ public class Puu {
         Solmu p = null;
         while(v != null){       //kunnes saavutetaan sopiva kohta
             p = v;              //seuraavan v:n vanhempi
-            if(avain<v.getAvain()) v = v.getVasen();            //vasempaan alipuuhun
-            else    v = v.getOikea();                           //oikeaan alipuuhun
+            int vavain = v.getAvain();
+            if(avain<vavain) v = v.getVasen();            //vasempaan alipuuhun
+            else if(avain>vavain)    v = v.getOikea();    //oikeaan alipuuhun
+            else return v;      //jos sama avain
         }
         return p;       //palautetaan lehtisolmu
     }
@@ -155,7 +163,7 @@ public class Puu {
         Solmu x = this.juuri;
         while(x!=null){
             if(avain>x.getAvain())  x = x.getOikea();   //etsitään oikeasta alipuusta
-            if(avain<x.getAvain())  x = x.getVasen();   //etsitään vasemmasta alipuusta
+            else if(avain<x.getAvain())  x = x.getVasen();   //etsitään vasemmasta alipuusta
             else return x;  //jos solmun avain on etsitty avain
         }
         return null;
