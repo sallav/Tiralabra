@@ -52,6 +52,7 @@ public class LautaTest {
         pelilauta.laitaMerkki(1, 0, 1);
         int[][] taul = pelilauta.getLauta();
         Assert.assertEquals(1, taul[1][0]);
+        Assert.assertEquals(2, pelilauta.montakoNappia(1));
     }
     
     @Test
@@ -274,21 +275,17 @@ public class LautaTest {
     }
     
     @Test
-    public void melkeinMyllyTest() throws Exception{
-        Assert.assertFalse(pelilauta.melkeinMylly(16, 1));
+    public void melkeinMyllyjaTest() throws Exception{
+        Assert.assertFalse(0<pelilauta.melkeinMyllyja(1));
         pelilauta.laitaMerkki(2, 1, 1);
-        Assert.assertTrue(pelilauta.melkeinMylly(16, 1));
-        Assert.assertTrue(pelilauta.melkeinMylly(17, 1));
-        Assert.assertTrue(pelilauta.melkeinMylly(18, 1));
+        Assert.assertTrue(0<pelilauta.melkeinMyllyja(1));
     }
     
     @Test
-    public void melkeinMyllyTest2() throws Exception{
-        Assert.assertFalse(pelilauta.melkeinMylly(16, 1));
+    public void melkeinMyllySivullaTest() throws Exception{
+        Assert.assertFalse(pelilauta.melkeinMyllySivulla(17, 1));
         pelilauta.laitaMerkki(2, 2, 1);
-        Assert.assertTrue(pelilauta.melkeinMylly(16, 1));
-        Assert.assertTrue(pelilauta.melkeinMylly(17, 1));
-        Assert.assertTrue(pelilauta.melkeinMylly(18, 1));        
+        Assert.assertTrue(pelilauta.melkeinMyllySivulla(17, 1));   
     }
     
     @Test

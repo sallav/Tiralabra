@@ -49,6 +49,7 @@ public class Lauta {
         int[] paikat = new int[24];
         for(int i=0; i<24; i++){
             paikat[i] = i;
+            this.lauta[i/8][i%8] = 0;
         }
         this.tyhjat = new Puu(paikat);
         this.mustat = new Puu();
@@ -104,9 +105,9 @@ public class Lauta {
         else{ 
             this.lauta[j][i] = vari;     //uudeksi arvoksi 1 tai 2 varista riippuen
             if(vari==1){
-                puuSiirto((j*8)+i, this.tyhjat, this.mustat, mustia, +1);   //siirto tyhjistä mustiiin
+                puuSiirto((j*8)+i, this.tyhjat, this.mustat, 1, 1);   //siirto tyhjistä mustiiin
             }if(vari==2){
-                puuSiirto((j*8)+i, this.tyhjat, this.valkoiset, valkoisia, +1); //siirto tyhjistä valkoisiin
+                puuSiirto((j*8)+i, this.tyhjat, this.valkoiset, 2, 1); //siirto tyhjistä valkoisiin
             }
         }
     }
@@ -125,10 +126,10 @@ public class Lauta {
         if(this.lauta[j][i]!=vari)  throw new Exception(); //ei oikean väristä merkkiä
         else{
             if(vari==1){
-                puuSiirto((j*8)+i, this.mustat, this.tyhjat, this.mustia, -1);  //siirretään mustista tyhjiin ja vähennetään mustien määrää
+                puuSiirto((j*8)+i, this.mustat, this.tyhjat, 1,(-1)); //siirretään mustista tyhjiin ja vähennetään mustien määrää
             }
             if(vari==2){
-                puuSiirto((j*8)+i, this.valkoiset, this.tyhjat, this.valkoisia, -1);    //siirretään valkoisista tyhjiin ja vähennetään valkoisten määrää
+                puuSiirto((j*8)+i, this.valkoiset, this.tyhjat, 2, (-1));  //siirretään valkoisista tyhjiin ja vähennetään valkoisten määrää
             }
             this.lauta[j][i] = 0;
         }
@@ -148,10 +149,10 @@ public class Lauta {
     public void syo(int j, int i, int vari) throws Exception{
         if(this.lauta[j][i]!=vari)  throw new Exception();  //ei oikean väristä merkkiä
         if(vari==1){
-            puuSiirto((j*8)+i, this.mustat, this.tyhjat, this.mustia, -1);
+            puuSiirto((j*8)+i, this.mustat, this.tyhjat, 1, (-1));
             msyoty++;
         }if(vari==2){
-            puuSiirto((j*8)+i, this.valkoiset, this.tyhjat, this.valkoisia, -1);
+            puuSiirto((j*8)+i, this.valkoiset, this.tyhjat, 2, (-1));
             vsyoty++;
         }
         this.lauta[j][i] = 0;
@@ -173,20 +174,22 @@ public class Lauta {
     public void peruSyonti(int j, int i, int vari) throws Exception{
         if(this.lauta[j][i]==1 || this.lauta[j][i]==2)  throw new Exception();
         if(vari==1){
-            puuSiirto((j*8)+i, this.tyhjat, this.mustat, this.mustia, 1);
+            puuSiirto((j*8)+i, this.tyhjat, this.mustat, 1, 1);
             msyoty--;
-        }if(vari==2){
-            puuSiirto((j*8)+i, this.tyhjat, this.valkoiset, this.valkoisia, 1);
-            vsyoty++;
+        }else if(vari==2){
+            puuSiirto((j*8)+i, this.tyhjat, this.valkoiset, 2,1);
+            vsyoty--;
         }else{
             throw new Exception();
         }
         this.lauta[j][i] = vari;
     }
     
-    public void puuSiirto(int avain, Puu poistettava, Puu lisattava, int nappulat, int muutos){
-        lisattava.lisaa(poistettava.poista(avain), lisattava.getJuuri());
-        nappulat = nappulat + muutos;
+    public void puuSiirto(int avain, Puu poistettava, Puu lisattava, int vari, int muutos){
+        Solmu lisa = poistettava.poista(avain);
+        lisattava.lisaa(lisa, lisattava.getJuuri());
+        if(vari==1) this.mustia=this.mustia + muutos;
+        if(vari==2) this.valkoisia = this.valkoisia + muutos;
     }
     
     /**

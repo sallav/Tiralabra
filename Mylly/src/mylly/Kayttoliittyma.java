@@ -19,13 +19,18 @@ public interface Kayttoliittyma {
     public abstract int pelinValinta();
     
     /**
-     * 
-     * @param siirto
-     * @param vari
-     * @param poisto 
+     * paivitaLauta -metodi päivittää laudalle parametrina annetun siirron
+     * @param siirto sijainti johon siirto tehtiin
+     * @param vari minkä värinen nappula siirrettiin
+     * @param poisto true, jos kyseessä on nappulan poisto, false jos kyseessä
+     * on tavallinen siirto
      */
     public abstract void paivitaLauta(int siirto, int vari, boolean poisto);
     
+    /**
+     * tulostaLauta -metodi tulostaa pelilaudan sen hetkisen tilan käyttäjälle 
+     * nähtäväksi
+     */
     public abstract void tulostaLauta();
     
     /**

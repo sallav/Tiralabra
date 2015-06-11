@@ -15,8 +15,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
- * @author Käyttäjä
+ * TKayttoliittyma -luokan metodien testejä
+ * @author Salla
  */
 public class TKayttoliittymaTest {
     String lautaesitys;

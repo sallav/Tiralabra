@@ -60,8 +60,10 @@ public class Tekoaly {
      * merkkiä tulisi liikuttaa('v', 'o', 'y' tai 'a')
      */
     public Solmu parasSiirto(Lauta lauta, int vari){
-        Puu tyhjat = lauta.getTyhjat();
-        Solmu juuri = tyhjat.getJuuri();
+        Puu merkit = null;
+        if(vari==1) merkit = lauta.getMustat();
+        if(vari==2) merkit = lauta.getValkoiset();
+        Solmu juuri = merkit.getJuuri();
         Solmu paras = kayLapiSiirrot(juuri, juuri, lauta, vari, 0, true);
         return paras;
     }
@@ -75,47 +77,31 @@ public class Tekoaly {
      * @return sijainti (0-23) mistä vastustajan pelimerkki kannattaa poistaa
      */
     public int parasPoistettava(Lauta lauta, int vari, int pelaamatta, int edel){
-        int paras = -1000;
-        int parasp = -1;        //paras paikka, josta poistaa merkki
-        for(int i=0; i<24; i++){    //käydään kaikki paikat läpi
-            if(lauta.merkki(i/8, i%8)!=(3-vari) || lauta.mylly(3-vari, i))    continue; //jos ei vastapuolen merkkiä, tai vastapuolen merkki on myllyssä
-            int tulos = kokeilePoistaa(lauta, i/8, i%8, vari, 1, pelaamatta, true, edel);     //kokeillaan poistaa merkki 
-            if(tulos>paras){
-                paras = tulos;
-                parasp = i;         //jos tulos on parempi kuin aikaisemmissa, laitetaan poistopaikka muistiin
-            }
-        }
-        return parasp;              //mikä merkki kannattaa poistaa (ts. merkin sijaintipaikka)
+        Puu merkit = null;
+        if(vari==1) merkit = lauta.getValkoiset();
+        if(vari==2) merkit = lauta.getMustat();
+        Solmu juuri = merkit.getJuuri();
+        Solmu paras = kayLapiPoistot(juuri, juuri, lauta, vari, 0, pelaamatta, true, edel);
+        return paras.getArvo();              //mikä merkki kannattaa poistaa (ts. merkin sijaintipaikka)
     }
     
     public Solmu kayLapiSijainnit(Solmu juuri, Solmu paras, Lauta lauta, int vari, int k, boolean omavuoro, int pelaamatta){
         if(juuri!=null){            //saavutettu lehdet           
             Solmu v = kayLapiSijainnit(juuri.getVasen(), paras, lauta, vari, k, omavuoro, pelaamatta);  //vasen puoli puuta
             Solmu o = kayLapiSijainnit(juuri.getOikea(), paras, lauta, vari, k, omavuoro, pelaamatta);  //oikea puoli puuta
-                if((v==null && o!=null) || (o!=null && omavuoro && (o.getArvo()>v.getArvo()))) paras = o;   //parempi arvo muistiin
-                else if(v!=null || (o!=null && omavuoro)) paras = v; 
-            int a = juuri.getAvain();   //avain eli ts. sijainti laudalla (paikat 0-23)                                      //tai jos vastustajan vuoro niin huonompi
-            int tulos = kokeileSijainti(lauta, a/8, a%8, vari, k, omavuoro, pelaamatta);    //kokeillaan siirtoa tähän sijaintiin
-            juuri.setArvo(tulos);   //tulos muistiin solmuun
-                if(omavuoro && (tulos>paras.getArvo())) paras = juuri;
-                else if(!omavuoro && (tulos<paras.getArvo()))    paras = juuri;
+            paras = parempi(v, o, paras, omavuoro);
+            paras = kokeile(1, juuri, paras, lauta, vari, k, pelaamatta, omavuoro, 0);
         }
-        return paras;       //paras solmuista tai jos vastapuolen vuoro niin huonoin
+        return paras;
     }
     
     public Solmu kayLapiSiirrot(Solmu juuri, Solmu paras, Lauta lauta, int vari, int k, boolean omavuoro){
         if(juuri!=null){
             Solmu v = kayLapiSiirrot(juuri.getVasen(), paras, lauta, vari, k, omavuoro);
             Solmu o = kayLapiSiirrot(juuri.getOikea(), paras, lauta, vari, k, omavuoro);
-                if((v==null && o!=null) || (o!=null && omavuoro && (o.getArvo()>v.getArvo())))  paras = o;
-                else if(v!=null || (o!=null && omavuoro)) paras = v;
-            if(omavuoro){
-                int tulos = kokeileSiirtoaOma(lauta, juuri, vari, k);
-                if(tulos>paras.getArvo())   paras = juuri;  
-            }else{
-                int tulos = kokeileSiirtoaVastaP(lauta, juuri, vari, k);
-                if(tulos<paras.getArvo())   paras = juuri;
-            }
+            paras = parempi(v, o, paras, omavuoro);
+            if(omavuoro)    paras = kokeile(2, juuri, paras, lauta, vari, k, 0, omavuoro, 0);
+            else            paras = kokeile(3, juuri, paras, lauta, vari, k, 0, omavuoro, 0);
         }
         return paras;
     }
@@ -124,17 +110,31 @@ public class Tekoaly {
         if(juuri!=null){
             Solmu v = kayLapiPoistot(juuri.getVasen(), paras, lauta, vari, k, pelaamatta, omavuoro, edel); 
             Solmu o = kayLapiPoistot(juuri.getOikea(), paras, lauta, vari, k, pelaamatta, omavuoro, edel);
-            if((v==null && o!=null) || (o!=null && omavuoro && (o.getArvo()>v.getArvo())))  paras = o;
-                else if(v!=null || (o!=null && omavuoro)) paras = v;
-            int sijainti = juuri.getAvain();
-            if(omavuoro){
-                int tulos = kokeilePoistaa(lauta, sijainti/8, sijainti%8, vari, k, pelaamatta, omavuoro, edel);
-                if(tulos>paras.getArvo())   paras = juuri;  
-            }else{
-                int tulos = kokeilePoistaa(lauta, sijainti/8, sijainti%8, vari, k, pelaamatta, omavuoro, edel);
-                if(tulos<paras.getArvo())   paras = juuri;
-            }
+            paras = parempi(v, o, paras, omavuoro);
+            paras = kokeile(4, juuri, paras, lauta, vari, k, pelaamatta, omavuoro, edel);
         }
+        return paras;
+    }
+    
+    public Solmu parempi(Solmu vasen, Solmu oikea, Solmu paras, boolean omavuoro){
+        if(vasen==null && oikea==null) return paras;
+        else if(vasen==null || (omavuoro && oikea.getArvo()>vasen.getArvo()))    paras = oikea;
+        else paras = vasen;
+        return paras;
+    }
+    
+    public Solmu kokeile(int mita, Solmu solmu, Solmu paras, Lauta lauta, int vari, int k, int pelaamatta, boolean omavuoro, int edel){
+        int sij = solmu.getAvain();
+        int tulos = 0;
+        switch(mita){
+            case 1: tulos = kokeileSijainti(lauta, sij/8, sij%8, vari, k, omavuoro, pelaamatta);
+            case 2: tulos = kokeileSiirtoaOma(lauta, solmu, vari, k);
+            case 3: tulos = kokeileSiirtoaVastaP(lauta, solmu, vari, k);
+            case 4: tulos = kokeilePoistaa(lauta, sij/8, sij%8, vari, k, pelaamatta, omavuoro, edel);
+        }
+        solmu.setArvo(tulos);
+        if(omavuoro && tulos>paras.getArvo())   paras = solmu;
+        else if(!omavuoro && tulos<paras.getArvo()) paras = solmu;
         return paras;
     }
     
@@ -361,16 +361,13 @@ public class Tekoaly {
      * @return arvio lopputuloksesta johon voidaan poistolla päätyä
      */
     public int poisto(Lauta lauta, int vari, int k, int pelaamatta, boolean omavuoro, int edel){
-            int pal = 1000;
-            if(omavuoro) pal = -1000;
-            for(int i=0; i<24; i++){                        //käydään läpi kaikki pelilaudan paikat
-                if(lauta.merkki(i/8, i%8)!=(3-vari) || lauta.mylly(3-vari, i))    continue; //jos paikassa ei ole vastapuolen väriä, tai vastapuolen nappi on myllyssä
-                int tulos = kokeilePoistaa(lauta, i/8, i%8, vari, k, pelaamatta, omavuoro, edel);
-                if(omavuoro && tulos>pal) pal = tulos;      //jos vuorossa on pelaaja ja tulos parempi kuin aikaisemmat tulokset
-                if(!omavuoro && tulos<pal)  pal = tulos;    //jos vuorossa on vastapuoli ja tulos on huonompi kuin aikaisemmat tulokset
-            }
-            return pal; //palautetaan paras/huonoin lopputulos riippuen siitä onko vuorossa pelaaja, jonka mahdollisuuksia arvioidaan vai vastapuoli
-        }
+        Puu merkit = null;
+        if(vari==1) merkit = lauta.getValkoiset();
+        if(vari==2) merkit = lauta.getMustat();
+        Solmu juuri = merkit.getJuuri();
+        Solmu paras = kayLapiPoistot(juuri, juuri, lauta, vari, 0, pelaamatta, true, edel);
+        return paras.getArvo();              //mikä merkki kannattaa poistaa (ts. merkin sijaintipaikka)
+    }
         
     /**
      * kokeilePoistaa -metodi kokeilee poistaa parametrina annetussa sijainnissa olevan merkin
