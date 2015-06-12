@@ -123,8 +123,8 @@ public class Lauta {
      * @throws Exception jos paikan arvo ei vastaa poistettavan merkin väriä
      */
     public void poista(int j, int i, int vari) throws Exception{
-        if(this.lauta[j][i]!=vari)  throw new Exception(); //ei oikean väristä merkkiä
-        else{
+  //      if(this.lauta[j][i]!=vari)  throw new Exception(); //ei oikean väristä merkkiä
+ //       else{
             if(vari==1){
                 puuSiirto((j*8)+i, this.mustat, this.tyhjat, 1,(-1)); //siirretään mustista tyhjiin ja vähennetään mustien määrää
             }
@@ -132,7 +132,7 @@ public class Lauta {
                 puuSiirto((j*8)+i, this.valkoiset, this.tyhjat, 2, (-1));  //siirretään valkoisista tyhjiin ja vähennetään valkoisten määrää
             }
             this.lauta[j][i] = 0;
-        }
+  //      }
     }
     
     /**
@@ -188,7 +188,7 @@ public class Lauta {
     public void puuSiirto(int avain, Puu poistettava, Puu lisattava, int vari, int muutos){
         Solmu lisa = poistettava.poista(avain);
         lisattava.lisaa(lisa, lisattava.getJuuri());
-        if(vari==1) this.mustia=this.mustia + muutos;
+        if(vari==1) this.mustia = this.mustia + muutos;
         if(vari==2) this.valkoisia = this.valkoisia + muutos;
     }
     

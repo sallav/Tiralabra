@@ -83,6 +83,11 @@ public class PuuTest {
         Assert.assertNull(puu.etsi(8));
         Assert.assertEquals(4, puu.etsi(9).getVanhempi().getAvain());
         Assert.assertEquals(9, puu.etsi(6).getVanhempi().getAvain());
+        Assert.assertEquals(4, puu.poista(4).getAvain());
+        Assert.assertNull(puu.etsi(4));
+        System.out.println(puu.getJuuri().getAvain());
+        Assert.assertEquals(2, puu.etsi(9).getVanhempi().getAvain());
+        Assert.assertEquals(2, puu.etsi(1).getVanhempi().getAvain());
     }
     
     @Test

@@ -46,6 +46,7 @@ public class Tekoaly {
         Puu tyhjat = lauta.getTyhjat();     //laudalla olevat tyhjät sijainnit
         Solmu juuri = tyhjat.getJuuri();    
         Solmu paras = kayLapiSijainnit(juuri, juuri, lauta, vari, 0, true, pelaamatta);
+        System.out.println(paras==null);
         return paras.getAvain();            //palautetaan paikka mihin siirtäminen johtaisi parhaaseen lopputulokseen pelaajan kannalta
     }
     
@@ -210,7 +211,7 @@ public class Tekoaly {
         if(pelaamatta==0)   return vastaPuoliLaudalla(lauta, vari, k, edel);     //jos kaikki nappulat on jo käytetty
         Puu tyhjat = lauta.getTyhjat();     //kaikki tyhjät sijainnit
         Solmu juuri = tyhjat.getJuuri();
-        Solmu huonoin = kayLapiSijainnit(juuri, juuri, lauta, vari, k, false, pelaamatta);
+        Solmu huonoin = kayLapiSijainnit(juuri, juuri, lauta, 3-vari, k, false, pelaamatta);
         return huonoin.getArvo();                             //palautetaan huonoin mahdollinen lopputulos joka voi syntyä tilanteesta 
     }
     

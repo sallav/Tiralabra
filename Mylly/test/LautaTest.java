@@ -57,8 +57,9 @@ public class LautaTest {
     
     @Test
     public void laitaMerkkiTestVaarallaSyotteella() throws Exception{
-        pelilauta.laitaMerkki(1, 0, 1);
-        Assert.assertFalse(0==pelilauta.getLauta()[1][0]);
+        pelilauta.laitaMerkki(1, 1, 1);
+        Assert.assertFalse(0==pelilauta.getLauta()[1][1]);
+        Assert.assertTrue(1==pelilauta.getLauta()[1][1]);
     }
     
     @Test

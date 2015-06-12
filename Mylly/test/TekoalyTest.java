@@ -27,9 +27,7 @@ public class TekoalyTest {
     Heuristiikka h;
     
     public TekoalyTest() {
-        lauta = new Lauta();
-        h = new Perus();
-        AI = new Tekoaly(h, 3);
+
     }
     
     @BeforeClass
@@ -42,6 +40,9 @@ public class TekoalyTest {
     
     @Before
     public void setUp() {
+        lauta = new Lauta();
+        h = new Perus();
+        AI = new Tekoaly(h, 3);
     }
     
     @After
@@ -53,6 +54,18 @@ public class TekoalyTest {
     //
     // @Test
     // public void hello() {}
+    
+    @Test
+    public void kayLapiSijainnitTest() throws Exception{
+        Solmu juuri = lauta.getTyhjat().getJuuri();
+        Solmu paras1 = AI.kayLapiSijainnit(juuri, juuri, lauta, 1, 0, true, 18);
+        Assert.assertNotNull(lauta);
+        Assert.assertEquals(0, lauta.getLauta()[1][1]);
+   //     lauta.laitaMerkki(1, 1, 1);
+   //     Solmu paras2 = AI.kayLapiSijainnit(juuri, juuri, lauta, 1, 0, true, 17);
+   //     Assert.assertFalse(paras1.getAvain()==paras2.getAvain());
+   //     Assert.assertTrue(1==paras2.getAvain() || 17==paras2.getAvain());
+    }
     
     @Test
     public void parasTyhjista() throws Exception, Exception{
@@ -175,7 +188,8 @@ public class TekoalyTest {
     public void kokeileSijaintiTest() throws Exception{
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(1, 1, 1);
-        Assert.assertTrue(AI.kokeileSijainti(lauta, 2, 1, 1, 0, true, 16)>AI.kokeileSijainti(lauta, 2, 1, 2, 0, true, 16));
+        Assert.assertEquals(100, AI.kokeileSijainti(lauta, 2, 1, 1, 0, true, 16));
+//        Assert.assertTrue(AI.kokeileSijainti(lauta, 2, 1, 1, 0, true, 16)>AI.kokeileSijainti(lauta, 2, 1, 2, 0, true, 16));
     }
     
     @Test

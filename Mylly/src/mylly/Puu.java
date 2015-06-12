@@ -119,7 +119,7 @@ public class Puu {
             this.juuri = vasen;
         }
         if(vasenlapsi){ //jos poistettu lapsi oli vanhempansa vasen lapsi
-            isov.setVasen(vasen);   //vasen isovanhemman vasemaksi lapseksi
+            if (isov!=null) isov.setVasen(vasen);   //vasen isovanhemman vasemaksi lapseksi
             vasen.setVanhempi(isov);
             lisaa(oikea, vasen);    //lisätään oikea vasemmasta alkavaan alipuuhun
         }else{
