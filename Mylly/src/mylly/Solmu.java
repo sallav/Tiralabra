@@ -32,6 +32,15 @@ public class Solmu implements Comparable{
         this.suunta = 'x';
     }
     
+    public Solmu(int avain, int arvo){
+        this.vanhempi = null;
+        this.vasen = null;
+        this.oikea = null;
+        this.avain = avain;
+        this.arvo = arvo;
+        this.suunta = 'x';
+    }
+    
     /**
      * Solmu -luokan konstruktori alustaa avaimen arvoksi parametrina annetun avaimen
      * sekä solmun vanhemmaksi parametrina annetun toisen Solmu -luokan ilmentymän.

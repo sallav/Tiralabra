@@ -6,7 +6,9 @@
 
 import mylly.Heuristiikka;
 import mylly.Lauta;
+import mylly.Lista;
 import mylly.Perus;
+import mylly.Puu;
 import mylly.Solmu;
 import mylly.Tekoaly;
 import org.junit.After;
@@ -58,7 +60,7 @@ public class TekoalyTest {
     @Test
     public void kayLapiSijainnitTest() throws Exception{
         Solmu juuri = lauta.getTyhjat().getJuuri();
-        Solmu paras1 = AI.kayLapiSijainnit(juuri, juuri, lauta, 1, 0, true, 18);
+        int paras = AI.kayLapiSijainnit(1, lauta, juuri, 1, 0, 18, true, 0);
         Assert.assertNotNull(lauta);
         Assert.assertEquals(0, lauta.getLauta()[1][1]);
    //     lauta.laitaMerkki(1, 1, 1);
@@ -68,7 +70,7 @@ public class TekoalyTest {
     }
     
     @Test
-    public void parasTyhjista() throws Exception, Exception{
+    public void parasTyhjista() throws Exception{
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(2, 1, 1);
         Assert.assertEquals(9, AI.parasTyhjista(lauta, 1, 16));
@@ -104,12 +106,12 @@ public class TekoalyTest {
     }
     
     @Test 
-    public void parasPoistettavaTest() throws Exception{
+    public void parasPoistoTest() throws Exception{
         lauta.laitaMerkki(0, 6, 2);
         lauta.laitaMerkki(0, 1, 2);
         lauta.laitaMerkki(1, 1, 2);
         lauta.laitaMerkki(2, 2, 2);
-        int poistop = AI.parasPoistettava(lauta, 1, 13, 18);
+        int poistop = AI.parasPoisto(lauta, 1, 13, 18);
         Assert.assertFalse(poistop==6);
         Solmu siirrettava = AI.parasSiirto(lauta, 2);
         int paikka = siirrettava.getAvain();
@@ -118,13 +120,109 @@ public class TekoalyTest {
     }
     
     @Test
-    public void parasPoistettavaTest2() throws Exception{
+    public void jokuHyvaSijainti(){
+        Assert.assertEquals(8, AI.jokuHyvaSijainti(new Lista(new Solmu(8))).getAvain());
+    }
+    
+    @Test 
+    public void listaaParhaat() throws Exception{
+        lauta.laitaMerkki(0, 1, 1);
+        lauta.laitaMerkki(1, 1, 1);
+        lauta.laitaMerkki(1, 0, 1);
+        Puu tyhjat = lauta.getTyhjat();
+        Lista parhaat = AI.listaaParhaat(1, tyhjat.getJuuri(), lauta, 1, 0, 15, 8);
+        Assert.assertEquals(2, parhaat.getKoko());
+        int eka = parhaat.getEka().getPuuSolmu().getAvain();
+        int toka = parhaat.getVika().getPuuSolmu().getAvain();
+        Assert.assertTrue(eka==10 || eka==17);
+        Assert.assertTrue(toka==10 || toka==17);
+    }
+    
+    @Test
+    public void paivitaLista(){
+        Solmu eka = new Solmu(6);
+        eka.setArvo(10);
+        Solmu toka = new Solmu(8);
+        toka.setArvo(10);
+        Lista uusi = AI.paivitaLista(new Lista(eka), toka, 10);
+        Assert.assertEquals(2, uusi.getKoko());
+        Assert.assertEquals(10, uusi.getArvo());
+        toka.setArvo(15);
+        Lista paivitetty = AI.paivitaLista(uusi, toka, 15);
+        Assert.assertEquals(15, paivitetty.getArvo());
+        Assert.assertEquals(1, paivitetty.getKoko());
+    }
+    
+    @Test
+    public void parempiLista(){
+        Solmu eka = new Solmu(8, 10);
+        Solmu toka = new Solmu(2, 20);
+        Lista v = new Lista(eka);
+        Lista o = null;
+        Lista parempi = AI.parempiLista(v, o);
+        Assert.assertEquals(10, parempi.getArvo());
+        o = new Lista(toka);
+        parempi = AI.parempiLista(v, o);
+        Assert.assertEquals(20, parempi.getArvo());
+        
+    }
+    
+    @Test
+    public void kayLapiSijainnit2Test(){
+        Puu puu = lauta.getTyhjat();
+        Assert.assertFalse(-1000==AI.kayLapiSijainnit(1, lauta, puu.getJuuri(), 1, 0, 18, true, 0));
+    }
+    
+    @Test
+    public void kayLapiSijainnit3Test() throws Exception{
+        lauta.laitaMerkki(0, 1, 1);
+        lauta.laitaMerkki(1, 1, 1);
+        lauta.laitaMerkki(2, 2, 1);
+        Puu mustat = lauta.getMustat();
+        Assert.assertTrue(0<AI.kayLapiSijainnit(2, lauta, mustat.getJuuri(), 1, 0, 15, true, 18));
+    }
+    
+    @Test
+    public void parempiArvoTest(){
+        int eka = 100;
+        int toka = -60;
+        Assert.assertEquals(eka, AI.parempiArvo(eka, toka, true));
+        Assert.assertEquals(toka, AI.parempiArvo(eka, toka, false));
+    }
+    
+    @Test
+    public void kokeileTest() throws Exception{
+        lauta.laitaMerkki(0, 1, 1);
+        lauta.laitaMerkki(1, 1, 1);
+        Assert.assertTrue(AI.kokeile(1, lauta, new Solmu(17), 1, 0, 16, true, 9)>AI.kokeile(1, lauta, new Solmu(17), 2, 0, 16, false, 9));
+    }
+    
+    @Test
+    public void kokeileTest2() throws Exception{
+        lauta.laitaMerkki(0, 1, 1);
+        lauta.laitaMerkki(1, 1, 1);
+        lauta.laitaMerkki(2, 2, 1);
+        Assert.assertTrue(AI.kokeile(2, lauta, new Solmu(18), 1, 0, 6, true, 18)>AI.kokeile(2, lauta, new Solmu(1), 1, 0, 6, true, 18));
+        Assert.assertTrue(AI.kokeile(2, lauta, new Solmu(18), 1, 0, 6, true, 18)>AI.kokeile(2, lauta, new Solmu(9), 1, 0, 6, true, 18));
+    }
+    
+    @Test
+    public void kokeileTest3() throws Exception{
+        lauta.laitaMerkki(1, 0, 2);
+        lauta.laitaMerkki(1, 1, 2);
+        lauta.laitaMerkki(1, 3, 2);
+        lauta.laitaMerkki(0, 6, 2);
+        Assert.assertTrue(AI.kokeile(3, lauta, new Solmu(11), 1, 0, 0, true, 6)>AI.kokeile(3, lauta, new Solmu(6), 1, 0, 0, true, 6));
+    }
+    
+    @Test
+    public void parasPoistoTest2() throws Exception{
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(1, 1, 1);
         lauta.laitaMerkki(2, 2, 1);
         lauta.laitaMerkki(2, 0, 2);
         lauta.laitaMerkki(0, 4, 2);
-        int poistop = AI.parasPoistettava(lauta, 1, 12, 18);
+        int poistop = AI.parasPoisto(lauta, 1, 12, 18);
         Assert.assertFalse(poistop==4);
     }
     
@@ -137,51 +235,51 @@ public class TekoalyTest {
     }
     
     @Test
-    public void omaSiirtoLaudalleTest() throws Exception{
+    public void siirtoLaudalleTest() throws Exception{
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(1, 1, 1);
-        Assert.assertTrue(0<AI.omaSiirtoLaudalle(lauta, 1, 0, 16, 9));
-        Assert.assertTrue(AI.omaSiirtoLaudalle(lauta, 1, 0, 15, 9)>AI.omaSiirtoLaudalle(lauta, 2, 0, 15, 9));
+        Assert.assertTrue(0<AI.siirtoLaudalle(lauta, 1, 0, 16, true, 9));
+        Assert.assertTrue(AI.siirtoLaudalle(lauta, 1, 0, 15, true, 9)>AI.siirtoLaudalle(lauta, 2, 0, 15, true, 9));
     }
     
     @Test
-    public void omaSiirtoLaudallaTest() throws Exception{
+    public void siirtoLaudallaTest() throws Exception{
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(1, 1, 1);
         lauta.laitaMerkki(2, 2, 1);
-        Assert.assertTrue(0>AI.omaSiirtoLaudalla(lauta, 1, 0, 9));
+        Assert.assertTrue(0<AI.siirtoLaudalla(lauta, 1, 0, true, 9));
     }
     
     @Test
-    public void omaSiirtoLaudalla2Test() throws Exception{
+    public void siirtoLaudalla2Test() throws Exception{
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(1, 1, 1);
         lauta.laitaMerkki(0, 0, 1);
-        Assert.assertTrue(0>AI.omaSiirtoLaudalla(lauta, 2, 0, 0));
+        Assert.assertTrue(0>AI.siirtoLaudalla(lauta, 2, 0, true, 0));
     }
     
     @Test
-    public void vastaPuoliLaudalleTest() throws Exception{
+    public void siirtoLaudalle2Test() throws Exception{
         lauta.laitaMerkki(0, 1, 2);
         lauta.laitaMerkki(1, 1, 2);
         lauta.laitaMerkki(2, 2, 2);
-        Assert.assertTrue(0>AI.vastaPuoliLaudalle(lauta, 1, 0, 15, 18));
+        Assert.assertTrue(0>AI.siirtoLaudalle(lauta, 1, 0, 15, false, 18));
     }
     
     @Test
-    public void vastaPuoliLaudallaTest() throws Exception{
+    public void siirtoLaudalla3Test() throws Exception{
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(1, 1, 1);
         lauta.laitaMerkki(2, 2, 1);
-        Assert.assertTrue(0>AI.vastaPuoliLaudalla(lauta, 1, 0, 18));
+        Assert.assertTrue(0>AI.siirtoLaudalla(lauta, 1, 0, false, 18));
     }
     
     @Test
-    public void vastaPuoliLaudalla2Test() throws Exception{
+    public void siirtoLaudalla4Test() throws Exception{
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(1, 1, 1);
         lauta.laitaMerkki(2, 2, 1);
-        Assert.assertTrue(0>AI.vastaPuoliLaudalla(lauta, 2, 0, 18));
+        Assert.assertTrue(0>AI.siirtoLaudalla(lauta, 2, 0, false, 18));
     }
     
     @Test
@@ -201,34 +299,34 @@ public class TekoalyTest {
     }
     
     @Test
-    public void kokeileSiirtoaOmaTest() throws Exception{
+    public void kokeileSiirtoTest() throws Exception{
         lauta.laitaMerkki(0, 1, 2);
         lauta.laitaMerkki(1, 1, 2);
         lauta.laitaMerkki(2, 2, 2);
-        int tulos = AI.kokeileSiirtoaOma(lauta, new Solmu(18), 2, 0);
+        int tulos = AI.kokeileSiirto(lauta, new Solmu(18), 2, 0, true);
         Assert.assertTrue(0>tulos);
     }
             
     @Test
-    public void kokeileSiirtoaOma2Test() throws Exception{
+    public void kokeileSiirto2Test() throws Exception{
         lauta.laitaMerkki(0, 1, 2);
         lauta.laitaMerkki(1, 1, 2);
         lauta.laitaMerkki(2, 2, 2);
         lauta.laitaMerkki(2, 0, 1);
         lauta.laitaMerkki(0, 6, 1);
-        Assert.assertTrue(AI.kokeileSiirtoaOma(lauta, new Solmu(16), 1, 0)>AI.kokeileSiirtoaOma(lauta, new Solmu(6), 1, 0));        
-        Assert.assertTrue(AI.kokeileSiirtoaOma(lauta, new Solmu(18), 2, 0)>AI.kokeileSiirtoaOma(lauta, new Solmu(16), 1, 0));
+        Assert.assertTrue(AI.kokeileSiirto(lauta, new Solmu(16), 1, 0, true)>AI.kokeileSiirto(lauta, new Solmu(6), 1, 0, true));        
+        Assert.assertTrue(AI.kokeileSiirto(lauta, new Solmu(18), 2, 0, true)>AI.kokeileSiirto(lauta, new Solmu(16), 1, 0, true));
     }
     
     @Test
-    public void kokeileSiirtoaVastapTest() throws Exception{
+    public void kokeileSiirto3Test() throws Exception{
         lauta.laitaMerkki(0, 1, 2);
         lauta.laitaMerkki(1, 1, 2);
         lauta.laitaMerkki(2, 2, 2);
         lauta.laitaMerkki(2, 0, 1);
         lauta.laitaMerkki(0, 6, 1);
-        Assert.assertTrue(AI.kokeileSiirtoaVastaP(lauta, new Solmu(16), 2, 0)<AI.kokeileSiirtoaVastaP(lauta, new Solmu(6), 2, 0));        
-        Assert.assertTrue(AI.kokeileSiirtoaVastaP(lauta, new Solmu(18), 1, 0)<AI.kokeileSiirtoaVastaP(lauta, new Solmu(16), 2, 0));
+        Assert.assertTrue(AI.kokeileSiirto(lauta, new Solmu(16), 2, 0, false)<AI.kokeileSiirto(lauta, new Solmu(6), 2, 0, false));        
+        Assert.assertTrue(AI.kokeileSiirto(lauta, new Solmu(18), 1, 0, false)<AI.kokeileSiirto(lauta, new Solmu(16), 2, 0, false));
     }
     
     @Test

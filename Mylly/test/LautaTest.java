@@ -5,6 +5,7 @@
  */
 
 import mylly.Lauta;
+import mylly.Puu;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -106,6 +107,33 @@ public class LautaTest {
         Assert.assertFalse(0==pelilauta.getLauta()[2][0]);
         Assert.assertFalse(0<pelilauta.syoty(1));
         Assert.assertFalse(0==pelilauta.montakoNappia(1));
+    }
+    
+    @Test
+    public void puuSiirtoTest() throws Exception{
+        Puu m = pelilauta.getMustat();
+        Puu v = pelilauta.getValkoiset();
+        Assert.assertEquals(1, m.getKoko());
+        pelilauta.puuSiirto(16, m, v, 1, (-1));
+        Assert.assertTrue(m.getJuuri()==null);
+        Assert.assertEquals(16, v.getJuuri().getAvain());
+        Assert.assertEquals(0, pelilauta.montakoNappia(1));
+        Assert.assertEquals(1, v.getKoko());
+        Assert.assertEquals(0, m.getKoko());
+    }
+    
+    @Test
+    public void puuSiirto2Test(){
+        Puu t = pelilauta.getTyhjat();
+        Puu m = pelilauta.getMustat();
+        Assert.assertEquals(23, t.getKoko());
+        pelilauta.puuSiirto(16, m, t, 1, (-1));
+        Assert.assertTrue(t.etsi(16).getAvain()==16);
+        pelilauta.puuSiirto(18, t, m, 1, 1);
+        pelilauta.puuSiirto(7, t, m, 1, 1);
+        Assert.assertEquals(22, t.getKoko());
+        Assert.assertEquals(18, m.getJuuri().getAvain());
+        Assert.assertEquals(2, m.getKoko());
     }
     
     @Test

@@ -12,6 +12,7 @@ package mylly;
  */
 public class Puu {
     Solmu juuri;
+    int koko;
     
     /**
      * Puu -luokan konstruktori rakentaa binäärihakupuun, joka sisältää solmuissa 
@@ -21,6 +22,7 @@ public class Puu {
      */
     public Puu(int[] luvut){
         this.juuri = new Solmu(luvut[0]);
+        this.koko = 1;
         for(int i=1; i<luvut.length; i++){
             lisaaSolmu(luvut[i]);
         }
@@ -31,6 +33,7 @@ public class Puu {
      * @param juuri Solmu luokan ilmentymä
      */
     public Puu(Solmu juuri){
+        this.koko = 1;
         this.juuri = juuri;
     }
     
@@ -38,6 +41,7 @@ public class Puu {
      * Puu luokan konstruktori asettaa puun juureksi nullin
      */
     public Puu(){
+        this.koko = 0;
         this.juuri = null;
     }
     
@@ -50,6 +54,16 @@ public class Puu {
     }
     
     /**
+     * setJuuri -metodi asettaa puun juureksi parametrina annetun solmun sekä
+     * asettaa sen vanhemman arvoksi null
+     * @param uusijuuri Solmu -luokan ilmentymä josta tulee uusi juuri
+     */
+    public void setJuuri(Solmu uusijuuri){
+        this.juuri = uusijuuri;
+        this.juuri.vanhempi = null;
+    }
+    
+    /**
      * lisaaSolmu -metodi luo ja lisää puuhun uuden Solmu -luokan olion, jonka
      * avaimena on parametrina saatu luku, jos tätä lukua ei ole puussa ennestään
      * ja palauttaa true. Jos parametrina annettu luku löytyy puun solmuista, ei
@@ -59,28 +73,60 @@ public class Puu {
      */
     public boolean lisaaSolmu(int avain){
         Solmu uusi = new Solmu(avain);
-        return lisaa(uusi, this.juuri);
+        return lisaa(uusi, avain, this.juuri);
     }
     
     /**
-     * Lisää parametrina annetun solmun parametrina annetusta juuresta alkavaan alipuuhun
+     * lisaa -metodi lisää parametrina annetun Solmu -olion puuhun, olettaen, että lisättävän
+     * solmun sisältämää avainta ei löydy muista puun solmuista
+     * @param lisa Solmu -luokan ilmentymä
+     * @return true jos solmu lisättiin puuhun, false jos puusta löytyy jo solmu samalla avaimella
+     */
+    public boolean lisaa(Solmu lisa){
+        return lisaa(lisa, lisa.getAvain(), this.juuri);
+    }
+    /**
+     * lisaa -metodi lisää parametrina annetun solmun parametrina annetusta juuresta alkavaan alipuuhun
      * ja palauttaa true jos lisäys onnistui. Jos parametrina annetun solmun avainta vastaava
      * kokonaisluku löytyy jo alipuusta, ei solmua lisätä ja metodi palauttaa false.
      * @param lisa puuhun lisättävä Solmu -luokan olio
+     * @param avain puuhun lisättävän solmun avain (kokonaisluku)
      * @param juuri Solmu -luokan olio, josta alkavaan alipuuhun toinen solmu lisätään
      * @return true jos lisäys onnistui, false jos avain löytyy jo puun solmuista ja siten
      * lisäystä ei tehdä
      */
-    public boolean lisaa(Solmu lisa, Solmu juuri){
+    private boolean lisaa(Solmu lisa, int avain, Solmu juuri){
+        if(this.juuri==null){   //jos puu on tyhjä laitetaan juureksi         
+            setJuuri(lisa);
+            this.koko = 1;
+        }      
         Solmu vanhempi = sopivaVanhempi(lisa, juuri);
-        if(vanhempi==null)  this.juuri = lisa;      //jos puu on tyhjä laitetaan juureksi
-        else{
-            if(lisa.getAvain()>vanhempi.getAvain())         vanhempi.setOikea(lisa);
-            else if(lisa.getAvain()<vanhempi.getAvain())    vanhempi.setVasen(lisa);
-            else    return false;
-            lisa.setVanhempi(vanhempi);
+        if(!asetaLapsi(vanhempi, lisa, avain))    return false;       //jos ei onnistu palautetaan false
+        this.koko++;        //jos onnistuu kasvatetaan puun kokoa
+        return true;        //ja palautetaan true
+    }
+    
+    /**
+     * asetaLapsi -metodi asettaa parametrina annetun lapsisolmun parametrina annetun
+     * vanhempisolmun vasemmaksi tai oikeaksi lapseksi sen mukaan onko sen avain suurempi
+     * vai pienempi kuin vanhemman avain. Suurempi avain lisätään oikealle puolelle ja 
+     * pienempi vasemmalle. Jos avaimet ovat yhtäsuuret lasta ei lisätä ja metodi palauttaa
+     * false, muuten palautetaan true.
+     * @param vanhempi Solmu -luokan ilmentymä jonka lapseksi lapsi lisätään
+     * @param lapsi Solmu -luokan ilmentymä, joka lisätään vanhemman lapseksi
+     * @param lapsenavain kokonaisluku, joka on lapsen avain
+     * @return true jos lisäys tehtiin, false jos avain on sama kuin vanhemman, jolloin 
+     * lisäystä ei tehdä
+     */
+    private boolean asetaLapsi(Solmu vanhempi, Solmu lapsi, int lapsenavain){
+        if(vanhempi!=null){
+            int vavain = vanhempi.getAvain();                       //vanhemman avain
+            if(lapsenavain>vavain) vanhempi.setOikea(lapsi);        //suurempi lisätään oikealle puolelle
+            else if(lapsenavain<vavain) vanhempi.setVasen(lapsi);   //pienempi lisätään vasemmalle puolelle
+            else return false;                          //jos avain on sama kuin vanhemmalla ei lisätä puuhun
+            lapsi.setVanhempi(vanhempi);                //vanhempi lapsen vanhemmaksi
         }
-        return true;
+        return false;           //jos vanhempi null ei voida lisätä puuhun
     }
     
     /**
@@ -93,12 +139,12 @@ public class Puu {
     public Solmu poista(int avain){
         Solmu p = etsi(avain);
         if(p!=null){
-            Solmu vas = p.getVasen();
-            Solmu oik = p.getOikea();
-            Solmu vanh = p.getVanhempi();
-            if(vanh!=null && vanh.getVasen()==p) vanhemmanLapseksi(vanh, vas, oik, true);
-            else if(vanh!=null) vanhemmanLapseksi(vanh, vas, oik, false);
-            else vanhemmanLapseksi(null, vas, oik, true);
+            this.koko--;
+            Solmu vas = p.getVasen();       //poistettavan vasen lapsi
+            Solmu oik = p.getOikea();       //poistettavan oikea lapsi
+            Solmu vanh = p.getVanhempi();   //poistettavan vanhempi
+            if(vanh!=null && vanh.getOikea()==p) vanhemmanLapseksi(vanh, vas, oik, false);  //jos poistettava on vanhempansa oikea lapsi
+            else vanhemmanLapseksi(vanh, vas, oik, true);
         }
         return p;
     }
@@ -115,18 +161,14 @@ public class Puu {
      * @param vasenlapsi true jos poistettu solmu oli isov solmun vasen lapsi, muuten false
      */
     public void vanhemmanLapseksi(Solmu isov, Solmu vasen, Solmu oikea, boolean vasenlapsi){
-        if(isov==null){
-            this.juuri = vasen;
-        }
-        if(vasenlapsi){ //jos poistettu lapsi oli vanhempansa vasen lapsi
-            if (isov!=null) isov.setVasen(vasen);   //vasen isovanhemman vasemaksi lapseksi
-            vasen.setVanhempi(isov);
-            lisaa(oikea, vasen);    //lisätään oikea vasemmasta alkavaan alipuuhun
-        }else{
-            isov.setOikea(oikea);   //oikea isovanhemman oikeaksi lapseksi
-            oikea.setVanhempi(isov);
-            lisaa(vasen, oikea);    //lisätään vasen oikeasta alkavaan alipuuhun
-        }
+        Solmu lapsi;
+        if(vasen!=null) lapsi = vasen;
+        else lapsi = oikea;
+        if(vasenlapsi){         //jos poistettu lapsi oli vanhempansa vasen lapsi
+            if (isov!=null) isov.setVasen(lapsi);   //poistetun vasemman isovanhemman vasemmaksi lapseksi
+            else this.juuri = lapsi;                //jos poistettava oli juuri
+        }else   isov.setOikea(lapsi);   //poistetun oikean isovanhemman oikeaksi lapseksi
+        if(oikea!=null && lapsi!=oikea)    lisaa(oikea, oikea.getAvain(), lapsi);   //oikea lisätään toisesta lapsesta alkavaan alipuuhun
     }
     
     /**
@@ -140,16 +182,14 @@ public class Puu {
     public Solmu sopivaVanhempi(Solmu uusi, Solmu juuri){
         if(uusi==null)  return null;
         int avain = uusi.getAvain();    //uuden solmun avain
-        Solmu v = juuri;
-        Solmu p = null;
-        while(v != null){       //kunnes saavutetaan sopiva kohta
-            p = v;              //seuraavan v:n vanhempi
-            int vavain = v.getAvain();
-            if(avain<vavain) v = v.getVasen();            //vasempaan alipuuhun
-            else if(avain>vavain)    v = v.getOikea();    //oikeaan alipuuhun
-            else return v;      //jos sama avain
+        Solmu j = juuri;
+        Solmu v = null;
+        while(j != null){       //kunnes saavutetaan sopiva kohta
+            v = j;              //seuraavan j:n vanhempi
+            j = lapsi(avain, j);    //seuraava j, eli edellisen lapsi
+            if(v==j)    return j;   //tai jos sama avain palautetaan edellinen j
         }
-        return p;       //palautetaan lehtisolmu
+        return v;       //palautetaan halutun kohdan vanhempi
     }
     
     /**
@@ -161,11 +201,33 @@ public class Puu {
      */
     public Solmu etsi(int avain){
         Solmu x = this.juuri;
-        while(x!=null){
-            if(avain>x.getAvain())  x = x.getOikea();   //etsitään oikeasta alipuusta
-            else if(avain<x.getAvain())  x = x.getVasen();   //etsitään vasemmasta alipuusta
-            else return x;  //jos solmun avain on etsitty avain
+        while(x!=null && x!=lapsi(avain, x)){
+            x = lapsi(avain, x);
         }
-        return null;
+        return x;
+    }
+    
+    /**
+     * lapsi -metodi palauttaa avainta lähempänä olevan parametrina annetun juuri -solmun lapsen
+     * eli oikean lapsen jos avain on suurempi kuin juuren avain tai vasemman lapsen jos avain 
+     * on pienempi kuin juuren avain. Jos juuren avain on sama kuin parametrina annettu avain
+     * palautetaan juuri itse
+     * @param avain avain johon juuren avainta verrataan
+     * @param juuri solmu jonka avainta verrataan annettuun avaimeen
+     * @return avainta lähinnä oleva solmu juuresta ja sen lapsista
+     */
+    private Solmu lapsi(int avain, Solmu juuri){
+        int javain = juuri.getAvain();
+        if(avain>javain)    return juuri.getOikea();        //jos juuri on avainta pienempi palautetaan oikea
+        else if(avain<javain)   return juuri.getVasen();    //jos juuri on avainta isompi palautetaan vasen
+        else return juuri;                                  //jos juuren avain on sama palautetaan juuri
+    }
+    
+    /**
+     * getKoko -metodi palauttaa puun sen hetkisen koon
+     * @return puun koko eli solmujen määrä
+     */
+    public int getKoko(){
+        return this.koko;
     }
 }

@@ -55,6 +55,28 @@ public class Lauta {
         this.mustat = new Puu();
         this.valkoiset = new Puu();
     }
+    
+    public Lauta(int[][] sijainnit, int msyoty, int vsyoty){
+        this.lauta = sijainnit;
+        this.mustia = 0;
+        this.valkoisia = 0;
+        this.msyoty = msyoty;
+        this.vsyoty = vsyoty;
+        this.tyhjat = new Puu();
+        this.mustat = new Puu();
+        this.valkoiset = new Puu();
+        for(int i=0; i<24; i++){
+            if(sijainnit[i/8][i%8]==2){
+                this.valkoiset.lisaaSolmu(i);
+                this.valkoisia++;
+            }
+            else if(sijainnit[i/8][i%8]==1){
+                this.mustat.lisaaSolmu(i);
+                this.mustia++;
+            }
+            else this.tyhjat.lisaaSolmu(i);
+        }
+    }
 
     /**
      * getLauta -metodi palauttaa pelilautaa edustavan matriisin, joka sisältää pelimerkkien sijainnit.
@@ -102,14 +124,12 @@ public class Lauta {
      */
     public void laitaMerkki(int j, int i, int vari) throws Exception{
         if(this.lauta[j][i]==1 || this.lauta[j][i]==2) throw new Exception();   //jos paikassa on jo merkki
-        else{ 
             this.lauta[j][i] = vari;     //uudeksi arvoksi 1 tai 2 varista riippuen
             if(vari==1){
-                puuSiirto((j*8)+i, this.tyhjat, this.mustat, 1, 1);   //siirto tyhjistä mustiiin
+                puuSiirto(((j*8)+i), this.tyhjat, this.mustat, 1, 1);   //siirto tyhjistä mustiiin
             }if(vari==2){
-                puuSiirto((j*8)+i, this.tyhjat, this.valkoiset, 2, 1); //siirto tyhjistä valkoisiin
+                puuSiirto(((j*8)+i), this.tyhjat, this.valkoiset, 2, 1); //siirto tyhjistä valkoisiin
             }
-        }
     }
     
     /**
@@ -123,16 +143,14 @@ public class Lauta {
      * @throws Exception jos paikan arvo ei vastaa poistettavan merkin väriä
      */
     public void poista(int j, int i, int vari) throws Exception{
-  //      if(this.lauta[j][i]!=vari)  throw new Exception(); //ei oikean väristä merkkiä
- //       else{
+        if(this.lauta[j][i]!=vari)  throw new Exception(); //ei oikean väristä merkkiä
             if(vari==1){
-                puuSiirto((j*8)+i, this.mustat, this.tyhjat, 1,(-1)); //siirretään mustista tyhjiin ja vähennetään mustien määrää
+                puuSiirto(((j*8)+i), this.mustat, this.tyhjat, 1,(-1)); //siirretään mustista tyhjiin ja vähennetään mustien määrää
             }
             if(vari==2){
-                puuSiirto((j*8)+i, this.valkoiset, this.tyhjat, 2, (-1));  //siirretään valkoisista tyhjiin ja vähennetään valkoisten määrää
+                puuSiirto(((j*8)+i), this.valkoiset, this.tyhjat, 2, (-1));  //siirretään valkoisista tyhjiin ja vähennetään valkoisten määrää
             }
             this.lauta[j][i] = 0;
-  //      }
     }
     
     /**
@@ -149,10 +167,10 @@ public class Lauta {
     public void syo(int j, int i, int vari) throws Exception{
         if(this.lauta[j][i]!=vari)  throw new Exception();  //ei oikean väristä merkkiä
         if(vari==1){
-            puuSiirto((j*8)+i, this.mustat, this.tyhjat, 1, (-1));
+            puuSiirto(((j*8)+i), this.mustat, this.tyhjat, 1, (-1));
             msyoty++;
         }if(vari==2){
-            puuSiirto((j*8)+i, this.valkoiset, this.tyhjat, 2, (-1));
+            puuSiirto(((j*8)+i), this.valkoiset, this.tyhjat, 2, (-1));
             vsyoty++;
         }
         this.lauta[j][i] = 0;
@@ -174,10 +192,10 @@ public class Lauta {
     public void peruSyonti(int j, int i, int vari) throws Exception{
         if(this.lauta[j][i]==1 || this.lauta[j][i]==2)  throw new Exception();
         if(vari==1){
-            puuSiirto((j*8)+i, this.tyhjat, this.mustat, 1, 1);
+            puuSiirto(((j*8)+i), this.tyhjat, this.mustat, 1, 1);
             msyoty--;
         }else if(vari==2){
-            puuSiirto((j*8)+i, this.tyhjat, this.valkoiset, 2,1);
+            puuSiirto(((j*8)+i), this.tyhjat, this.valkoiset, 2,1);
             vsyoty--;
         }else{
             throw new Exception();
@@ -187,7 +205,7 @@ public class Lauta {
     
     public void puuSiirto(int avain, Puu poistettava, Puu lisattava, int vari, int muutos){
         Solmu lisa = poistettava.poista(avain);
-        lisattava.lisaa(lisa, lisattava.getJuuri());
+        lisattava.lisaa(lisa);
         if(vari==1) this.mustia = this.mustia + muutos;
         if(vari==2) this.valkoisia = this.valkoisia + muutos;
     }

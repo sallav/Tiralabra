@@ -21,9 +21,8 @@ import static org.junit.Assert.*;
 public class PuuTest {
     Puu puu;
     
+    
     public PuuTest() {
-        int[] paikat = {4, 2, 8, 1, 9, 6};
-        puu = new Puu(paikat);
     }
     
     @BeforeClass
@@ -36,6 +35,8 @@ public class PuuTest {
     
     @Before
     public void setUp() {
+        int[] paikat = {4, 2, 8, 1, 9, 6};
+        puu = new Puu(paikat);
     }
     
     @After
@@ -56,38 +57,58 @@ public class PuuTest {
     @Test
     public void lisaaSolmuTest(){
         Assert.assertFalse(puu.lisaaSolmu(8));
+        Assert.assertEquals(6, puu.getKoko());
     }
     
     @Test
     public void lisaaSolmuTest2(){
         Assert.assertTrue(puu.lisaaSolmu(18));
         Assert.assertEquals(18, puu.etsi(18).getAvain());
+        Assert.assertEquals(7, puu.getKoko());
     }
     
     @Test
     public void lisaaTest(){
         Solmu uusi = new Solmu(3);
-        Assert.assertTrue(puu.lisaa(uusi, puu.getJuuri()));
+        Assert.assertTrue(puu.lisaa(uusi));
         Assert.assertEquals(uusi.getAvain(), puu.etsi(3).getAvain());
+        Assert.assertEquals(7, puu.getKoko());
     }
     
     @Test
     public void lisaaTest2(){
         Solmu uusi = new Solmu(4);
-        Assert.assertFalse(puu.lisaa(uusi, puu.getJuuri()));
+        Assert.assertFalse(puu.lisaa(uusi));
+        Assert.assertEquals(6, puu.getKoko());
     }
     
     @Test
     public void poistaTest(){
         Assert.assertTrue(puu.poista(8).getAvain()==8);
         Assert.assertNull(puu.etsi(8));
+        Assert.assertEquals(5, puu.getKoko());
         Assert.assertEquals(4, puu.etsi(9).getVanhempi().getAvain());
         Assert.assertEquals(9, puu.etsi(6).getVanhempi().getAvain());
         Assert.assertEquals(4, puu.poista(4).getAvain());
         Assert.assertNull(puu.etsi(4));
+        Assert.assertEquals(4, puu.getKoko());
         System.out.println(puu.getJuuri().getAvain());
         Assert.assertEquals(2, puu.etsi(9).getVanhempi().getAvain());
         Assert.assertEquals(2, puu.etsi(1).getVanhempi().getAvain());
+    }
+    
+    @Test
+    public void poistaTest2(){
+        Assert.assertTrue(puu.poista(2).getAvain()==2);
+        Assert.assertNull(puu.etsi(2));
+        Assert.assertEquals(5, puu.getKoko());
+        Assert.assertNotNull(puu.getJuuri());
+        Assert.assertNotNull(puu.getJuuri().getVasen());
+        Assert.assertEquals(1, puu.getJuuri().getVasen().getAvain());
+        Assert.assertNotNull(puu.etsi(1));
+        Assert.assertEquals(4, puu.etsi(1).getVanhempi().getAvain());
+        Assert.assertNull(puu.poista(18));
+        Assert.assertEquals(5, puu.getKoko());
     }
     
     @Test

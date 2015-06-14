@@ -5,6 +5,7 @@
         <group>
             <file>file:/C:/Users/Käyttäjä/Documents/GitHub/Tiralabra/Mylly/src/mylly/Pelaaja.java</file>
             <file>file:/C:/Users/Käyttäjä/Documents/GitHub/Tiralabra/Mylly/src/mylly/Peli.java</file>
+            <file>file:/C:/Users/Käyttäjä/Documents/GitHub/Tiralabra/Mylly/src/mylly/Lista.java</file>
             <file>file:/C:/Users/Käyttäjä/Documents/GitHub/Tiralabra/Mylly/test/TekoalyTest.java</file>
             <file>file:/C:/Users/Käyttäjä/Documents/GitHub/Tiralabra/Mylly/src/mylly/Heuristiikka.java</file>
             <file>file:/C:/Users/Käyttäjä/Documents/GitHub/Tiralabra/Mylly/test/TKayttoliittymaTest.java</file>
@@ -22,6 +23,7 @@
             <file>file:/C:/Users/Käyttäjä/Documents/GitHub/Tiralabra/Mylly/test/PerusTest.java</file>
             <file>file:/C:/Users/Käyttäjä/Documents/GitHub/Tiralabra/Mylly/src/mylly/Puu.java</file>
             <file>file:/C:/Users/Käyttäjä/Documents/GitHub/Tiralabra/Mylly/src/mylly/Solmu.java</file>
+            <file>file:/C:/Users/Käyttäjä/Documents/GitHub/Tiralabra/Mylly/src/mylly/ListaSolmu.java</file>
         </group>
     </open-files>
 </project-private>

@@ -112,7 +112,7 @@ public class AIPelaaja implements Pelaaja{
     public int poistaLaudalta(Lauta lauta, int nappeja, int edel){
         int poistettava;
         try{
-            poistettava = aly.parasPoistettava(lauta, this.vari, nappeja, edel);
+            poistettava = aly.parasPoisto(lauta, this.vari, nappeja, edel);
             lauta.syo(poistettava/8, poistettava%8, 3-this.vari);
         }catch(Exception e){
             return -1;
