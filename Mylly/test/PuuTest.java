@@ -56,6 +56,7 @@ public class PuuTest {
     
     @Test
     public void lisaaSolmuTest(){
+        Assert.assertEquals(6, puu.getKoko());
         Assert.assertFalse(puu.lisaaSolmu(8));
         Assert.assertEquals(6, puu.getKoko());
     }
@@ -87,13 +88,13 @@ public class PuuTest {
         Assert.assertTrue(puu.poista(8).getAvain()==8);
         Assert.assertNull(puu.etsi(8));
         Assert.assertEquals(5, puu.getKoko());
-        Assert.assertEquals(4, puu.etsi(9).getVanhempi().getAvain());
-        Assert.assertEquals(9, puu.etsi(6).getVanhempi().getAvain());
+        Assert.assertEquals(6, puu.etsi(9).getVanhempi().getAvain());
+        Assert.assertEquals(4, puu.etsi(6).getVanhempi().getAvain());
         Assert.assertEquals(4, puu.poista(4).getAvain());
         Assert.assertNull(puu.etsi(4));
         Assert.assertEquals(4, puu.getKoko());
         System.out.println(puu.getJuuri().getAvain());
-        Assert.assertEquals(2, puu.etsi(9).getVanhempi().getAvain());
+        Assert.assertEquals(2, puu.etsi(6).getVanhempi().getAvain());
         Assert.assertEquals(2, puu.etsi(1).getVanhempi().getAvain());
     }
     
@@ -114,15 +115,15 @@ public class PuuTest {
     @Test
     public void vanhemmanLapseksiTest(){
         puu.vanhemmanLapseksi(puu.etsi(9), new Solmu(10), new Solmu(11), false);
-        Assert.assertTrue(puu.etsi(11).getVanhempi()==puu.etsi(9));
-        Assert.assertTrue(puu.etsi(10).getVanhempi()==puu.etsi(11));
+        Assert.assertTrue(puu.etsi(11).getVanhempi()==puu.etsi(10));
+        Assert.assertTrue(puu.etsi(10).getVanhempi()==puu.etsi(9));
     }
     
     @Test
     public void vanhemmanLapseksiTest2(){
         puu.vanhemmanLapseksi(puu.etsi(1), new Solmu(-2), new Solmu(-1), true);
-        Assert.assertTrue(puu.etsi(-2).getVanhempi()==puu.etsi(1));
         Assert.assertTrue(puu.etsi(-1).getVanhempi()==puu.etsi(-2));
+        Assert.assertTrue(puu.etsi(-2).getVanhempi()==puu.etsi(1));
     }
     
     @Test

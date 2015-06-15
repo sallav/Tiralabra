@@ -264,10 +264,10 @@ public class Tekoaly {
     public int siirtoLaudalle(Lauta lauta, int vari, int k, int pelaamatta, boolean omavuoro, int edel){
         if(k==syvyys)   return arvioiTilanne(lauta, vari, pelaamatta, edel);     //kun haluttu syvyys saavutettu palautetaan arvio tilanteesta        
         if(pelaamatta==0)   return siirtoLaudalla(lauta, vari, k, omavuoro, edel);      //jos kaikki nappulat on jo käytetty kutsutaan toista metodia
-        Lauta uusi = new Lauta(lauta.getLauta(), lauta.syoty(1), lauta.syoty(2));
-        Puu tyhjat = uusi.getTyhjat();     //tyhjät sijainnit
+        lauta = new Lauta(lauta.getLauta(), lauta.syoty(1), lauta.syoty(2));
+        Puu tyhjat = lauta.getTyhjat();     //tyhjät sijainnit
         Solmu juuri = tyhjat.getJuuri();    
-        return kayLapiSijainnit(1, uusi, juuri, vari, k, pelaamatta, omavuoro, edel); //palautetaan paras mahdollinen lopputulos joka voi syntyä alkuperäisestä tilanteesta
+        return kayLapiSijainnit(1, lauta, juuri, vari, k, pelaamatta, omavuoro, edel); //palautetaan paras mahdollinen lopputulos joka voi syntyä alkuperäisestä tilanteesta
     }
     
     /**

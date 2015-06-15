@@ -45,6 +45,15 @@ public class Puu {
         this.juuri = null;
     }
     
+    public Puu(Lista solmut){
+        ListaSolmu x = solmut.getEka();
+        this.juuri = new Solmu(x.getPuuSolmu().getAvain());
+        while(x.getSeuraava()!=null){
+            x = x.getSeuraava();
+            lisaaSolmu(x.getPuuSolmu().getAvain());
+        }
+    }
+    
     /**
      * getJuuri -metodi palauttaa puun juuren
      * @return Solmu -luokan olio, joka on puun juurena
@@ -101,7 +110,8 @@ public class Puu {
             this.koko = 1;
         }      
         Solmu vanhempi = sopivaVanhempi(lisa, juuri);
-        if(!asetaLapsi(vanhempi, lisa, avain))    return false;       //jos ei onnistu palautetaan false
+        boolean lisatty = asetaLapsi(vanhempi, lisa, avain);
+        if(!lisatty)    return false;       //jos ei onnistu palautetaan false
         this.koko++;        //jos onnistuu kasvatetaan puun kokoa
         return true;        //ja palautetaan true
     }
@@ -125,6 +135,7 @@ public class Puu {
             else if(lapsenavain<vavain) vanhempi.setVasen(lapsi);   //pienempi lisätään vasemmalle puolelle
             else return false;                          //jos avain on sama kuin vanhemmalla ei lisätä puuhun
             lapsi.setVanhempi(vanhempi);                //vanhempi lapsen vanhemmaksi
+            return true;
         }
         return false;           //jos vanhempi null ei voida lisätä puuhun
     }
@@ -139,12 +150,13 @@ public class Puu {
     public Solmu poista(int avain){
         Solmu p = etsi(avain);
         if(p!=null){
-            this.koko--;
             Solmu vas = p.getVasen();       //poistettavan vasen lapsi
             Solmu oik = p.getOikea();       //poistettavan oikea lapsi
             Solmu vanh = p.getVanhempi();   //poistettavan vanhempi
             if(vanh!=null && vanh.getOikea()==p) vanhemmanLapseksi(vanh, vas, oik, false);  //jos poistettava on vanhempansa oikea lapsi
             else vanhemmanLapseksi(vanh, vas, oik, true);
+            if(oik!=null) this.koko--;      //jos oikea ei null tehdään yksi lisäys puuhun joten kokoa kasvatetaan
+            this.koko--;                    //kokoa vähennetään
         }
         return p;
     }
@@ -164,11 +176,14 @@ public class Puu {
         Solmu lapsi;
         if(vasen!=null) lapsi = vasen;
         else lapsi = oikea;
-        if(vasenlapsi){         //jos poistettu lapsi oli vanhempansa vasen lapsi
-            if (isov!=null) isov.setVasen(lapsi);   //poistetun vasemman isovanhemman vasemmaksi lapseksi
-            else this.juuri = lapsi;                //jos poistettava oli juuri
-        }else   isov.setOikea(lapsi);   //poistetun oikean isovanhemman oikeaksi lapseksi
-        if(oikea!=null && lapsi!=oikea)    lisaa(oikea, oikea.getAvain(), lapsi);   //oikea lisätään toisesta lapsesta alkavaan alipuuhun
+        if(lapsi!=null){
+            if(vasenlapsi){         //jos poistettu lapsi oli vanhempansa vasen lapsi
+                if (isov!=null) isov.setVasen(lapsi);   //poistetun vasemman isovanhemman vasemmaksi lapseksi
+                else this.juuri = lapsi;                //jos poistettava oli juuri
+            }else   isov.setOikea(lapsi);   //poistetun oikean isovanhemman oikeaksi lapseksi
+            lapsi.setVanhempi(isov);
+            if(oikea!=null && lapsi!=oikea)    lisaa(oikea, oikea.getAvain(), lapsi);   //oikea lisätään toisesta lapsesta alkavaan alipuuhun
+        }
     }
     
     /**
