@@ -114,13 +114,14 @@ public class Tekoaly {
      * @return lista solmuista, jotka edustavat parhaita sijainteja laudalla
      */
     public Lista listaaParhaat(int toimenpide, Solmu juuri, Lauta lauta, int vari, int k, int pelaamatta, int edel){
-       Lista parhaat = new Lista();
+        Lista parhaat;
+        parhaat = new Lista();
         if(juuri!=null){            //saavutettu lehdet           
             Lista v = listaaParhaat(toimenpide, juuri.getVasen(), lauta, vari, k, pelaamatta, edel);  //vasen puoli puuta
             Lista o = listaaParhaat(toimenpide, juuri.getOikea(), lauta, vari, k, pelaamatta, edel);  //oikea puoli puuta
             parhaat = parempiLista(v, o);   //kumpi listoista on parempi
             int uusiarvo = kokeile(toimenpide, lauta, juuri, vari, k, pelaamatta, true, 0);   //mikä tulos juuren solmulle saadaan
-            parhaat = paivitaLista(parhaat, juuri, uusiarvo);   //onko juuri parempi tai yhtä hyvä kuin siihen mennesssä parhaat
+            parhaat = paivitaLista(parhaat, juuri, uusiarvo);   //onko juuri arvoltaan parempi tai yhtä hyvä kuin siihen mennesssä parhaat
         }
         return parhaat;
     }
@@ -157,8 +158,8 @@ public class Tekoaly {
         int vasena = -1000;
         int oikeaa = -1000;
         if(vasen==null && oikea==null) return null;
-        if(vasen!=null) vasena = vasen.getEka().getPuuSolmu().getArvo();    //vasemman listan arvo
-        if(oikea!=null) oikeaa = vasen.getEka().getPuuSolmu().getArvo();    //oikean listan arvo
+        if(vasen!=null) vasena = vasen.getArvo();    //vasemman listan arvo
+        if(oikea!=null) oikeaa = oikea.getArvo();    //oikean listan arvo
         if(vasen==null || oikeaa>vasena)    return oikea;
         else if(vasen!=null && vasena==oikeaa)  vasen.lisaa(oikea);     //jos saman arvoisia yhdistetään listat
         return vasen;   //palautetaan vasen 
@@ -226,7 +227,9 @@ public class Tekoaly {
         int tulos = 0;
         switch(toimenpide){
             case 1: tulos = kokeileSijainti(lauta, sij/8, sij%8, vari, k, omavuoro, pelaamatta);
+                    break;
             case 2: tulos = kokeileSiirto(lauta, solmu, vari, k, omavuoro);
+                    break;
             case 3: tulos = kokeilePoistaa(lauta, sij/8, sij%8, vari, k, pelaamatta, omavuoro, edel);
         }
         solmu.setArvo(tulos);   //päivitetään parametrina annetun solmun arvo tuloksen mukaan
@@ -264,8 +267,8 @@ public class Tekoaly {
     public int siirtoLaudalle(Lauta lauta, int vari, int k, int pelaamatta, boolean omavuoro, int edel){
         if(k==syvyys)   return arvioiTilanne(lauta, vari, pelaamatta, edel);     //kun haluttu syvyys saavutettu palautetaan arvio tilanteesta        
         if(pelaamatta==0)   return siirtoLaudalla(lauta, vari, k, omavuoro, edel);      //jos kaikki nappulat on jo käytetty kutsutaan toista metodia
-        lauta = new Lauta(lauta.getLauta(), lauta.syoty(1), lauta.syoty(2));
-        Puu tyhjat = lauta.getTyhjat();     //tyhjät sijainnit
+//        lauta = new Lauta(lauta.getLauta(), lauta.syoty(1), lauta.syoty(2));
+        Puu tyhjat = lauta.getTyhjat().teeKopio();     //tyhjät sijainnit
         Solmu juuri = tyhjat.getJuuri();    
         return kayLapiSijainnit(1, lauta, juuri, vari, k, pelaamatta, omavuoro, edel); //palautetaan paras mahdollinen lopputulos joka voi syntyä alkuperäisestä tilanteesta
     }
@@ -283,9 +286,9 @@ public class Tekoaly {
     public int siirtoLaudalla(Lauta lauta, int vari, int k, boolean omavuoro, int edel){
         if(k==syvyys)   return arvioiTilanne(lauta, vari, 0, edel);   //arvio tilanteesta kun haluttu syvyys saavutettu
         Puu merkit = null;
-        lauta = new Lauta(lauta.getLauta(), lauta.syoty(1), lauta.syoty(2));
-        if(vari==1) merkit = lauta.getMustat();
-        else if(vari==2) merkit = lauta.getValkoiset();
+//        lauta = new Lauta(lauta.getLauta(), lauta.syoty(1), lauta.syoty(2));
+        if(vari==1) merkit = lauta.getMustat().teeKopio();
+        else if(vari==2) merkit = lauta.getValkoiset().teeKopio();
         Solmu juuri = merkit.getJuuri();
         return kayLapiSijainnit(2, lauta, juuri, vari, k, 0, omavuoro, edel); 
     }
@@ -305,9 +308,9 @@ public class Tekoaly {
      */
     public int poisto(Lauta lauta, int vari, int k, int pelaamatta, boolean omavuoro, int edel){
         Puu merkit = null;
-        lauta = new Lauta(lauta.getLauta(), lauta.syoty(1), lauta.syoty(2));
-        if(vari==1) merkit = lauta.getValkoiset();
-        if(vari==2) merkit = lauta.getMustat();
+//        lauta = new Lauta(lauta.getLauta(), lauta.syoty(1), lauta.syoty(2));
+        if(vari==1) merkit = lauta.getValkoiset().teeKopio();
+        if(vari==2) merkit = lauta.getMustat().teeKopio();
         Solmu juuri = merkit.getJuuri();
         return kayLapiSijainnit(3, lauta, juuri, vari, k, pelaamatta, omavuoro, edel);
     }
@@ -331,6 +334,9 @@ public class Tekoaly {
     public int kokeileSijainti(Lauta lauta, int j, int i, int vari, int k, boolean omavuoro, int pelaamatta){
         int tulos = 1000;
         try{
+            if(j==2 && i==5){
+                System.out.println("jotain");
+            }    
             lauta.laitaMerkki(j, i, vari);                  //kokeillaan sijaintia laittamalla siihen halutun värinen merkki
                     for(int m=0; m<3; m++){
                         for(int l=0; l<8; l++){

@@ -44,7 +44,7 @@ public class TekoalyTest {
     public void setUp() {
         lauta = new Lauta();
         h = new Perus();
-        AI = new Tekoaly(h, 3);
+        AI = new Tekoaly(h, 1);
     }
     
     @After

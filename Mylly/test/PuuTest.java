@@ -4,15 +4,16 @@
  * and open the template in the editor.
  */
 
+import java.util.ArrayList;
 import mylly.Puu;
 import mylly.Solmu;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -110,6 +111,37 @@ public class PuuTest {
         Assert.assertEquals(4, puu.etsi(1).getVanhempi().getAvain());
         Assert.assertNull(puu.poista(18));
         Assert.assertEquals(5, puu.getKoko());
+    }
+    
+    @Test
+    public void poistaTest3(){
+        Puu uusi = new Puu();
+        for(int i=0; i<24; i++){
+            uusi.lisaaSolmu(i);
+        }
+        ArrayList<Integer> luvut = uusi.esijarjestys();
+        for(int i=0; i<24; i++){
+            Assert.assertTrue(i==luvut.get(i));
+        }
+        uusi.poista(23);
+        luvut = uusi.esijarjestys();
+        for(int i=0; i<23; i++){
+            Assert.assertTrue(i==luvut.get(i));
+        }
+        uusi.lisaaSolmu(23);
+        uusi.poista(22);
+        luvut = uusi.esijarjestys();
+        for(int i=0; i<23; i++){
+            if(i!=22) Assert.assertTrue(i==luvut.get(i));
+        }        
+        uusi.lisaaSolmu(22);
+        luvut = uusi.esijarjestys();
+        for(int i=0; i<23; i++){
+ //           Assert.assertTrue(luvut.toString(), i==luvut.get(i));
+        }
+        uusi.poista(21);
+        luvut = uusi.esijarjestys();
+        Assert.assertTrue(luvut.toString(), uusi.etsi(21)!=null);
     }
     
     @Test

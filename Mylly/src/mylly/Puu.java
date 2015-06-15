@@ -5,6 +5,8 @@
  */
 package mylly;
 
+import java.util.ArrayList;
+
 /**
  * Puu -luokka tarjoaa toteutuksen binäärihakupuulle, johon voi tallettaa pelilaudan
  * paikkoja vastaavia sijainteja sisältäviä solmuja
@@ -32,8 +34,8 @@ public class Puu {
      * Puu -luokan konstruktori alustaa puun juureksi parametrina saamansa solmun
      * @param juuri Solmu luokan ilmentymä
      */
-    public Puu(Solmu juuri){
-        this.koko = 1;
+    public Puu(Solmu juuri, int koko){
+        this.koko = koko;
         this.juuri = juuri;
     }
     
@@ -244,5 +246,38 @@ public class Puu {
      */
     public int getKoko(){
         return this.koko;
+    }
+    
+    public Puu teeKopio(){
+        Solmu juuri = kopioiPuu(this.juuri);
+        return new Puu(juuri, this.koko);
+    }
+    
+    public Solmu kopioiPuu(Solmu juuri){
+        if(juuri!=null){
+            Solmu v = kopioiPuu(juuri.getVasen());
+            Solmu o = kopioiPuu(juuri.getVasen());
+            Solmu uusijuuri = new Solmu(juuri.getAvain());
+            uusijuuri.setArvo(juuri.getArvo());
+            uusijuuri.setVasen(v);
+            uusijuuri.setOikea(o);
+            return uusijuuri;
+        }
+        return null;
+    }
+    
+    public ArrayList<Integer> esijarjestys(){
+//        int[] luvut = new int[this.koko];
+        ArrayList<Integer> luvut = new ArrayList<Integer>();
+        esijarjHelper(luvut, this.juuri);
+        return luvut;
+    }
+    
+    private void esijarjHelper(ArrayList<Integer> luvut, Solmu juuri){
+        if(juuri!=null){
+        luvut.add(juuri.getAvain());
+        esijarjHelper(luvut, juuri.getVasen());
+        esijarjHelper(luvut, juuri.getOikea());
+        }
     }
 }

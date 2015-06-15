@@ -23,8 +23,6 @@ public class PerusTest {
     Lauta lauta;
     
     public PerusTest() {
-        perush = new Perus();
-        lauta = new Lauta();
     }
     
     @BeforeClass
@@ -37,6 +35,8 @@ public class PerusTest {
     
     @Before
     public void setUp() {
+        perush = new Perus();
+        lauta = new Lauta();
     }
     
     @After
@@ -60,12 +60,12 @@ public class PerusTest {
         lauta.laitaMerkki(1, 1, 1);
         lauta.laitaMerkki(2, 1, 1);
         Assert.assertTrue(0<perush.tilanneArvio(lauta, 1, 15, 17));
-        Assert.assertFalse(0>perush.tilanneArvio(lauta, 2, 15, 17));
+        Assert.assertTrue(0>perush.tilanneArvio(lauta, 2, 15, 17));
     }
     
     @Test
     public void voikoLiikkuaTest(){
-        Assert.assertEquals(1, perush.voikoLiikkua(lauta, 1));
+        Assert.assertEquals(0, perush.voikoLiikkua(lauta, 1));
     }
     
     @Test
