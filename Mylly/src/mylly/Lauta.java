@@ -46,14 +46,10 @@ public class Lauta {
         this.valkoisia = 0;
         this.msyoty = 0;
         this.vsyoty = 0;
-        int[] paikat = new int[24];
-        for(int i=0; i<24; i++){
-            paikat[i] = i;
-            this.lauta[i/8][i%8] = 0;
-        }
-        this.tyhjat = new Puu(paikat);
-        this.mustat = new Puu();
-        this.valkoiset = new Puu();
+        int[] paikat = {11, 5, 18, 3, 9, 15, 22, 1, 4, 7, 10, 13, 16, 20, 23, 0, 2, 6, 8, 12, 14, 17, 19, 21};  //kaikki laudan paikat
+        this.tyhjat = new SijaintiPuu2(paikat);  //puu jossa kaikki tyhjät paikat
+        this.mustat = new SijaintiPuu2();        //tyhjä puu
+        this.valkoiset = new SijaintiPuu2();     //tyhjä puu
     }
     
     public Lauta(int[][] sijainnit, int msyoty, int vsyoty){
@@ -62,19 +58,19 @@ public class Lauta {
         this.valkoisia = 0;
         this.msyoty = msyoty;
         this.vsyoty = vsyoty;
-        this.tyhjat = new Puu();
-        this.mustat = new Puu();
-        this.valkoiset = new Puu();
+        this.tyhjat = new SijaintiPuu2();
+        this.mustat = new SijaintiPuu2();
+        this.valkoiset = new SijaintiPuu2();
         for(int i=0; i<24; i++){
             if(sijainnit[i/8][i%8]==2){
-                this.valkoiset.lisaaSolmu(i);
+                this.valkoiset.lisaa(i);
                 this.valkoisia++;
             }
             else if(sijainnit[i/8][i%8]==1){
-                this.mustat.lisaaSolmu(i);
+                this.mustat.lisaa(i);
                 this.mustia++;
             }
-            else this.tyhjat.lisaaSolmu(i);
+            else this.tyhjat.lisaa(i);
         }
     }
 
@@ -260,9 +256,7 @@ public class Lauta {
      * @return 1 jos merkki on musta, 2 jos merkki on valkoinen, 0 jos sijainti on tyhjä
      */
     public int merkki(int j, int i){
-        if(this.lauta[j][i]==1) return 1;   //musta
-        if(this.lauta[j][i]==2) return 2;   //valkoinen
-        else return 0;                      //tyhjä -> voidaan kokeilla onko paikka varattu vai ei
+        return this.lauta[j][i];
     }
     
     /**

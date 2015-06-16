@@ -6,6 +6,8 @@
 
 import java.util.ArrayList;
 import mylly.Puu;
+import mylly.SijaintiPuu;
+import mylly.SijaintiPuu2;
 import mylly.Solmu;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -22,7 +24,6 @@ import org.junit.Test;
 public class PuuTest {
     Puu puu;
     
-    
     public PuuTest() {
     }
     
@@ -37,7 +38,7 @@ public class PuuTest {
     @Before
     public void setUp() {
         int[] paikat = {4, 2, 8, 1, 9, 6};
-        puu = new Puu(paikat);
+        puu = new SijaintiPuu2(paikat);
     }
     
     @After
@@ -58,13 +59,13 @@ public class PuuTest {
     @Test
     public void lisaaSolmuTest(){
         Assert.assertEquals(6, puu.getKoko());
-        Assert.assertFalse(puu.lisaaSolmu(8));
+        Assert.assertFalse(puu.lisaa(8));
         Assert.assertEquals(6, puu.getKoko());
     }
     
     @Test
     public void lisaaSolmuTest2(){
-        Assert.assertTrue(puu.lisaaSolmu(18));
+        Assert.assertTrue(puu.lisaa(18));
         Assert.assertEquals(18, puu.etsi(18).getAvain());
         Assert.assertEquals(7, puu.getKoko());
     }
@@ -91,6 +92,7 @@ public class PuuTest {
         Assert.assertEquals(5, puu.getKoko());
         Assert.assertEquals(6, puu.etsi(9).getVanhempi().getAvain());
         Assert.assertEquals(4, puu.etsi(6).getVanhempi().getAvain());
+        Assert.assertNotNull(puu.etsi(4));
         Assert.assertEquals(4, puu.poista(4).getAvain());
         Assert.assertNull(puu.etsi(4));
         Assert.assertEquals(4, puu.getKoko());
@@ -115,9 +117,9 @@ public class PuuTest {
     
     @Test
     public void poistaTest3(){
-        Puu uusi = new Puu();
+        SijaintiPuu uusi = new SijaintiPuu();
         for(int i=0; i<24; i++){
-            uusi.lisaaSolmu(i);
+            uusi.lisaa(i);
         }
         ArrayList<Integer> luvut = uusi.esijarjestys();
         for(int i=0; i<24; i++){
@@ -128,46 +130,27 @@ public class PuuTest {
         for(int i=0; i<23; i++){
             Assert.assertTrue(i==luvut.get(i));
         }
-        uusi.lisaaSolmu(23);
+        uusi.lisaa(23);
         uusi.poista(22);
         luvut = uusi.esijarjestys();
         for(int i=0; i<23; i++){
             if(i!=22) Assert.assertTrue(i==luvut.get(i));
         }        
-        uusi.lisaaSolmu(22);
+        uusi.lisaa(22);
         luvut = uusi.esijarjestys();
         for(int i=0; i<23; i++){
- //           Assert.assertTrue(luvut.toString(), i==luvut.get(i));
+            if(i>21)    Assert.assertTrue(luvut.toString(), i!=luvut.get(i));
         }
         uusi.poista(21);
         luvut = uusi.esijarjestys();
-        Assert.assertTrue(luvut.toString(), uusi.etsi(21)!=null);
-    }
-    
-    @Test
-    public void vanhemmanLapseksiTest(){
-        puu.vanhemmanLapseksi(puu.etsi(9), new Solmu(10), new Solmu(11), false);
-        Assert.assertTrue(puu.etsi(11).getVanhempi()==puu.etsi(10));
-        Assert.assertTrue(puu.etsi(10).getVanhempi()==puu.etsi(9));
-    }
-    
-    @Test
-    public void vanhemmanLapseksiTest2(){
-        puu.vanhemmanLapseksi(puu.etsi(1), new Solmu(-2), new Solmu(-1), true);
-        Assert.assertTrue(puu.etsi(-1).getVanhempi()==puu.etsi(-2));
-        Assert.assertTrue(puu.etsi(-2).getVanhempi()==puu.etsi(1));
-    }
-    
-    @Test
-    public void sopivaVanhempiTest(){
-        Assert.assertTrue(puu.sopivaVanhempi(new Solmu(3), puu.getJuuri()).getAvain()==2);
-        Assert.assertTrue(puu.sopivaVanhempi(new Solmu(12), puu.getJuuri()).getAvain()==9);
+        Assert.assertTrue(luvut.toString(), uusi.etsi(21)==null);
     }
     
     @Test
     public void etsiTest(){
         Assert.assertNull(puu.etsi(10));
         Assert.assertTrue(puu.etsi(1).getAvain()==1);
+        Assert.assertNotNull(puu.etsi(6));
         Assert.assertTrue(puu.etsi(6).getAvain()==6);
     }
    

@@ -9,6 +9,7 @@ import mylly.Lauta;
 import mylly.Lista;
 import mylly.Perus;
 import mylly.Puu;
+import mylly.SijaintiPuu;
 import mylly.Solmu;
 import mylly.Tekoaly;
 import org.junit.After;
