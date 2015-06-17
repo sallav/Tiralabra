@@ -60,19 +60,20 @@ public class AIPelaaja implements Pelaaja{
      * siirraLaudalla -metodi arvioi tekoälyn avulla parhaan siirron, mikä voidaan tehdä laudalla
      * jo olevilla nappuloilla ja toteuttaa sen.
      * @param lauta pelilauta, jossa siirto tehdään
-     * @return sijainti johon siirto tehtiin
+     * @return taulukko, jossa on sijainti, josta siirto tehtiin ja sijainti johon siirto tehtiin
      */
     @Override
-    public int siirraLaudalla(Lauta lauta){
+    public int[] siirraLaudalla(Lauta lauta){
         Solmu solmu = aly.parasSiirto(lauta, this.vari);    //arvioidaan paras siirto: taulukossa ovat arvot mistä ja mihin suuntaan
-        int uusip;      
+        int uusip; 
+        int vanhap = solmu.getAvain();    //paikka jossa olevaa nappulaa siirretään
         try{
-            int sijainti = solmu.getAvain();        //paikka jossa olevaa nappulaa siirretään
-            uusip = lauta.siirra(sijainti/8, sijainti%8, solmu.getSuunta());  //tehdään siirto haluttuun suuntaan (ylös, alas, vasemmalle tai oikealle mahdollisuuksien mukaan) 
+            uusip = lauta.siirra(vanhap/8, vanhap%8, solmu.getSuunta());  //tehdään siirto haluttuun suuntaan (ylös, alas, vasemmalle tai oikealle mahdollisuuksien mukaan) 
         }catch(Exception e){    //ei pitäisi tulla virhettä tässä tapauksessa, vaikka metodi heittää poikkeuksen
             uusip = -1;      
         }
-        return uusip;   //uusi paikka
+        int[] pal = {vanhap, uusip};
+        return pal;   //uusi paikka
     }
     
     /**
@@ -83,8 +84,9 @@ public class AIPelaaja implements Pelaaja{
      * @return  sijainti, johon siirto tehtiin
      */
     @Override
-    public int lenna(Lauta lauta){
-        return 0;
+    public int[] lenna(Lauta lauta){
+        int[] pal = new int[2]; 
+        return pal;
     }
     
     /**

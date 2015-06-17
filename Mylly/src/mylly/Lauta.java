@@ -120,12 +120,14 @@ public class Lauta {
      */
     public void laitaMerkki(int j, int i, int vari) throws Exception{
         if(this.lauta[j][i]==1 || this.lauta[j][i]==2) throw new Exception();   //jos paikassa on jo merkki
+        else{
             this.lauta[j][i] = vari;     //uudeksi arvoksi 1 tai 2 varista riippuen
             if(vari==1){
                 puuSiirto(((j*8)+i), this.tyhjat, this.mustat, 1, 1);   //siirto tyhjistä mustiiin
             }if(vari==2){
                 puuSiirto(((j*8)+i), this.tyhjat, this.valkoiset, 2, 1); //siirto tyhjistä valkoisiin
             }
+        }
     }
     
     /**
@@ -140,6 +142,7 @@ public class Lauta {
      */
     public void poista(int j, int i, int vari) throws Exception{
         if(this.lauta[j][i]!=vari)  throw new Exception(); //ei oikean väristä merkkiä
+        else{
             if(vari==1){
                 puuSiirto(((j*8)+i), this.mustat, this.tyhjat, 1,(-1)); //siirretään mustista tyhjiin ja vähennetään mustien määrää
             }
@@ -147,6 +150,7 @@ public class Lauta {
                 puuSiirto(((j*8)+i), this.valkoiset, this.tyhjat, 2, (-1));  //siirretään valkoisista tyhjiin ja vähennetään valkoisten määrää
             }
             this.lauta[j][i] = 0;
+        }
     }
     
     /**
@@ -162,14 +166,16 @@ public class Lauta {
      */
     public void syo(int j, int i, int vari) throws Exception{
         if(this.lauta[j][i]!=vari)  throw new Exception();  //ei oikean väristä merkkiä
-        if(vari==1){
-            puuSiirto(((j*8)+i), this.mustat, this.tyhjat, 1, (-1));
-            msyoty++;
-        }if(vari==2){
-            puuSiirto(((j*8)+i), this.valkoiset, this.tyhjat, 2, (-1));
-            vsyoty++;
-        }
-        this.lauta[j][i] = 0;
+        else {
+            if(vari==1){
+                puuSiirto(((j*8)+i), this.mustat, this.tyhjat, 1, (-1));
+                msyoty++;
+            }if(vari==2){
+                puuSiirto(((j*8)+i), this.valkoiset, this.tyhjat, 2, (-1));
+                vsyoty++;
+            }
+            this.lauta[j][i] = 0;
+            }
     }
     
     /**
@@ -187,16 +193,18 @@ public class Lauta {
      */
     public void peruSyonti(int j, int i, int vari) throws Exception{
         if(this.lauta[j][i]==1 || this.lauta[j][i]==2)  throw new Exception();
-        if(vari==1){
-            puuSiirto(((j*8)+i), this.tyhjat, this.mustat, 1, 1);
-            msyoty--;
-        }else if(vari==2){
-            puuSiirto(((j*8)+i), this.tyhjat, this.valkoiset, 2,1);
-            vsyoty--;
-        }else{
-            throw new Exception();
+        else {
+            if(vari==1){
+                puuSiirto(((j*8)+i), this.tyhjat, this.mustat, 1, 1);
+                msyoty--;
+            }else if(vari==2){
+                puuSiirto(((j*8)+i), this.tyhjat, this.valkoiset, 2,1);
+                vsyoty--;
+            }else{
+                throw new Exception();
+            }
+            this.lauta[j][i] = vari;
         }
-        this.lauta[j][i] = vari;
     }
     
     public void puuSiirto(int avain, Puu poistettava, Puu lisattava, int vari, int muutos){
@@ -224,13 +232,11 @@ public class Lauta {
      * @throws Exception jos uudessa paikassa on jo nappi tai siirto on laiton.
      */
     public int siirra(int j, int i, char suunta) throws Exception{
-        switch(suunta){
-            case 'y':   if(j>0 || i%2!=0)   return siirto(j, i, j-1, i);    //riveillä 1 ja 2 voi siirtyä ylös eli ulommille neliöille keskipaikoilta 
-            case 'a':   if(j<2 || i%2!=0)   return siirto(j, i, j+1, i);    //riveillä 0 ja 1 voi siirtyä alas eli sisemmille neliöille keskipaikoilta
-            case 'v':   return siirto(j, i, j, vas(i));                 //vasemmalle neliön sisällä
-            case 'o':   return siirto(j, i, j, oik(i));                 //oikealle neliön sisällä
-            default:    throw new Exception();          //virheellinen parametri
-        }
+            if(suunta=='y' && (j>0 || i%2!=0))   return siirto(j, i, j-1, i);    //riveillä 1 ja 2 voi siirtyä ylös eli ulommille neliöille keskipaikoilta 
+            if(suunta=='a' && (j<2 || i%2!=0))   return siirto(j, i, j+1, i);    //riveillä 0 ja 1 voi siirtyä alas eli sisemmille neliöille keskipaikoilta
+            if(suunta=='v')   return siirto(j, i, j, vas(i));                 //vasemmalle neliön sisällä
+            if(suunta=='o')   return siirto(j, i, j, oik(i));                 //oikealle neliön sisällä
+            else return (8*j)+i;
     }
     
     /**
@@ -247,9 +253,11 @@ public class Lauta {
      */
     public int siirto(int vanhaj, int vanhai, int uusij, int uusii) throws Exception{
         if(this.lauta[uusij][uusii]==1 || this.lauta[uusij][uusii]==2)  throw new Exception();  //paikalla on jo merkki
+        else{
             this.lauta[uusij][uusii] = this.lauta[vanhaj][vanhai];
             this.lauta[vanhaj][vanhai] = 0;     //vanha sijainti jää tyhjäksi
-            return (uusij*8) + uusii;       
+            return (uusij*8) + uusii;           //palautetaan uusi sijainti
+        }
     }
     
     /**

@@ -112,13 +112,12 @@ public class Peli {
      * @param pelaaja
      */
     public void pelaaLaudalle(Pelaaja pelaaja, int pelaamatta){
+        this.kayttol.ilmoitaVuoro(pelaaja.vari());
         int sij = pelaaja.siirraLaudalle(lauta, pelaamatta);        //siirretään uusi nappula laudalle
         this.kayttol.paivitaLauta(sij, pelaaja.vari(), false);
         this.kayttol.tulostaLauta();
         if(lauta.mylly(pelaaja.vari(), sij)){
-            int psij = pelaaja.poistaLaudalta(lauta, pelaamatta-1, sij); // poistetaan vastapuolen nappi
-            this.kayttol.paivitaLauta(psij, 3-pelaaja.vari(), true);
-            this.kayttol.tulostaLauta();
+            poistaLaudalta(pelaaja, pelaamatta, sij);
         }
     }
     
@@ -131,16 +130,23 @@ public class Peli {
      * @param pelaaja
      */
     public void pelaaLaudalla(Pelaaja pelaaja){
-        int sij;
+        int[] sij;
+        this.kayttol.ilmoitaVuoro(pelaaja.vari());
         if(pelaaja.laudalla(lauta)>3)   sij = pelaaja.siirraLaudalla(lauta); //siirretään jotain laudalla jo olevaa nappia
         else sij = pelaaja.lenna(lauta);                //kun vain 3 nappia jäljellä
-        this.kayttol.paivitaLauta(sij, pelaaja.vari(), false);
+        this.kayttol.paivitaLauta(sij[0], pelaaja.vari(), true);
+        this.kayttol.paivitaLauta(sij[1], pelaaja.vari(), false);
         this.kayttol.tulostaLauta();
-        if(lauta.mylly(pelaaja.vari(), sij)){
-            int psij = pelaaja.poistaLaudalta(lauta, 0, sij);           // poistetaan vastapuolen nappi
-            this.kayttol.paivitaLauta(psij, 3-pelaaja.vari(), true);
-            this.kayttol.tulostaLauta();
+        if(lauta.mylly(pelaaja.vari(), sij[1])){
+            poistaLaudalta(pelaaja, 0, sij[1]);    // poistetaan vastapuolen nappi
         }
+    }
+    
+    public void poistaLaudalta(Pelaaja pelaaja, int pelaamatta, int edel){
+        this.kayttol.ilmoitaMylly(pelaaja.vari());
+        int psij = pelaaja.poistaLaudalta(lauta, pelaamatta, edel);
+        this.kayttol.paivitaLauta(psij, 3-pelaaja.vari(), true);
+        this.kayttol.tulostaLauta();
     }
     
     /**

@@ -18,6 +18,10 @@ public interface Kayttoliittyma {
      */
     public abstract int pelinValinta();
     
+    public abstract void ilmoitaVuoro(int pelaajanvari);
+    
+    public abstract void ilmoitaMylly(int pelaajanvari);
+    
     /**
      * paivitaLauta -metodi päivittää laudalle parametrina annetun siirron
      * @param siirto sijainti johon siirto tehtiin

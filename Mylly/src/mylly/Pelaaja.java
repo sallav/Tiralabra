@@ -30,7 +30,7 @@ public interface Pelaaja {
      * @param l Lauta -luokan ilmentymä, jossa peliä pelataan
      * @return sijainti, johon siirto tehtiin (0-23)
      */
-    public abstract int siirraLaudalla(Lauta l);
+    public abstract int[] siirraLaudalla(Lauta l);
 
     /**
      * lenna -metodi tekee siirron mihin tahansa tyhjään sijaintiin, kun pelaajalla
@@ -38,7 +38,7 @@ public interface Pelaaja {
      * @param l Lauta -luokan ilmentymä, jossa peliä pelataan
      * @return sijainti, johon siirto tehtiin (0-23)
      */
-    public abstract int lenna(Lauta l);
+    public abstract int[] lenna(Lauta l);
 
     /**
      * laudalla -metodi palauttaa pelaajan pelilaudalla olevien merkkien määrän 

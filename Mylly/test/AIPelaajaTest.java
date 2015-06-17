@@ -89,7 +89,7 @@ public class AIPelaajaTest {
     
     @Test
     public void siirraLaudallaTest(){
-        int uusipaikka = pelaaja.siirraLaudalla(pelilauta);
+        int uusipaikka = pelaaja.siirraLaudalla(pelilauta)[1];
         Assert.assertTrue(uusipaikka>=0);
         Assert.assertTrue(uusipaikka<24);
         Assert.assertEquals(1, pelilauta.merkki(uusipaikka/8, uusipaikka%8));
@@ -98,7 +98,7 @@ public class AIPelaajaTest {
     
     @Test
     public void lennaTest(){
-        int uusipaikka = pelaaja.lenna(pelilauta);
+        int uusipaikka = pelaaja.lenna(pelilauta)[1];
         Assert.assertTrue(uusipaikka>=0);
         Assert.assertTrue(uusipaikka<24);
         Assert.assertEquals(1, pelilauta.merkki(uusipaikka/8, uusipaikka%8));

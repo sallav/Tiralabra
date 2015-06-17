@@ -100,7 +100,7 @@ public class TKayttoliittymaTest {
         Assert.assertEquals(284, kayttol.indeksi(4, 0));
         Assert.assertEquals(274, kayttol.indeksi(5, 0));
         Assert.assertEquals(264, kayttol.indeksi(6, 0));
-        Assert.assertEquals(235, kayttol.indeksi(4, 1));
+        Assert.assertEquals(237, kayttol.indeksi(4, 1));
         Assert.assertEquals(228, kayttol.indeksi(5, 1));
         Assert.assertEquals(221, kayttol.indeksi(6, 1));
         Assert.assertEquals(190, kayttol.indeksi(4, 2));

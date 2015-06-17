@@ -64,6 +64,18 @@ public class TKayttoliittyma implements Kayttoliittyma{
         String merkit = pelilauta.toString();
         return merkit;
     }
+    
+    @Override
+    public void ilmoitaVuoro(int vari){
+        if(vari==1) System.out.println("Vuorossa musta");
+        else if(vari==2) System.out.println("Vuorossa valkoinen");
+    }
+    
+    @Override
+    public void ilmoitaMylly(int vari){
+        if(vari==1) System.out.println("Mustalla mylly, poista vastustajan pelimerkki");
+        else if(vari==2)    System.out.println("Valkoisella mylly, poista vastustajan pelimerkki");
+    }
 
     /**
      * tulostaLauta -metodi tulostaa merkkijonoesityksen pelin pelilaudasta ja sen 
@@ -90,7 +102,7 @@ public class TKayttoliittyma implements Kayttoliittyma{
     public void paivitaLauta(int siirto, int vari, boolean poisto){
         char merkki = 'o';
         int ind = indeksi(siirto%8, siirto/8);
-        pelilauta.setCharAt(edel, pelilauta.substring(edel, edel+1).toLowerCase().charAt(0));
+        pelilauta.setCharAt(edel, pelilauta.substring(edel, edel+1).toLowerCase().charAt(0)); 
         if(vari==1) merkki = 'M';
         if(vari==2) merkki = 'V';
         if(poisto)  merkki = 'O';        
@@ -108,7 +120,7 @@ public class TKayttoliittyma implements Kayttoliittyma{
      */
     public int indeksi(int paikka, int rivi){
         if(paikka<3)    return rivi*44 + paikka*10 + rivi*3 - rivi*paikka*3;
-        if(paikka>3 && paikka<7)    return 286 - (rivi*46) - 2 - ((-4 + paikka)*10) - (rivi*3) + ((-4+paikka)*3*rivi);
+        if(paikka>3 && paikka<7)    return 286 - (rivi*44) - 2 - ((-4 + paikka)*10) - (rivi*3) + ((-4+paikka)*3*rivi);
         if(paikka==3)   return 132 + 20 - (rivi*3);
         else            return 132 + (rivi*3);
     }

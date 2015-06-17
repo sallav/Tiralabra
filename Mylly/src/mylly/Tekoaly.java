@@ -351,7 +351,7 @@ public class Tekoaly {
                     }
                     System.out.println("");
        }catch(Exception e){                    //jos paikka on epäsopiva, esim. varattu, heitetään poikkeus merkkiä laitettaessa
-            if(omavuoro)tulos = -28700;            //"tätä paikkaa ei haluta käyttää"
+            if(omavuoro)tulos = -1000;            //"tätä paikkaa ei haluta käyttää"
         }
         return tulos;                           //kuinka hyvään lopputulokseen kys. sijainti johtaisi
     }
@@ -421,8 +421,9 @@ public class Tekoaly {
     public int kokeileSuunta(Lauta lauta, int j, int i, char suunta, int vari, int k, boolean omavuoro){
             int tulos = 1000; 
             try{
-                int uusip = lauta.siirra(j, i, suunta);                 //kokeillaan siirtää merkkiä annettuun suuntaan
-                    if(lauta.mylly(vari, uusip))    tulos = poisto(lauta, vari, k, 0, omavuoro, (j*8)+i);    //jos syntyi mylly saadaan poistaa vastapuolen merkki
+                int uusip = lauta.siirra(j, i, suunta);//kokeillaan siirtää merkkiä annettuun suuntaan
+                    if(uusip==(j*8)+i)  throw new Exception();  //ei voitu siirtää nappia mihinkään
+                    else if(lauta.mylly(vari, uusip))    tulos = poisto(lauta, vari, k, 0, omavuoro, (j*8)+i);    //jos syntyi mylly saadaan poistaa vastapuolen merkki
                     else tulos = siirtoLaudalle(lauta, 3-vari, k+1, 0, !omavuoro, (j*8)+i);  //jos ei myllyä on toisen pelaajan vuoro
                 lauta.siirra(uusip/8, uusip%8, vastaSuunta(suunta));     //perutaan tehty siirto
                 }catch(Exception e){                //jos sijainti on epäsopiva, esim. varattu
