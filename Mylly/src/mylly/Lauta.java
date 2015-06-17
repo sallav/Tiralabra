@@ -200,10 +200,14 @@ public class Lauta {
     }
     
     public void puuSiirto(int avain, Puu poistettava, Puu lisattava, int vari, int muutos){
-        Solmu lisa = poistettava.poista(avain);
-        lisattava.lisaa(lisa);
-        if(vari==1) this.mustia = this.mustia + muutos;
-        if(vari==2) this.valkoisia = this.valkoisia + muutos;
+        try{
+            Solmu lisa = poistettava.poista(avain);
+            lisattava.lisaa(lisa);
+            if(vari==1) this.mustia = this.mustia + muutos;
+            if(vari==2) this.valkoisia = this.valkoisia + muutos;
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
     }
     
     /**
@@ -266,8 +270,8 @@ public class Lauta {
      * @throws Exception jos annettu väri on tuntematon eli ei 1 tai 2
      */
     public int montakoNappia(int vari) throws Exception{
-        if(vari==1) return mustia;
-        if(vari==2) return valkoisia;
+        if(vari==1) return this.mustia;
+        if(vari==2) return this.valkoisia;
         else throw new Exception();     //virheellinen parametri
     }
     

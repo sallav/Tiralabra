@@ -42,7 +42,8 @@ public class SijaintiPuu2 implements Puu{
     
     public void setJuuri(Solmu solmu){
         this.juuri = solmu;
-        solmu.setVanhempi(null);
+        if(this.juuri==null) this.koko = 0;
+        else this.juuri.setVanhempi(null);
     }
     
     @Override
@@ -76,13 +77,17 @@ public class SijaintiPuu2 implements Puu{
         return true;
     }
     
-    private boolean lisaaJuureen(Solmu usolmu, int uavain, Solmu juuri){
-        if(usolmu==null)    return false;
-        Solmu vanhempi = etsiVanhempi(uavain, juuri);
-        if(vanhempi==null)  return false;
-        if(uavain<vanhempi.getAvain())   vanhempi.setVasen(usolmu);
-        else if(uavain>vanhempi.getAvain())  vanhempi.setOikea(usolmu);
-        usolmu.setVanhempi(vanhempi);
+    private boolean lisaaJuureen(Solmu solmu, int avain, Solmu juuri){
+        if(juuri==this.juuri && this.juuri==null)    setJuuri(solmu);
+        else{
+            if(solmu==null || juuri==null)    return false;
+            Solmu vanhempi = etsiVanhempi(avain, juuri);
+            int vavain = vanhempi.getAvain();
+            if(vanhempi==null || vavain==avain)  return false;
+            if(avain<vavain)   vanhempi.setVasen(solmu);
+            else if(avain>vavain)  vanhempi.setOikea(solmu);
+            solmu.setVanhempi(vanhempi);
+        }
         return true;
     }
     
@@ -90,25 +95,57 @@ public class SijaintiPuu2 implements Puu{
     public Solmu poista(int avain){
         Solmu p = etsi(avain, this.juuri);
         if(p!=null){
-            Solmu vanhempi = p.getVanhempi();
-            Solmu vas = p.getVasen();
-            Solmu oik = p.getOikea();
-            Solmu uusilapsi;
-            if(vas!=null)   {
-                uusilapsi = vas;
-                if(oik!=null)  lisaaJuureen(oik, oik.getAvain(), vas);
-            }
-            else uusilapsi = oik; 
-            if(vanhempi==null) setJuuri(uusilapsi);
-            else if(p==vanhempi.getVasen()) vanhempi.setVasen(uusilapsi);
-            else vanhempi.setOikea(uusilapsi);
-            uusilapsi.setVanhempi(vanhempi);
-            p.setVanhempi(null);
-            this.koko--;
+            poisto(p);
         }
         return p;
     }
     
+    private void poisto(Solmu p){
+        Solmu vanhempi = p.getVanhempi();
+        Solmu vas = p.getVasen();
+        Solmu oik = p.getOikea();
+        irrota(p);    
+        Solmu uusilapsi = oik;
+        if(vas!=null) uusilapsi = vas;
+            if(vanhempi==null && uusilapsi==null)   nollaaJuuri();
+            else{ 
+                if(vanhempi==null)    setJuuri(uusilapsi);
+                else if(uusilapsi==null)    nollaaLapsi(vanhempi, p==vanhempi.getVasen());
+                else    vanhemmanLapseksi(vanhempi, uusilapsi, p==vanhempi.getVasen());
+                this.koko--;
+                if(vas!=null && oik!=null) lisaaAlipuuhun(oik, vas);
+            }
+    }
+    
+    private void lisaaAlipuuhun(Solmu solmu, Solmu juuri){
+        solmu.setVanhempi(null);
+        int avain = solmu.getAvain();
+        lisaaJuureen(solmu, avain, juuri);
+    }
+    
+    private void irrota(Solmu p){
+        p.setVanhempi(null);
+        p.setOikea(null);
+        p.setVasen(null);        
+    }
+    
+    private void nollaaLapsi(Solmu vanhempi, boolean vasen){
+        if(vasen)   vanhempi.setVasen(null);
+        else    vanhempi.setOikea(null);
+    }
+    
+    private void nollaaJuuri(){
+        this.juuri = null;
+        this.koko = 0;
+    }
+    
+    public void vanhemmanLapseksi(Solmu vanhempi, Solmu lapsi, boolean vasemmalle){
+        if(vasemmalle)   vanhempi.setVasen(lapsi);
+        else    vanhempi.setOikea(lapsi);
+        lapsi.setVanhempi(vanhempi);
+    }
+    
+    @Override
     public Solmu etsi(int avain){
         return etsi(avain, this.juuri);
     }
@@ -122,11 +159,13 @@ public class SijaintiPuu2 implements Puu{
     }
     
     public Solmu etsiVanhempi(int avain, Solmu juuri){
+        if(juuri==null) return null;
         int juurenavain = juuri.getAvain();
+        if(juurenavain==avain)  return juuri;
         if(avain<juurenavain && juuri.getVasen()==null) return juuri;          //sopiva vanhempi
         else if(avain>juurenavain && juuri.getOikea()==null)   return juuri;   //sopiva vanhempi
-        else if(avain<juurenavain)   return etsiVanhempi(avain, juuri.getVasen());
-        else if(avain>juurenavain)  return etsiVanhempi(avain, juuri.getOikea());
+        else if(avain<juurenavain)   return etsiVanhempi(avain, juuri.getVasen());  //vasempaan alipuuhun
+        else if(avain>juurenavain)  return etsiVanhempi(avain, juuri.getOikea());   //oikeaan alipuuhun
         else return null;   //ei voida lisätä puuhun
     }
     
@@ -138,9 +177,12 @@ public class SijaintiPuu2 implements Puu{
     @Override
     public Puu teeKopio(){
         Puu kopio = new SijaintiPuu2();
-        for(int i=0; i<this.koko; i++){
-            kopio.lisaa(etsi(i, this.juuri));
-                }
+        for(int i=0; i<24; i++){
+            Solmu kopioitava = etsi(i, this.juuri);
+            if(kopioitava!=null){
+                Solmu uusi = new Solmu(kopioitava.getAvain(), kopioitava.getArvo());
+                kopio.lisaa(uusi);
+            }}
         return kopio;
     }
 }

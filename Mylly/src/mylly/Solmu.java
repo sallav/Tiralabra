@@ -80,6 +80,7 @@ public class Solmu implements Comparable{
      * @param lapsi Solmu -luokan ilmentymä, joka asetetaan solmun vasemmaksi lapseksi
      */
     public void setVasen(Solmu lapsi){
+        if(lapsi==null) this.vasen = null;
         this.vasen = lapsi;
     }
     
@@ -89,6 +90,7 @@ public class Solmu implements Comparable{
      * @param lapsi Solmu -luokan ilmentymä, joka asetetaan solmun oikeaksi lapseksi
      */
     public void setOikea(Solmu lapsi){
+        if(lapsi==null) this.oikea = null;
         this.oikea = lapsi;
     }
     
@@ -97,6 +99,7 @@ public class Solmu implements Comparable{
      * @param vanhempi Solmu -luokan ilmentymä, joka asetetaan solmun vanhemmaksi
      */
     public void setVanhempi(Solmu vanhempi){
+        if(vanhempi==null)  this.vanhempi = null;
         this.vanhempi = vanhempi;
     }
     

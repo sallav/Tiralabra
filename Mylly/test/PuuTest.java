@@ -103,7 +103,9 @@ public class PuuTest {
     
     @Test
     public void poistaTest2(){
-        Assert.assertTrue(puu.poista(2).getAvain()==2);
+        Solmu p = puu.poista(2);
+        Assert.assertNotNull(p);
+        Assert.assertTrue(p.getAvain()==2);
         Assert.assertNull(puu.etsi(2));
         Assert.assertEquals(5, puu.getKoko());
         Assert.assertNotNull(puu.getJuuri());

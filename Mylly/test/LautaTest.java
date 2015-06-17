@@ -116,7 +116,11 @@ public class LautaTest {
         Puu v = pelilauta.getValkoiset();
         Assert.assertEquals(1, m.getKoko());
         pelilauta.puuSiirto(16, m, v, 1, (-1));
-        Assert.assertTrue(m.getJuuri()==null);
+        Assert.assertNull(m.getJuuri());
+        Assert.assertNull(m.etsi(16));
+        Assert.assertEquals(0, m.getKoko());
+        Assert.assertNotNull(v.getJuuri());
+        Assert.assertNotNull(v.etsi(16));
         Assert.assertEquals(16, v.getJuuri().getAvain());
         Assert.assertEquals(0, pelilauta.montakoNappia(1));
         Assert.assertEquals(1, v.getKoko());
@@ -125,16 +129,23 @@ public class LautaTest {
     
     @Test
     public void puuSiirto2Test(){
-        Puu t = pelilauta.getTyhjat();
-        Puu m = pelilauta.getMustat();
-        Assert.assertEquals(23, t.getKoko());
-        pelilauta.puuSiirto(16, m, t, 1, (-1));
-        Assert.assertTrue(t.etsi(16).getAvain()==16);
-        pelilauta.puuSiirto(18, t, m, 1, 1);
-        pelilauta.puuSiirto(7, t, m, 1, 1);
-        Assert.assertEquals(22, t.getKoko());
-        Assert.assertEquals(18, m.getJuuri().getAvain());
-        Assert.assertEquals(2, m.getKoko());
+        Puu tyhjat = pelilauta.getTyhjat();
+        Puu mustat = pelilauta.getMustat();
+        Assert.assertEquals(23, tyhjat.getKoko());
+        Assert.assertEquals(1, mustat.getKoko());
+        pelilauta.puuSiirto(16, mustat, tyhjat, 1, (-1));
+        Assert.assertNotNull(tyhjat.getJuuri());
+        Assert.assertEquals(24, tyhjat.getKoko());
+        Assert.assertNotNull(tyhjat.etsi(16));
+        Assert.assertTrue(tyhjat.etsi(16).getAvain()==16);
+        Assert.assertEquals(0, mustat.getKoko());
+        Assert.assertTrue(mustat.etsi(16)==null);
+        Assert.assertTrue(mustat.getJuuri()==null);
+        pelilauta.puuSiirto(18, tyhjat, mustat, 1, 1);
+        pelilauta.puuSiirto(7, tyhjat, mustat, 1, 1);
+        Assert.assertEquals(22, tyhjat.getKoko());
+        Assert.assertEquals(18, mustat.getJuuri().getAvain());
+        Assert.assertEquals(2, mustat.getKoko());
     }
     
     @Test
