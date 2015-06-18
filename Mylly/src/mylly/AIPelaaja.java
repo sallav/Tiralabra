@@ -47,7 +47,7 @@ public class AIPelaaja implements Pelaaja{
      */
     @Override
     public int siirraLaudalle(Lauta lauta, int nappeja){
-        int paikka = aly.parasTyhjista(lauta, this.vari, nappeja); //paras tyhjistä laudalla olevista sijainneista
+        int paikka = aly.parasTyhjista(lauta, this.vari, nappeja).getAvain(); //paras tyhjistä laudalla olevista sijainneista
         try{
             lauta.laitaMerkki(paikka/8, paikka%8, this.vari);   //laitetaan uusi merkki valittuun sijaintiin
         }catch(Exception e){        //ei periaatteessa pitäisi tulla virhettä
@@ -85,7 +85,15 @@ public class AIPelaaja implements Pelaaja{
      */
     @Override
     public int[] lenna(Lauta lauta){
-        int[] pal = new int[2]; 
+        Solmu solmu = aly.parasLento(lauta, this.vari);
+        int vanhap = solmu.getAvain();
+        int uusip = solmu.getKohde().getAvain();
+        try{
+            lauta.siirto(vanhap/8, vanhap%8, uusip/8, uusip%8);
+        }catch(Exception e){
+            uusip = -1;
+        }
+        int[] pal = {vanhap, uusip};
         return pal;
     }
     
@@ -114,7 +122,7 @@ public class AIPelaaja implements Pelaaja{
     public int poistaLaudalta(Lauta lauta, int nappeja, int edel){
         int poistettava;
         try{
-            poistettava = aly.parasPoisto(lauta, this.vari, nappeja, edel);
+            poistettava = aly.parasPoisto(lauta, this.vari, nappeja, edel).getAvain();
             lauta.syo(poistettava/8, poistettava%8, 3-this.vari);
         }catch(Exception e){
             return -1;

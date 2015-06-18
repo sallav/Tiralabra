@@ -24,4 +24,6 @@ public interface Puu {
     public abstract int getKoko();
     
     public abstract Puu teeKopio(); 
+    
+    public abstract Lista esijarjestys();
 }

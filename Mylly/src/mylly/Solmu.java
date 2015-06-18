@@ -17,6 +17,7 @@ public class Solmu implements Comparable{
     int avain;
     int arvo;
     char suunta;
+    Solmu kohde;
     
     /**
      * Solmu -luokan konstruktori alustaa avaimen arvoksi annetun parametrin 
@@ -30,6 +31,7 @@ public class Solmu implements Comparable{
         this.avain = avain;
         this.arvo = 0;
         this.suunta = 'x';
+        this.kohde = null;
     }
     
     public Solmu(int avain, int arvo){
@@ -39,6 +41,7 @@ public class Solmu implements Comparable{
         this.avain = avain;
         this.arvo = arvo;
         this.suunta = 'x';
+        this.kohde = null;
     }
     
     /**
@@ -55,6 +58,7 @@ public class Solmu implements Comparable{
         this.avain = avain;
         this.arvo = 0;
         this.suunta = 'x';
+        this.kohde = null;
     }
     
     /**
@@ -112,6 +116,10 @@ public class Solmu implements Comparable{
         this.suunta = suunta;
     }
     
+    public void setKohde(Solmu solmu){
+        this.kohde = solmu;
+    }
+    
     /**
      * getVanhempi -metodi palauttaa solmun vanhemman
      * @return Solmu -luokan ilmentymä, joka on asetettu solmun vanhemmaksi 
@@ -161,6 +169,10 @@ public class Solmu implements Comparable{
      */
     public char getSuunta(){
         return this.suunta;
+    }
+    
+    public Solmu getKohde(){
+        return this.kohde;
     }
 
     @Override

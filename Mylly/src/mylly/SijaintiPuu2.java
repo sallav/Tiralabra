@@ -185,4 +185,18 @@ public class SijaintiPuu2 implements Puu{
             }}
         return kopio;
     }
+    
+        public Lista esijarjestys(){
+        Lista luvut = new Lista();
+        esijarjHelper(luvut, this.juuri);
+        return luvut;
+    }
+    
+    private void esijarjHelper(Lista luvut, Solmu juuri){
+        if(juuri!=null){
+        luvut.lisaa(juuri);
+        esijarjHelper(luvut, juuri.getVasen());
+        esijarjHelper(luvut, juuri.getOikea());
+        }
+    }
 }

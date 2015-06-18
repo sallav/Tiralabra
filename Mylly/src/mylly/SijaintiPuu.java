@@ -266,16 +266,15 @@ public class SijaintiPuu implements Puu{
         return null;
     }
     
-    public ArrayList<Integer> esijarjestys(){
-//        int[] luvut = new int[this.koko];
-        ArrayList<Integer> luvut = new ArrayList<Integer>();
+    public Lista esijarjestys(){
+        Lista luvut = new Lista();
         esijarjHelper(luvut, this.juuri);
         return luvut;
     }
     
-    private void esijarjHelper(ArrayList<Integer> luvut, Solmu juuri){
+    private void esijarjHelper(Lista luvut, Solmu juuri){
         if(juuri!=null){
-        luvut.add(juuri.getAvain());
+        luvut.lisaa(juuri);
         esijarjHelper(luvut, juuri.getVasen());
         esijarjHelper(luvut, juuri.getOikea());
         }

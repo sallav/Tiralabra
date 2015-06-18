@@ -134,8 +134,8 @@ public class Peli {
         this.kayttol.ilmoitaVuoro(pelaaja.vari());
         if(pelaaja.laudalla(lauta)>3)   sij = pelaaja.siirraLaudalla(lauta); //siirretään jotain laudalla jo olevaa nappia
         else sij = pelaaja.lenna(lauta);                //kun vain 3 nappia jäljellä
-        this.kayttol.paivitaLauta(sij[0], pelaaja.vari(), true);
-        this.kayttol.paivitaLauta(sij[1], pelaaja.vari(), false);
+        this.kayttol.paivitaLauta(sij[0], pelaaja.vari(), true);        //poistetaan vanhasta sijainnista
+        this.kayttol.paivitaLauta(sij[1], pelaaja.vari(), false);       //lisätään uuteen sijaintiin
         this.kayttol.tulostaLauta();
         if(lauta.mylly(pelaaja.vari(), sij[1])){
             poistaLaudalta(pelaaja, 0, sij[1]);    // poistetaan vastapuolen nappi
