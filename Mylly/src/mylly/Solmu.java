@@ -104,7 +104,7 @@ public class Solmu implements Comparable{
      */
     public void setVanhempi(Solmu vanhempi){
         if(vanhempi==null)  this.vanhempi = null;
-        this.vanhempi = vanhempi;
+        else this.vanhempi = vanhempi;
     }
     
     /**

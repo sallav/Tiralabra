@@ -38,6 +38,15 @@ public class Lista {
     }
     
     /**
+     * tyhja -metodi kertoo onko lista tyhjä
+     * @return true jos lista on tyhjä, false jos listassa on solmuja
+     */
+    public boolean tyhja(){
+        if(this.vika==null && this.koko==0) return true;
+        return false;
+    }
+    
+    /**
      * lisaa -metodi luo uuden ListaSolmu -olion, joka sisältää parametrina annetun
      * Solmu -luokan ilmentymän muuttujanaan sekä lisää tämän listan ensimmäiseksi alkioksi.
      * ListaSolmu -olioon lisätään linkki edelliseen listan ensimmäisenä olleeseen alkioon 
@@ -54,6 +63,18 @@ public class Lista {
         }
         this.eka = uusi;            //lisätty alkio on listan ensimmäinen
         this.koko++;                //listan koko kasvaa yhdellä 
+    }
+    
+    public void lisaa(int avain){
+        ListaSolmu uusi;
+        if(eka==null){
+            uusi = new ListaSolmu(avain);
+            this.vika = uusi;
+        }else{
+            uusi = new ListaSolmu(avain, this.eka);
+        }
+        this.eka = uusi;
+        this.koko++;
     }
     
     /**

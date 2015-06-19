@@ -45,8 +45,7 @@ public class Tekoaly {
     public Solmu parasTyhjista(Lauta lauta, int vari, int pelaamatta){      //kutsutaan kun kaikki napit ei vielä laudalla
         Puu tyhjat = lauta.getTyhjat().teeKopio();     //laudalla olevat tyhjät sijainnit
         Solmu juuri = tyhjat.getJuuri();    
-        Lista parhaat = listaaParhaat(1, juuri, lauta, vari, 0, pelaamatta, 0);
-        System.out.println(parhaat==null);
+        Lista parhaat = listaaParhaat(1, juuri, lauta, vari, 0, pelaamatta);
         return jokuHyvaSijainti(parhaat);            //palautetaan paikka mihin siirtäminen johtaisi parhaaseen lopputulokseen pelaajan kannalta
     }
     
@@ -65,7 +64,7 @@ public class Tekoaly {
         if(vari==1) merkit = lauta.getMustat().teeKopio();
         if(vari==2) merkit = lauta.getValkoiset().teeKopio();
         Solmu juuri = merkit.getJuuri();
-        Lista parhaat = listaaParhaat(2, juuri, lauta, vari, 0, 0, 0);
+        Lista parhaat = listaaParhaat(2, juuri, lauta, vari, 0, 0);
         return jokuHyvaSijainti(parhaat);
     }
     
@@ -77,48 +76,102 @@ public class Tekoaly {
      * @param pelaamatta kuinka monta pelinappulaa pelaajilla on siirtämättä laudalle
      * @return Solmu, jonka avain on sijainti (0-23) mistä vastustajan pelimerkki kannattaa poistaa
      */
-    public Solmu parasPoisto(Lauta lauta, int vari, int pelaamatta, int edel){
+    public Solmu parasPoisto(Lauta lauta, int vari, int pelaamatta) {
         Puu merkit = null;
         if(vari==1) merkit = lauta.getValkoiset().teeKopio();
         if(vari==2) merkit = lauta.getMustat().teeKopio();
         Solmu juuri = merkit.getJuuri();
-        Lista parhaat = listaaParhaat(3, juuri, lauta, vari, 0, pelaamatta, edel);
+        Lista parhaat = listaaParhaat(3, juuri, lauta, vari, 0, pelaamatta);
         return jokuHyvaSijainti(parhaat);              //mikä merkki kannattaa poistaa (ts. merkin sijaintipaikka)
     }
     
+    /**
+     * parasLento -metodi tekee arvion siitä, mitä merkkiä pelaajan kannattaisi siirtää ja
+     * mihin sijaintiin, kun pelaajalla on jäljellä enää kolme merkkiä laudalla ja hän voi
+     * lentää, eli liikkua mihin tahansa sijaintiin laudalla, millä tahansa laudalla olevalla
+     * merkillään.
+     * @param lauta Lauta -luokan ilmentymä, jossa peliä pelataan
+     * @param vari pelaajan väri (1=musta, 2=valkoinen), jonka mahdollisuuksia arvioidaan
+     * @return Solmu, jonka avain on sijainti laudalla, jossa olevaa merkkiä pelaajan kannattaa
+     * siirtää, ja jonka kohde -muuttujaan on asetettu solmu, jonka avaimena olevaan sijaintiin 
+     * merkkiä kannattaisi liikuttaa
+     */
     public Solmu parasLento(Lauta lauta, int vari){
         Lista merkit = null;
         if(vari==1) merkit = lauta.getMustat().teeKopio().esijarjestys();
         if(vari==2) merkit = lauta.getValkoiset().teeKopio().esijarjestys();
-        return listanParas(merkit);
+        return listanParas(lauta, vari, merkit);
     }
  
-    public void listanParas(Lista merkit){
-        parasa = -1000;
-        ListaSolmu x = merkit.getEka();
-        Solmu paras = x.getPuuSolmu();
+    /**
+     * listanParas -metodi käy läpi parametrina annetun listan ja luo uuden listan, joka 
+     * koostuu parhaista listan solmuista, eli solmuista, joiden avaimissa olevissa 
+     * sijainneissa olevia nappeja kannattaa liikuttaa, sekä palauttaa jonkun näistä
+     * solmuista.
+     * @param lauta Lauta -luokan ilmentymä, jossa peliä pelataan
+     * @param vari pelaajan väri(1=musta, 2=valkoinen), jonka mahdollisuuksia arvioidaan
+     * @param lista Lista -luokan olio, joka sisältää laudalla olevien nappuloiden sijainnit
+     * @return Solmu -olio, jonka avaimen osoittamassa sijainnissa olevaa nappulaa kannattaa liikuttaa
+     */
+    public Solmu listanParas(Lauta lauta, int vari, Lista lista){
+        int parasa = -1000;
+        ListaSolmu x = lista.getEka();
+        Lista parhaat = new Lista();
         while(x!=null){
-            paras = poistaJaKokeile(lauta, x.getPuuSolmu(), vari, paras, parasa);
-            parasa = paras.getArvo();
+            parasa = poistaJaKokeile(lauta, x.getPuuSolmu(), vari, parhaat, parasa);
             x = x.getSeuraava();
         }
-        return paras;
+        return jokuHyvaSijainti(parhaat);
     }
     
-    public Solmu poistaJaKokeile(Lauta lauta, Solmu p, int vari, Solmu paras, int parasarvo){
-        int sij = p.getAvain();
+    /**
+     * poistaJaKokeile -metodi poistaa parametrina annetun solmun avaimen osoittamassa sijainnissa 
+     * olevan nappulan ja kokeilee sijoittaa sen uudelleen laudalla oleviin tyhjiin sijainteihin. 
+     * Jos saatava tulos on parempi kuin aikaisemmat, lisätään poistettava solmu parametrina annettuun
+     * parhaiden poistettavien solmujen listaan. Lopuksi poistettu merkki laitetaan takaisin paikalleen
+     * laudalle. Metodi palauttaa parhaan mahdollisen tuloksen.
+     * @param lauta Lauta -luokan ilmentymä, jossa peliä pelataan
+     * @param poistettava Solmu -olio, jonka avaimena olevasta sijainnista merkki poistetaan
+     * @param vari pelaajan väri (1=musta, 2=valkoinen), jonka mahdollisuuksia arvioidaan
+     * @param parhaat Lista -luokan ilmentymä, johon on listattu parhaat poistettavat merkit
+     * @param parasarvo aikaisemmista tuloksista paras
+     * @return tähän astisista tuloksista paras, eli saatu uusi tulos tai aikaisemmin saatu paras arvo 
+     * riippuen siitä kumpi on suurempi
+     */
+    public int poistaJaKokeile(Lauta lauta, Solmu poistettava, int vari, Lista parhaat, int parasarvo){
+        int sij = poistettava.getAvain();
         try{
-            lauta.poista(sij/8, sij%8, vari);
-            Solmu kohde = parasTyhjista(lauta, vari, 1);
-            lauta.laitaMerkki(sij/8, sij%8, vari);
-            p.setKohde(kohde);
-            p.setArvo(kohde.getArvo());
-            if(kohde.getArvo()>parasarvo)   return p;
+            lauta.poista(sij/8, sij%8, vari);                   //poistetaan laudalta oma nappi
+            Solmu kohde = parasTyhjista(lauta, vari, 1);        //paras sijoituskohta poistetulle napille
+            lauta.laitaMerkki(sij/8, sij%8, vari);              //nappi takaisin paikalleen
+            return paivitaParas(poistettava, kohde, parhaat, parasarvo);    //oliko saatu tulos edellisiä parempi
         }catch(Exception e){
-            return paras;
+            return parasarvo;
         }
-        return paras;
     }
+ 
+    /**
+     * paivitaParas -metodi päivittää parametrina annettuun lähtösolmuun kohde muuttujaksi
+     * parametrina annetun kohdesolmun sekä arvoksi kohdesolmun arvon. Jos arvo on parempi
+     * tai yhtäsuuri kuin siihen mennessä saatu paras arvo, päivitetään parhaat lähtösolmut
+     * sisältävä lista uudella lähtösolmulla.
+     * @param lahtos solmu, jonka avaimena olevassa sijainnissa olevaa nappia on kokeiltu siirtää
+     * @param kohde solmu, jonka avaimena olevaan sijaintiin nappia on kokeiltu siirtää
+     * @param parhaat Lista -luokan olio, joka sisältää parhaat lähtösolmut
+     * @param parasarvo aikaisemmista tuloksista paras
+     * @return tähän astisista tuloksista paras, eli saatu uusi tulos tai aikaisemmin saatu paras arvo 
+     * riippuen siitä kumpi on suurempi
+     */
+    public int paivitaParas(Solmu lahtos, Solmu kohde, Lista parhaat, int parasarvo){
+        int tulos = kohde.getArvo();
+        lahtos.setKohde(kohde);
+        lahtos.setArvo(tulos);
+        if(tulos>=parasarvo){
+            paivitaLista(parhaat, lahtos, tulos);
+            return tulos;
+        }
+        return parasarvo;
+    } 
     
     /**
      * jokuHyvaSijainti -metodi arpoo yhden solmun parametrina annetusta listasta
@@ -147,14 +200,14 @@ public class Tekoaly {
      * @param edel edellinen siirto (sijainti 0-23)
      * @return lista solmuista, jotka edustavat parhaita sijainteja laudalla
      */
-    public Lista listaaParhaat(int toimenpide, Solmu juuri, Lauta lauta, int vari, int k, int pelaamatta, int edel){
+    public Lista listaaParhaat(int toimenpide, Solmu juuri, Lauta lauta, int vari, int k, int pelaamatta) {
         Lista parhaat;
         parhaat = new Lista();
         if(juuri!=null){            //saavutettu lehdet           
-            Lista v = listaaParhaat(toimenpide, juuri.getVasen(), lauta, vari, k, pelaamatta, edel);  //vasen puoli puuta
-            Lista o = listaaParhaat(toimenpide, juuri.getOikea(), lauta, vari, k, pelaamatta, edel);  //oikea puoli puuta
+            Lista v = listaaParhaat(toimenpide, juuri.getVasen(), lauta, vari, k, pelaamatta);  //vasen puoli puuta
+            Lista o = listaaParhaat(toimenpide, juuri.getOikea(), lauta, vari, k, pelaamatta);  //oikea puoli puuta
             parhaat = parempiLista(v, o);   //kumpi listoista on parempi
-            int uusiarvo = kokeile(toimenpide, lauta, juuri, vari, k, pelaamatta, true, 0);   //mikä tulos juuren solmulle saadaan
+            int uusiarvo = kokeile(toimenpide, lauta, juuri, vari, k, true, pelaamatta);   //mikä tulos juuren solmulle saadaan
             parhaat = paivitaLista(parhaat, juuri, uusiarvo);   //onko juuri arvoltaan parempi tai yhtä hyvä kuin siihen mennesssä parhaat
         }
         return parhaat;
@@ -171,12 +224,10 @@ public class Tekoaly {
      * @return lista, jossa on tähän mennessä parhaat sijainnit
      */
     public Lista paivitaLista(Lista parhaat, Solmu uusi, int uusiarvo){
-        int listanarvo;
-        uusiarvo = uusi.getArvo();
-        if(parhaat==null) listanarvo = -1000;    //jos Lista olio on null sen arvo on huonoin mahdollinen
-        else listanarvo = parhaat.getArvo();     //muuten listan arvo on listan solmujen arvo
-//        if(uusiarvo>listanarvo) return new Lista(uusi); //jos uusi parempi, hylätään vanha lista
-        if(uusiarvo==listanarvo)    parhaat.lisaa(uusi);    //jos uusi samanarvoinen, lisätään se listaan
+        int listanarvo = -1000;
+        if(parhaat!=null && !parhaat.tyhja()) listanarvo = parhaat.getArvo();
+        if(parhaat==null) parhaat = new Lista();
+        if((uusiarvo==listanarvo || parhaat.tyhja()) && uusiarvo!=-1000)   parhaat.lisaa(uusi);
         else if(uusiarvo>listanarvo) parhaat = new Lista(uusi);
         return parhaat;                                     //palautetaan päivitetty lista
     }
@@ -191,7 +242,7 @@ public class Tekoaly {
     public Lista parempiLista(Lista vasen, Lista oikea){
         int vasena = -1000;
         int oikeaa = -1000;
-        if(vasen==null && oikea==null) return null;
+        if(vasen==null && oikea==null) return new Lista();
         if(vasen!=null) vasena = vasen.getArvo();    //vasemman listan arvo
         if(oikea!=null) oikeaa = oikea.getArvo();    //oikean listan arvo
         if(vasen==null || oikeaa>vasena)    return oikea;
@@ -212,15 +263,14 @@ public class Tekoaly {
      * @param k kuinka syvälle pelipuussa ollaan edetty (puun taso)
      * @param pelaamatta kuinka monta nappulaa on siirtämättä laudalle
      * @param omavuoro onko arvioitavan pelaajan vai vastustajan vuoro
-     * @param edel edellinen siirto
      * @return paras mahdollinen arvo, joka saadaan puussa olevista sijainneista
      */
-    public int kayLapiSijainnit(int toimenpide, Lauta lauta, Solmu juuri, int vari, int k, int pelaamatta, boolean omavuoro, int edel){
+    public int kayLapiSijainnit(int toimenpide, Lauta lauta, Solmu juuri, int vari, int k, boolean omavuoro, int pelaamatta) {
         if(juuri!=null){
-            int v = kayLapiSijainnit(toimenpide, lauta, juuri.getVasen(), vari, k, pelaamatta, omavuoro, edel);
-            int o = kayLapiSijainnit(toimenpide, lauta, juuri.getOikea(), vari, k, pelaamatta, omavuoro, edel);
+            int v = kayLapiSijainnit(toimenpide, lauta, juuri.getVasen(), vari, k, omavuoro, pelaamatta);
+            int o = kayLapiSijainnit(toimenpide, lauta, juuri.getOikea(), vari, k, omavuoro, pelaamatta);
             int paras = parempiArvo(v, o, omavuoro);
-            int uusiarvo = kokeile(toimenpide, lauta, juuri, vari, k, pelaamatta, omavuoro, edel);
+            int uusiarvo = kokeile(toimenpide, lauta, juuri, vari, k, omavuoro, pelaamatta);
             return parempiArvo(paras, uusiarvo, omavuoro);
         }
         else if(omavuoro)    return -1000;
@@ -242,6 +292,21 @@ public class Tekoaly {
     }
     
     /**
+     * kelpo -metodi kertoo onko parametrina annettu sijainnin arvo kelvollinen, eli voidaanko
+     * sen saaneeseen sijaintiin siirtää nappulaa. Jos on oma vuoro ja arvo on -1000 arvo
+     * on epäkelpo tai jos on vastapuolen vuoro ja arvo on 1000 on arvo myös epäkelpo ja tällöin
+     * palautetaan false. Muuten palautetaan true.
+     * @param arvo sijainnin arvo
+     * @param omavuoro arvioidaanko pelaajan vuoroa(true) vai vastapuolen vuoroa(false)
+     * @return true jos sijainnin arvo on kelvollinen eli sijaintiin voidaan siirtää, muuten false
+     */
+    public boolean kelpo(int arvo, boolean omavuoro){
+        if(omavuoro && arvo==-1000) return false;
+        if(!omavuoro && arvo==1000) return false;
+        else return true;
+    }
+    
+    /**
      * kokeile -metodi suorittaa parametrina annetun toimenpiteen parametrina annetun
      * solmun edustamaan sijaintiin ja palauttaa siitä seuraavan arvioidun tuloksen, 
      * asetettuaan sen ensin solmun arvoksi.
@@ -253,21 +318,15 @@ public class Tekoaly {
      * @param k kuinka syvälle pelipuuta on jo gneroitu (puun taso)
      * @param pelaamatta kuinka monta nappulaa on siirtämättä laudalle
      * @param omavuoro onko pelaajan vai vastapelaajan vuoro
-     * @param edel edellinen siirto
      * @return tulos joka kokeillusta siirrosta voidaan saavuttaa
      */
-    public int kokeile(int toimenpide, Lauta lauta, Solmu solmu, int vari, int k, int pelaamatta, boolean omavuoro, int edel){
+    public int kokeile(int toimenpide, Lauta lauta, Solmu solmu, int vari, int k, boolean omavuoro, int pelaamatta) {
         int sij = solmu.getAvain();     //sijainti
         int tulos = 0;
-        switch(toimenpide){
-            case 1: tulos = kokeileSijainti(lauta, sij/8, sij%8, vari, k, omavuoro, pelaamatta);
-                    break;
-            case 2: tulos = kokeileSiirto(lauta, solmu, vari, k, omavuoro);
-                    break;
-            case 3: tulos = kokeilePoistaa(lauta, sij/8, sij%8, vari, k, pelaamatta, omavuoro, edel);
-                    break;
-            case 4: tulos = kokeileLentaa(lauta, sij/8, sij%8, vari, k, omavuoro);
-        }
+            if(toimenpide==1) tulos = kokeileSijainti(lauta, sij/8, sij%8, vari, k, omavuoro, pelaamatta);
+            if(toimenpide==2) tulos = kokeileSiirto(lauta, solmu, vari, k, omavuoro);
+            if(toimenpide==3) tulos = kokeilePoistaa(lauta, sij/8, sij%8, vari, k, omavuoro, pelaamatta);
+            if(toimenpide==4) tulos = kokeileLentaa(lauta, sij/8, sij%8, vari, k, omavuoro);
         solmu.setArvo(tulos);   //päivitetään parametrina annetun solmun arvo tuloksen mukaan
         return tulos;           //palautetaan parametrina annettu solmu
     }
@@ -300,13 +359,13 @@ public class Tekoaly {
      * @return paras mahdollinen tulos johon pelissä päädytään arvioituna asteikolla (-1)-(+1) 
      * (tai joku muu asteikko...)
      */
-    public int siirtoLaudalle(Lauta lauta, int vari, int k, int pelaamatta, boolean omavuoro, int edel){
-        if(k==syvyys)   return arvioiTilanne(lauta, vari, pelaamatta, edel);     //kun haluttu syvyys saavutettu palautetaan arvio tilanteesta        
-        if(pelaamatta==0)   return siirtoLaudalla(lauta, vari, k, omavuoro, edel);      //jos kaikki nappulat on jo käytetty kutsutaan toista metodia
-//        lauta = new Lauta(lauta.getLauta(), lauta.syoty(1), lauta.syoty(2));
+    public int siirtoLaudalle(Lauta lauta, int vari, int k, boolean omavuoro, int pelaamatta){
+        if(k==syvyys)   return arvioiTilanne(lauta, vari, omavuoro, pelaamatta);     //kun haluttu syvyys saavutettu palautetaan arvio tilanteesta        
+        if(pelaamatta==0)   return siirtoLaudalla(lauta, vari, k, omavuoro);      //jos kaikki nappulat on jo käytetty kutsutaan toista metodia
+ //       lauta = new Lauta(lauta.getLauta(), lauta.syoty(1), lauta.syoty(2));
         Puu tyhjat = lauta.getTyhjat().teeKopio();     //tyhjät sijainnit
         Solmu juuri = tyhjat.getJuuri();    
-        return kayLapiSijainnit(1, lauta, juuri, vari, k, pelaamatta, omavuoro, edel); //palautetaan paras mahdollinen lopputulos joka voi syntyä alkuperäisestä tilanteesta
+        return kayLapiSijainnit(1, lauta, juuri, vari, k, omavuoro, pelaamatta); //palautetaan paras mahdollinen lopputulos joka voi syntyä alkuperäisestä tilanteesta
     }
     
     /**
@@ -319,16 +378,16 @@ public class Tekoaly {
      * @param k kuinka pitkälle pelipuuta on jo generoitu
      * @return arvio parhaasta mahdollisesta tilanteesta, johon pelissä päädytään
      */
-    public int siirtoLaudalla(Lauta lauta, int vari, int k, boolean omavuoro, int edel){
-        if(k==syvyys)   return arvioiTilanne(lauta, vari, 0, edel);   //arvio tilanteesta kun haluttu syvyys saavutettu
+    public int siirtoLaudalla(Lauta lauta, int vari, int k, boolean omavuoro){
+        if(k==syvyys)   return arvioiTilanne(lauta, vari, omavuoro, 0);   //arvio tilanteesta kun haluttu syvyys saavutettu
         Puu merkit = null;
         int toimenpide = 2;     //kokeile siirtoa
-//        lauta = new Lauta(lauta.getLauta(), lauta.syoty(1), lauta.syoty(2));
+   //     lauta = new Lauta(lauta.getLauta(), lauta.syoty(1), lauta.syoty(2));
         if(vari==1) merkit = lauta.getMustat().teeKopio();
         else if(vari==2) merkit = lauta.getValkoiset().teeKopio();
         Solmu juuri = merkit.getJuuri();                
         if(merkit.getKoko()<4)  toimenpide = 4; //lennetään
-        return kayLapiSijainnit(toimenpide, lauta, juuri, vari, k, 0, omavuoro, edel); 
+        return kayLapiSijainnit(toimenpide, lauta, juuri, vari, k, omavuoro, 0); 
     }
     
     /**
@@ -344,13 +403,13 @@ public class Tekoaly {
      * @return paras mahdollinen tulos, jos on pelaajan vuoro tai huonoin mahdollinen tulos,
      * jos on vastapelaajan vuoro
      */
-    public int poisto(Lauta lauta, int vari, int k, int pelaamatta, boolean omavuoro, int edel){
+    public int poisto(Lauta lauta, int vari, int k, boolean omavuoro, int pelaamatta){
         Puu merkit = null;
-//        lauta = new Lauta(lauta.getLauta(), lauta.syoty(1), lauta.syoty(2));
+   //     lauta = new Lauta(lauta.getLauta(), lauta.syoty(1), lauta.syoty(2));
         if(vari==1) merkit = lauta.getValkoiset().teeKopio();
-        if(vari==2) merkit = lauta.getMustat().teeKopio();
+        else if(vari==2) merkit = lauta.getMustat().teeKopio();
         Solmu juuri = merkit.getJuuri();
-        return kayLapiSijainnit(3, lauta, juuri, vari, k, pelaamatta, omavuoro, edel);
+        return kayLapiSijainnit(3, lauta, juuri, vari, k, omavuoro, pelaamatta);
     }
     
     /**
@@ -369,28 +428,29 @@ public class Tekoaly {
      * @param pelaamatta kuinka monta nappulaa pelaajilla on vielä siirtämättä laudalle
      * @return arvio siitä kuinka hyvä on tilanne, johon siirrolla päädytään
      */
-    public int kokeileSijainti(Lauta lauta, int j, int i, int vari, int k, boolean omavuoro, int pelaamatta){
+    public int kokeileSijainti(Lauta lauta, int j, int i, int vari, int k, boolean omavuoro, int pelaamatta) {
         int tulos = 1000;
-        try{
-            if(j==2 && i==5){
-                System.out.println("jotain");
-            }    
-            lauta.laitaMerkki(j, i, vari);                  //kokeillaan sijaintia laittamalla siihen halutun värinen merkki
-                    for(int m=0; m<3; m++){
-                        for(int l=0; l<8; l++){
-                            System.out.print(lauta.getLauta()[m][l]);
-                        }}
-                    System.out.println("");
-            if(lauta.mylly(vari, (8*j)+i))  tulos = poisto(lauta, vari, k, pelaamatta-1, omavuoro, (j*8)+i); //jos syntyi mylly voidaan poistaa yksi vastapuolen merkeistä
-            else tulos = siirtoLaudalle(lauta, 3-vari, k+1, pelaamatta-1, !omavuoro, (j*8)+i);  //jos ei myllyä, on vastapuolen vuoro
-            lauta.poista(j, i, vari);                       //perutaan tehty siirto
-                    for(int l=0; l<24; l++){
-                        System.out.print(lauta.getLauta()[l/8][l%8]);
-                    }
-                    System.out.println("");
-       }catch(Exception e){                    //jos paikka on epäsopiva, esim. varattu, heitetään poikkeus merkkiä laitettaessa
-            if(omavuoro)tulos = -1000;            //"tätä paikkaa ei haluta käyttää"
-        }
+        if(omavuoro) tulos = -1000;
+    //    try{  
+            boolean onnistuuko = lauta.laitaMerkki(j, i, vari);                  //kokeillaan sijaintia laittamalla siihen halutun värinen merkki
+            if(!onnistuuko) return tulos;
+//                    for(int m=0; m<3; m++){
+  //                      for(int l=0; l<8; l++){
+    //                        System.out.print(lauta.getLauta()[m][l]);
+     //                  }}
+        //            System.out.println("");
+            if(lauta.mylly(vari, (8*j)+i))  tulos = poisto(lauta, vari, k, omavuoro, pelaamatta-1); //jos syntyi mylly voidaan poistaa yksi vastapuolen merkeistä
+            else tulos = siirtoLaudalle(lauta, 3-vari, k+1, !omavuoro, pelaamatta-1);  //jos ei myllyä, on vastapuolen vuoro
+            boolean onnp = lauta.poista(j, i, vari);                       //perutaan tehty siirto
+            if(!onnp)   System.out.println("Virhe poistaessa");
+ //           if(!onnp)   System.out.println("Virhe poistaessa");
+   //                 for(int l=0; l<24; l++){
+     //                   System.out.print(lauta.getLauta()[l/8][l%8]);
+       //             }
+         //           System.out.println("");
+   //    }catch(Exception e){                    //jos paikka on epäsopiva, esim. varattu, heitetään poikkeus merkkiä laitettaessa
+   //         if(omavuoro)tulos = -1000;            //"tätä paikkaa ei haluta käyttää"
+  //      }
         return tulos;                           //kuinka hyvään lopputulokseen kys. sijainti johtaisi
     }
         
@@ -411,12 +471,13 @@ public class Tekoaly {
             int paras = -1000;
             if(!omavuoro)   paras = 1000;
             int sijainti = solmu.getAvain();
-                for(int l=0; l<4; l++){ // kokeillaan siirtoa kaikkiin 4 eri suuntaan
-                   int suunnantulos = kokeileSuunta(lauta, sijainti/8, sijainti%8, suunnat[l], vari, k, omavuoro);
+            String suunnat = lauta.getSuunnat(sijainti);    //suunnat joihin voidaan liikkua sijainnista
+                for(int l=0; l<suunnat.length(); l++){      //kokeillaan siirtoa kaikkiin mahdollisiin suuntiin
+                   int suunnantulos = kokeileSuunta(lauta, sijainti/8, sijainti%8, suunnat.charAt(l), vari, k, omavuoro);
                     if(parempiKuinEnnen(suunnantulos, paras, omavuoro)){
                         paras = suunnantulos;   //jos tulos parempi kuin aikaisemmista siirroista, laitetaan se muistiin
                         solmu.setArvo(suunnantulos);
-                        solmu.setSuunta(suunnat[l]);    //myös suunta muistiin
+                        solmu.setSuunta(suunnat.charAt(l));    //myös suunta muistiin
                     }
                 }
             return paras;   //palautetaan paras mahdollinen lopputulos ja suunta mistä se syntyi
@@ -459,15 +520,16 @@ public class Tekoaly {
      */
     public int kokeileSuunta(Lauta lauta, int j, int i, char suunta, int vari, int k, boolean omavuoro){
             int tulos = 1000; 
-            try{
-                int uusip = lauta.siirra(j, i, suunta);//kokeillaan siirtää merkkiä annettuun suuntaan
-                    if(uusip==(j*8)+i)  throw new Exception();  //ei voitu siirtää nappia mihinkään
-                    else if(lauta.mylly(vari, uusip))    tulos = poisto(lauta, vari, k, 0, omavuoro, (j*8)+i);    //jos syntyi mylly saadaan poistaa vastapuolen merkki
-                    else tulos = siirtoLaudalle(lauta, 3-vari, k+1, 0, !omavuoro, (j*8)+i);  //jos ei myllyä on toisen pelaajan vuoro
-                lauta.siirra(uusip/8, uusip%8, vastaSuunta(suunta));     //perutaan tehty siirto
-                }catch(Exception e){                //jos sijainti on epäsopiva, esim. varattu
-                    if(omavuoro)    tulos = -1000;    //"tätä siirtoa ei haluta tehdä"
-                    }
+            if(omavuoro)    tulos = -1000;
+       //     try{
+                int uusip = lauta.siirra(j, i, suunta); //kokeillaan siirtää merkkiä annettuun suuntaan
+                    if(uusip==(j*8)+i) return tulos;    //ei voitu siirtää nappia mihinkään
+                    else if(lauta.mylly(vari, uusip))    tulos = poisto(lauta, vari, k, omavuoro, 0);    //jos syntyi mylly saadaan poistaa vastapuolen merkki
+                    else tulos = siirtoLaudalla(lauta, 3-vari, k+1, !omavuoro);          //jos ei myllyä on toisen pelaajan vuoro
+                if(uusip!=(j*8)+i) lauta.siirra(uusip/8, uusip%8, vastaSuunta(suunta));     //perutaan tehty siirto
+         //       }catch(Exception e){                //jos sijainti on epäsopiva, esim. varattu
+         //           if(omavuoro)    tulos = -1000;    //"tätä siirtoa ei haluta tehdä"
+         //           }
             return tulos;                           //lopputulos joka siirrosta seuraisi
         }
         
@@ -485,27 +547,31 @@ public class Tekoaly {
      * jos on vastapuolen pelivuoro
      * @return arvio tilanteesta johon poistolla päädytään
      */
-    public int kokeilePoistaa(Lauta lauta, int j, int i, int vari, int k, int pelaamatta, boolean omavuoro, int edel){
+    public int kokeilePoistaa(Lauta lauta, int j, int i, int vari, int k, boolean omavuoro, int pelaamatta){
             int tulos = 1000;
-            try{
-                lauta.syo(j, i, 3-vari);         //kokeillaan poistaa vastapuolen merkki
-                tulos = siirtoLaudalle(lauta, 3-vari, k+1, pelaamatta, !omavuoro, edel);  //toisen pelaajan vuoro
+            if(omavuoro) tulos = -1000;
+//            try{
+                boolean syoty = lauta.syo(j, i, 3-vari);         //kokeillaan poistaa vastapuolen merkki
+                if(!syoty)  return tulos;
+                tulos = siirtoLaudalle(lauta, 3-vari, k+1, !omavuoro, pelaamatta);  //toisen pelaajan vuoro
                 lauta.peruSyonti(j, i, 3-vari);         //perutaan tehty siirto    
-            }catch(Exception e){                        //jos yritetään poistaa jotain muuta kuin pitäisi
-                if(omavuoro)tulos = -1000;              //"tätä ei haluta poistaa"
-            }
+//            }catch(Exception e){                        //jos yritetään poistaa jotain muuta kuin pitäisi
+//                if(omavuoro)tulos = -1000;              //"tätä ei haluta poistaa"
+//            }
             return tulos;       //lopputulos joka poistosta seuraisi
         }
     
     public int kokeileLentaa(Lauta lauta, int j, int i, int vari, int k, boolean omavuoro){
         int tulos = 1000;
-        try{
-            lauta.poista(j, i, vari);
-            tulos = siirtoLaudalle(lauta, vari, k, 1, omavuoro, (j*8)+i);
+        if(omavuoro)    tulos = -1000;
+  //      try{
+            boolean onnistuuko = lauta.poista(j, i, vari);
+            if(!onnistuuko) return tulos;
+            tulos = siirtoLaudalle(lauta, vari, k, omavuoro, 1);
             lauta.laitaMerkki(j, i, vari);
-        }catch(Exception e){
-            if(omavuoro) tulos = -1000;
-        }
+  //      }catch(Exception e){
+  //          if(omavuoro) tulos = -1000;
+  //      }
         return tulos;
     }
     
@@ -519,8 +585,9 @@ public class Tekoaly {
      * @return kokonaislukumerkkinen arvo, joka kuvastaa sitä kuinka hyvä pelitilanne 
      * on annetun värisen pelaajan kannalta
      */
-    public int arvioiTilanne(Lauta lauta, int vari, int pelaamatta, int edel){
-        return this.heuristiikka.tilanneArvio(lauta, vari, pelaamatta, edel);
+    public int arvioiTilanne(Lauta lauta, int vari, boolean omavuoro, int pelaamatta){
+        if(!omavuoro)   vari = 3-vari;  //halutaan arvio oman pelaajan kannalta
+        return this.heuristiikka.tilanneArvio(lauta, vari, pelaamatta);
     }
     
 }

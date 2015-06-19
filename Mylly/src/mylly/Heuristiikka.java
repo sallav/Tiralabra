@@ -20,6 +20,6 @@ public interface Heuristiikka {
      * @param pelaamatta kuinka monta nappia pelaajilla on siirtämättä laudalle
      * @return arvio tilanteen edullisuudesta pelaajalle
      */
-    public abstract int tilanneArvio(Lauta l, int vari, int pelaamatta, int edel);
+    public abstract int tilanneArvio(Lauta l, int vari, int pelaamatta);
     
 }

@@ -100,15 +100,17 @@ public class TKayttoliittyma implements Kayttoliittyma{
      */
     @Override
     public void paivitaLauta(int siirto, int vari, boolean poisto){
-        char merkki = 'o';
-        int ind = indeksi(siirto%8, siirto/8);
-        pelilauta.setCharAt(edel, pelilauta.substring(edel, edel+1).toLowerCase().charAt(0)); 
-        if(vari==1) merkki = 'M';
-        if(vari==2) merkki = 'V';
-        if(poisto)  merkki = 'O';        
-        pelilauta.setCharAt(ind, merkki);
-        edel = ind;
-        System.out.println(siirto + ": rivi " + siirto/8 + " paikka " + siirto%8);
+        if(siirto>=0){
+            char merkki = 'o';
+            int ind = indeksi(siirto%8, siirto/8);
+            pelilauta.setCharAt(edel, pelilauta.substring(edel, edel+1).toLowerCase().charAt(0)); 
+            if(vari==1) merkki = 'M';
+            if(vari==2) merkki = 'V';
+            if(poisto)  merkki = 'O';        
+            pelilauta.setCharAt(ind, merkki);
+            edel = ind;
+            System.out.println(siirto + ": rivi " + siirto/8 + " paikka " + siirto%8);
+        }
     }
 
     /**

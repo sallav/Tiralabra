@@ -177,26 +177,36 @@ public class SijaintiPuu2 implements Puu{
     @Override
     public Puu teeKopio(){
         Puu kopio = new SijaintiPuu2();
-        for(int i=0; i<24; i++){
-            Solmu kopioitava = etsi(i, this.juuri);
-            if(kopioitava!=null){
-                Solmu uusi = new Solmu(kopioitava.getAvain(), kopioitava.getArvo());
-                kopio.lisaa(uusi);
-            }}
+        Lista solmut = jalkijarjestys(); 
+        ListaSolmu x = solmut.getEka();
+        while(x!=null){
+            Solmu kopioitava = x.getPuuSolmu();
+            Solmu uusi = new Solmu(kopioitava.getAvain());
+            kopio.lisaa(uusi);
+            x = x.getSeuraava();
+            }
         return kopio;
     }
     
-        public Lista esijarjestys(){
+    @Override
+    public Lista esijarjestys(){
         Lista luvut = new Lista();
-        esijarjHelper(luvut, this.juuri);
+        jarjHelper(luvut, this.juuri, true);
         return luvut;
     }
     
-    private void esijarjHelper(Lista luvut, Solmu juuri){
+    public Lista jalkijarjestys(){
+        Lista luvut = new Lista();
+        jarjHelper(luvut, this.juuri, false);
+        return luvut;
+    }
+    
+    private void jarjHelper(Lista luvut, Solmu juuri, boolean esi){
         if(juuri!=null){
-        luvut.lisaa(juuri);
-        esijarjHelper(luvut, juuri.getVasen());
-        esijarjHelper(luvut, juuri.getOikea());
+            if(esi) luvut.lisaa(juuri);
+            jarjHelper(luvut, juuri.getVasen(), esi);
+            jarjHelper(luvut, juuri.getOikea(), esi);
+            if(!esi) luvut.lisaa(juuri);
         }
     }
 }

@@ -48,11 +48,7 @@ public class AIPelaaja implements Pelaaja{
     @Override
     public int siirraLaudalle(Lauta lauta, int nappeja){
         int paikka = aly.parasTyhjista(lauta, this.vari, nappeja).getAvain(); //paras tyhjistä laudalla olevista sijainneista
-        try{
-            lauta.laitaMerkki(paikka/8, paikka%8, this.vari);   //laitetaan uusi merkki valittuun sijaintiin
-        }catch(Exception e){        //ei periaatteessa pitäisi tulla virhettä
-            System.out.println("virhe");
-        }
+        lauta.laitaMerkki(paikka/8, paikka%8, this.vari);   //laitetaan uusi merkki valittuun sijaintiin
         return paikka;
     }
     
@@ -64,16 +60,16 @@ public class AIPelaaja implements Pelaaja{
      */
     @Override
     public int[] siirraLaudalla(Lauta lauta){
-        Solmu solmu = aly.parasSiirto(lauta, this.vari);    //arvioidaan paras siirto: taulukossa ovat arvot mistä ja mihin suuntaan
-        int uusip; 
-        int vanhap = solmu.getAvain();    //paikka jossa olevaa nappulaa siirretään
-        try{
-            uusip = lauta.siirra(vanhap/8, vanhap%8, solmu.getSuunta());  //tehdään siirto haluttuun suuntaan (ylös, alas, vasemmalle tai oikealle mahdollisuuksien mukaan) 
-        }catch(Exception e){    //ei pitäisi tulla virhettä tässä tapauksessa, vaikka metodi heittää poikkeuksen
-            uusip = -1;      
+        Solmu solmu = aly.parasSiirto(lauta, this.vari);    //arvioidaan paras siirto
+        int uusip = -1;
+        int vanhap = solmu.getAvain();          //paikka jossa olevaa nappulaa siirretään
+        if(solmu.getArvo()!=-1000) uusip = lauta.siirra(vanhap/8, vanhap%8, solmu.getSuunta());  //tehdään siirto haluttuun suuntaan (ylös, alas, vasemmalle tai oikealle mahdollisuuksien mukaan) 
+        if(uusip==vanhap){
+            System.out.println("virhe, yritettiin siirtää virheellisesti");
+            uusip = -1;
         }
         int[] pal = {vanhap, uusip};
-        return pal;   //uusi paikka
+        return pal;   
     }
     
     /**
@@ -88,11 +84,7 @@ public class AIPelaaja implements Pelaaja{
         Solmu solmu = aly.parasLento(lauta, this.vari);
         int vanhap = solmu.getAvain();
         int uusip = solmu.getKohde().getAvain();
-        try{
-            lauta.siirto(vanhap/8, vanhap%8, uusip/8, uusip%8);
-        }catch(Exception e){
-            uusip = -1;
-        }
+        uusip = lauta.siirto(vanhap/8, vanhap%8, uusip/8, uusip%8);
         int[] pal = {vanhap, uusip};
         return pal;
     }
@@ -104,11 +96,7 @@ public class AIPelaaja implements Pelaaja{
      */
     @Override
     public int laudalla(Lauta lauta){
-        try{
         return lauta.montakoNappia(this.vari);
-        }catch(Exception e){    //heittää poikkeuksen, jos vari -parametri on virheellinen
-            return 0;
-        }
     }
     
     /**
@@ -121,12 +109,9 @@ public class AIPelaaja implements Pelaaja{
     @Override
     public int poistaLaudalta(Lauta lauta, int nappeja, int edel){
         int poistettava;
-        try{
-            poistettava = aly.parasPoisto(lauta, this.vari, nappeja, edel).getAvain();
-            lauta.syo(poistettava/8, poistettava%8, 3-this.vari);
-        }catch(Exception e){
-            return -1;
-        }
-        return poistettava;
+            poistettava = aly.parasPoisto(lauta, this.vari, nappeja).getAvain();
+            boolean onnistuu = lauta.syo(poistettava/8, poistettava%8, 3-this.vari);
+            if(onnistuu)    return poistettava;
+            else return -1; 
     }
 }

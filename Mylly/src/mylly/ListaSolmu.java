@@ -13,6 +13,7 @@ package mylly;
 public class ListaSolmu {
     ListaSolmu seur;
     Solmu puusolmu;
+    int avain;
     
     /**
      * ListaSolmu -luokan konstruktori asettaa listasolmun muuttujaksi parametrina
@@ -22,6 +23,7 @@ public class ListaSolmu {
     public ListaSolmu(Solmu solmu){
         this.seur = null;               //seuraajaa ei ole vielä määritelty
         this.puusolmu = solmu;
+        this.avain = solmu.getAvain();
     }
     
     /**
@@ -34,6 +36,19 @@ public class ListaSolmu {
     public ListaSolmu(Solmu solmu, ListaSolmu seuraava){
         this.seur = seuraava;       //seuraava listan alkio
         this.puusolmu = solmu;      //tämän alkion sisältö
+        this.avain = solmu.getAvain();
+    }
+    
+    public ListaSolmu(int avain){
+        this.avain = avain;
+        this.puusolmu = null;
+        this.seur = null;
+    }
+    
+    public ListaSolmu(int avain, ListaSolmu seuraava){
+        this.avain = avain;
+        this.puusolmu = null;
+        this.seur = seuraava;
     }
     
     /**
@@ -69,5 +84,9 @@ public class ListaSolmu {
      */
     public int getArvo(){
         return this.puusolmu.getArvo();
+    }
+    
+    public int getAvain(){
+        return this.avain;
     }
 }

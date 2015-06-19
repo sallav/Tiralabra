@@ -5,6 +5,7 @@
  */
 
 import java.util.ArrayList;
+import mylly.Lista;
 import mylly.Puu;
 import mylly.SijaintiPuu;
 import mylly.SijaintiPuu2;
@@ -123,25 +124,25 @@ public class PuuTest {
         for(int i=0; i<24; i++){
             uusi.lisaa(i);
         }
-        ArrayList<Integer> luvut = uusi.esijarjestys();
+        Lista luvut = uusi.esijarjestys();
         for(int i=0; i<24; i++){
-            Assert.assertTrue(i==luvut.get(i));
+            Assert.assertTrue(i==luvut.getSolmu(i).getAvain());
         }
         uusi.poista(23);
         luvut = uusi.esijarjestys();
         for(int i=0; i<23; i++){
-            Assert.assertTrue(i==luvut.get(i));
+            Assert.assertTrue(i==luvut.getSolmu(i).getAvain());
         }
         uusi.lisaa(23);
         uusi.poista(22);
         luvut = uusi.esijarjestys();
         for(int i=0; i<23; i++){
-            if(i!=22) Assert.assertTrue(i==luvut.get(i));
+            if(i!=22) Assert.assertTrue(i==luvut.getSolmu(i).getAvain());
         }        
         uusi.lisaa(22);
         luvut = uusi.esijarjestys();
         for(int i=0; i<23; i++){
-            if(i>21)    Assert.assertTrue(luvut.toString(), i!=luvut.get(i));
+            if(i>21)    Assert.assertTrue(luvut.toString(), i!=luvut.getSolmu(i).getAvain());
         }
         uusi.poista(21);
         luvut = uusi.esijarjestys();

@@ -51,7 +51,7 @@ public class PerusTest {
     
     @Test
     public void tilanneArvioTest(){
-        Assert.assertEquals(0, perush.tilanneArvio(lauta, 1, 18, 0));
+        Assert.assertEquals(0, perush.tilanneArvio(lauta, 1, 18));
     }
     
     @Test
@@ -59,8 +59,8 @@ public class PerusTest {
         lauta.laitaMerkki(0, 1, 1);
         lauta.laitaMerkki(1, 1, 1);
         lauta.laitaMerkki(2, 1, 1);
-        Assert.assertTrue(0<perush.tilanneArvio(lauta, 1, 15, 17));
-        Assert.assertTrue(0>perush.tilanneArvio(lauta, 2, 15, 17));
+        Assert.assertTrue(0<perush.tilanneArvio(lauta, 1, 15));
+        Assert.assertTrue(0>perush.tilanneArvio(lauta, 2, 15));
     }
     
     @Test

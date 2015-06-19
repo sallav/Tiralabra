@@ -25,14 +25,14 @@ public class Peli {
     public Peli(Pelaaja eka, Pelaaja toka, Kayttoliittyma kl){
         this.eka = eka;                 
         this.toka = toka;
-        this.lauta = null;
+        this.lauta = new Lauta();
         this.kayttol = kl;
     }
     
     public Peli(Pelaaja eka, Pelaaja toka){
         this.eka = eka;
         this.toka = toka;
-        this.lauta = null;
+        this.lauta = new Lauta();
         this.kayttol = null;
     }
     
@@ -70,7 +70,6 @@ public class Peli {
      * @return pelin voittaja: musta=1, valkoinen=2 tai tasapeli=0
      */
     public int pelaa(){
-        this.lauta = new Lauta();
         int nappeja = 18;
         
         while(nappeja>0){       //9 nappulaa laudalle!
@@ -90,17 +89,27 @@ public class Peli {
      * @return 1 jos ensimmäinen pelaaja voitti, 2 jos toinen pelaaja voitti, 0 jos peli päättyi tasapeliin
      */
     public int pelaaLoppuun(){
-        
-        while(lauta.voikoLiikkua(eka.vari()) || lauta.voikoLiikkua(toka.vari())){   //jatketaan kunnes pelaajat eivät voi enää liikkua
-            if(!lauta.voikoLiikkua(eka.vari()) || eka.laudalla(lauta)<3)     return 2;  //jos pelaaja ei voi liikuttaa nappeja tai merkkejä jäljellä vain kaksi peli loppuu
-                pelaaLaudalla(eka);
-            if(!lauta.voikoLiikkua(toka.vari()) || toka.laudalla(lauta)<3)    return 1;  //jos pelaaja ei voi liikuttaa nappeja tai merkkejä jäljellä vain kaksi peli loppuu
-                pelaaLaudalla(toka);
+        boolean voiliikkua = true;
+        while(voiliikkua){   //jatketaan kunnes pelaajat eivät voi enää liikkua
+            if(lauta.montakoNappia(eka.vari())<3)     return 2;  //jos pelaaja ei voi liikuttaa nappeja tai merkkejä jäljellä vain kaksi peli loppuu
+                voiliikkua = pelaaLaudalla(eka);
+                if(!voiliikkua) break;
+            if(lauta.montakoNappia(toka.vari())<3)    return 1;  //jos pelaaja ei voi liikuttaa nappeja tai merkkejä jäljellä vain kaksi peli loppuu
+                voiliikkua = pelaaLaudalla(toka);
+                if(!voiliikkua) break;
         }
     return selvitaVoittaja();    
 }
     
     public int selvitaVoittaja(){
+        if(!lauta.voikoLiikkua(eka.vari()) && lauta.voikoLiikkua(toka.vari())) {
+            System.out.println("Musta ei voi liikkua");
+            return 2;
+        }
+        if(!lauta.voikoLiikkua(toka.vari()) && lauta.voikoLiikkua(eka.vari())) {
+            System.out.println("Valkoinen ei voi liikkua");
+            return 1;
+        }
         if(eka.laudalla(lauta)>toka.laudalla(lauta)) return 1;  //eka voitti
         if(eka.laudalla(lauta)<toka.laudalla(lauta))  return 2; //toka voitti
         else return 0;                                          //tasapeli
@@ -112,10 +121,9 @@ public class Peli {
      * @param pelaaja
      */
     public void pelaaLaudalle(Pelaaja pelaaja, int pelaamatta){
-        this.kayttol.ilmoitaVuoro(pelaaja.vari());
+        if(kayttol!=null)   this.kayttol.ilmoitaVuoro(pelaaja.vari());
         int sij = pelaaja.siirraLaudalle(lauta, pelaamatta);        //siirretään uusi nappula laudalle
-        this.kayttol.paivitaLauta(sij, pelaaja.vari(), false);
-        this.kayttol.tulostaLauta();
+        laudanPaivitys(sij, -1, pelaaja.vari());
         if(lauta.mylly(pelaaja.vari(), sij)){
             poistaLaudalta(pelaaja, pelaamatta, sij);
         }
@@ -129,24 +137,31 @@ public class Peli {
      * tapahtunut, tulee pelaajan poistaa yksi vastapuolen napeista.
      * @param pelaaja
      */
-    public void pelaaLaudalla(Pelaaja pelaaja){
+    public boolean pelaaLaudalla(Pelaaja pelaaja){
         int[] sij;
-        this.kayttol.ilmoitaVuoro(pelaaja.vari());
-        if(pelaaja.laudalla(lauta)>3)   sij = pelaaja.siirraLaudalla(lauta); //siirretään jotain laudalla jo olevaa nappia
+        if(kayttol!=null) this.kayttol.ilmoitaVuoro(pelaaja.vari());
+        if(lauta.montakoNappia(pelaaja.vari())>3)   sij = pelaaja.siirraLaudalla(lauta); //siirretään jotain laudalla jo olevaa nappia
         else sij = pelaaja.lenna(lauta);                //kun vain 3 nappia jäljellä
-        this.kayttol.paivitaLauta(sij[0], pelaaja.vari(), true);        //poistetaan vanhasta sijainnista
-        this.kayttol.paivitaLauta(sij[1], pelaaja.vari(), false);       //lisätään uuteen sijaintiin
-        this.kayttol.tulostaLauta();
+        if(sij[1]==-1)  return false;                   //uutta paikkaa ei ole, koska merkkiä ei voitu siirtää
+        laudanPaivitys(sij[1], sij[0], pelaaja.vari());
         if(lauta.mylly(pelaaja.vari(), sij[1])){
             poistaLaudalta(pelaaja, 0, sij[1]);    // poistetaan vastapuolen nappi
         }
+        return true;
     }
     
     public void poistaLaudalta(Pelaaja pelaaja, int pelaamatta, int edel){
-        this.kayttol.ilmoitaMylly(pelaaja.vari());
+        if(kayttol!=null) this.kayttol.ilmoitaMylly(pelaaja.vari());
         int psij = pelaaja.poistaLaudalta(lauta, pelaamatta, edel);
-        this.kayttol.paivitaLauta(psij, 3-pelaaja.vari(), true);
+        laudanPaivitys(-1, psij, 3-pelaaja.vari());
+    }
+    
+    public void laudanPaivitys(int siirto, int poisto, int vari){
+        if(kayttol!=null){
+        this.kayttol.paivitaLauta(poisto, vari, true);      //nappulan poisto
+        this.kayttol.paivitaLauta(siirto, vari, false);     //nappula laudalle
         this.kayttol.tulostaLauta();
+        }
     }
     
     /**

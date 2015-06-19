@@ -5,9 +5,11 @@
  */
 
 import mylly.AIPelaaja;
+import mylly.Heuristiikka;
 import mylly.Lauta;
 import mylly.Pelaaja;
 import mylly.Peli;
+import mylly.Perus;
 import mylly.Tekoaly;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -26,8 +28,11 @@ public class PeliTest {
     Pelaaja valkoinen;
     Tekoaly AI;
     Peli peli;
+    Heuristiikka h;
     
     public PeliTest() {
+        h = new Perus();
+        AI = new Tekoaly(h, 3);
         musta = new AIPelaaja(1, AI);
         valkoinen = new AIPelaaja(2, AI);
         peli = new Peli(musta, valkoinen);
