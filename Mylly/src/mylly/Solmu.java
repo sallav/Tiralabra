@@ -34,6 +34,12 @@ public class Solmu implements Comparable{
         this.kohde = null;
     }
     
+    /**
+     * Solmu -luokan konstruktori asettaa solmun avaimeksi parametrina annetun avaimen
+     * sekä arvoksi parametrina annetun arvon.
+     * @param avain kokonaisluku, josta tulee solmun avain
+     * @param arvo kokonaisluku, joka merkitään solmun arvoksi
+     */
     public Solmu(int avain, int arvo){
         this.vanhempi = null;
         this.vasen = null;
@@ -116,6 +122,12 @@ public class Solmu implements Comparable{
         this.suunta = suunta;
     }
     
+    /**
+     * setKohde -metodi asettaa solmun kohde atribuutiksi toisen Solmun. Tämä solmu edustaa
+     * sijaintia, johon pelissä tästä solmusta kannattaisi siirtyä.
+     * @param solmu Solmu -luokan ilmentymä, joka edustaa sijaintia laudalla, johon tämän solmun
+     * avaimena olevasta sijainnista kannattaisi siirtyä.
+     */
     public void setKohde(Solmu solmu){
         this.kohde = solmu;
     }
@@ -171,6 +183,12 @@ public class Solmu implements Comparable{
         return this.suunta;
     }
     
+    /**
+     * getKohde -metodi palauttaa kohdesolmun, eli Solmu -luokan ilmentymän, jonka avaimena 
+     * olevaan sijaintiin tämän solmun edustamasta sijainnista kannattaisi siirtyä. 
+     * @return Solmu -olio, jonka avaimena olevaan sijaintiin kannattaisi tämän solmun 
+     * avaimena olevasta sijainnista siirtyä
+     */
     public Solmu getKohde(){
         return this.kohde;
     }

@@ -34,6 +34,10 @@ public class AIPelaaja implements Pelaaja{
         return this.vari;
     }
     
+    /**
+     * getAly -metodi palauttaa pelaajaan liitetyn Tekoaly -olion
+     * @return pelaajan Tekoaly
+     */
     public Tekoaly getAly(){
         return this.aly;
     }
@@ -41,9 +45,9 @@ public class AIPelaaja implements Pelaaja{
     /**
      * siirraLaudalle -metodi arvioi tekoalyn avulla parhaan paikan mihin siirtää uusi nappula 
      * ja tekee arvion mukaisen siirron. 
-     * @param lauta pelilauta, jossa siirto tehdään
+     * @param lauta Lauta -luokan ilmentymä, jossa siirto tehdään
      * @param nappeja kuinka monta nappia on vielä siirtämätä laudalle
-     * @return  sijainti johon siirto tehtiin
+     * @return sijainti johon siirto tehtiin
      */
     @Override
     public int siirraLaudalle(Lauta lauta, int nappeja){
@@ -55,15 +59,15 @@ public class AIPelaaja implements Pelaaja{
     /**
      * siirraLaudalla -metodi arvioi tekoälyn avulla parhaan siirron, mikä voidaan tehdä laudalla
      * jo olevilla nappuloilla ja toteuttaa sen.
-     * @param lauta pelilauta, jossa siirto tehdään
-     * @return taulukko, jossa on sijainti, josta siirto tehtiin ja sijainti johon siirto tehtiin
+     * @param lauta Lauta -luokan ilmentymä, jossa siirto tehdään
+     * @return taulukko, jossa on sijainnit, mistä siirto tehtiin ja mihin siirto tehtiin
      */
     @Override
     public int[] siirraLaudalla(Lauta lauta){
         Solmu solmu = aly.parasSiirto(lauta, this.vari);    //arvioidaan paras siirto
         int uusip = -1;
         int vanhap = solmu.getAvain();          //paikka jossa olevaa nappulaa siirretään
-        if(solmu.getArvo()!=-1000) uusip = lauta.siirra(vanhap/8, vanhap%8, solmu.getSuunta());  //tehdään siirto haluttuun suuntaan (ylös, alas, vasemmalle tai oikealle mahdollisuuksien mukaan) 
+        if(solmu.getArvo()!=-1000) uusip = lauta.siirra(vanhap/8, vanhap%8, solmu.getSuunta(), this.vari);  //tehdään siirto haluttuun suuntaan (ylös, alas, vasemmalle tai oikealle mahdollisuuksien mukaan) 
         if(uusip==vanhap){
             System.out.println("virhe, yritettiin siirtää virheellisesti");
             uusip = -1;
@@ -76,7 +80,7 @@ public class AIPelaaja implements Pelaaja{
      * lenna -metodi arvioi tekoälyn avulla parhaan paikan, johon voidaan "lentää" laudalla, eli 
      * minkä tahansa tyhjän sijainnin, johon voidaan siirtää joku jo laudalla olevista nappuloista,
      * sekä tekee sitten arvion mukaisen siirron.
-     * @param lauta pelilauta, jossa siirto tehdään
+     * @param lauta Lauta -luokan ilmentymä, jossa siirto tehdään
      * @return  sijainti, johon siirto tehtiin
      */
     @Override
@@ -84,14 +88,14 @@ public class AIPelaaja implements Pelaaja{
         Solmu solmu = aly.parasLento(lauta, this.vari);
         int vanhap = solmu.getAvain();
         int uusip = solmu.getKohde().getAvain();
-        uusip = lauta.siirto(vanhap/8, vanhap%8, uusip/8, uusip%8);
+        uusip = lauta.siirto(vanhap/8, vanhap%8, uusip/8, uusip%8, this.vari);
         int[] pal = {vanhap, uusip};
         return pal;
     }
     
     /**
      * laudalla -metodi palauttaa pelaajan pelimerkkien määrän laudalla.
-     * @param lauta pelilauta, jossa pelataan
+     * @param lauta Lauta -luokan ilmentymä, jossa peliä pelataan
      * @return kuinka monta omaa pelimerkkiä on laudalla
      */
     @Override
@@ -102,12 +106,12 @@ public class AIPelaaja implements Pelaaja{
     /**
      * poistaLaudalta -metodi arvioi tekoälyn avulla, mikä vastustajan merkeistä kannattaisi
      * poistaa, kun tähän on mahdollisuus (kun on saatu mylly), ja tekee arvion mukaisen poiston.
-     * @param lauta pelilauta jossa pelataan
+     * @param lauta Lauta -luokan ilmentymä, jossa peliä pelataan
      * @param nappeja kuinka monta nappia on vielä siirtämättä laudalle
      * @return sijainti josta vastustajan nappi poistettiin
      */
     @Override
-    public int poistaLaudalta(Lauta lauta, int nappeja, int edel){
+    public int poistaLaudalta(Lauta lauta, int nappeja){
         int poistettava;
             poistettava = aly.parasPoisto(lauta, this.vari, nappeja).getAvain();
             boolean onnistuu = lauta.syo(poistettava/8, poistettava%8, 3-this.vari);

@@ -20,7 +20,7 @@ public interface Pelaaja {
     /**
      * siirraLaudalle -metodi siirtää uuden pelimerkin laudalle
      * @param l Lauta -luokan ilmentymä, jossa peliä pelataan
-     * @param nappejaja kuinka monta nappia pelaajalla on vielä siirtämättä laudalle
+     * @param nappeja kuinka monta merkkiä on vielä siirtämättä laudalle
      * @return sijainti, johon siirto tehtiin (0-23)
      */
     public abstract int siirraLaudalle(Lauta l, int nappeja);
@@ -28,7 +28,7 @@ public interface Pelaaja {
     /**
      * siirraLaudalla -metodi siirtää jotain jo laudalla olevista pelimerkeistä
      * @param l Lauta -luokan ilmentymä, jossa peliä pelataan
-     * @return sijainti, johon siirto tehtiin (0-23)
+     * @return taulukko, jossa on sijainnit, mistä siirto tehtiin ja mihin siirto tehtiin (0-23)
      */
     public abstract int[] siirraLaudalla(Lauta l);
 
@@ -36,7 +36,7 @@ public interface Pelaaja {
      * lenna -metodi tekee siirron mihin tahansa tyhjään sijaintiin, kun pelaajalla
      * on jäljellä enää kolme pelimerkkiä.
      * @param l Lauta -luokan ilmentymä, jossa peliä pelataan
-     * @return sijainti, johon siirto tehtiin (0-23)
+     * @return taulukko, jossa on sijainnit, mistä siirto tehtiin ja mihin siirto tehtiin (0-23)
      */
     public abstract int[] lenna(Lauta l);
 
@@ -50,7 +50,8 @@ public interface Pelaaja {
     /**
      * poistaLaudalta -metodi poistaa jonkun vastapuolen pelimerkeistä
      * @param l Lauta -luokan ilmentymä, jossa peliä pelataan
+     * @param nappeja kuinka monta merkkiä on vielä siirtämättä laudalle
      * @return sijainti, josta pelimerkki poistettiin
      */
-    public abstract int poistaLaudalta(Lauta l, int nappeja, int edel);
+    public abstract int poistaLaudalta(Lauta l, int nappeja);
 }

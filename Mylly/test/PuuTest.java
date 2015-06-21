@@ -119,25 +119,31 @@ public class PuuTest {
     }
     
     @Test
-    public void poistaTest3(){
+    public void poistaJaEsijarjestysTest(){
         SijaintiPuu uusi = new SijaintiPuu();
         for(int i=0; i<24; i++){
             uusi.lisaa(i);
         }
         Lista luvut = uusi.esijarjestys();
+        Assert.assertEquals(24, luvut.getKoko());
+        System.out.println("koko " + luvut.getKoko());
         for(int i=0; i<24; i++){
-            Assert.assertTrue(i==luvut.getSolmu(i).getAvain());
+            System.out.println(luvut.getSolmu(i).getAvain() + " ");
+            Assert.assertNotNull(luvut.getSolmu(i));
+            Assert.assertTrue(i==luvut.getSolmu(23-i).getAvain());
+            if(i==23)   System.out.println("vika");
         }
         uusi.poista(23);
         luvut = uusi.esijarjestys();
         for(int i=0; i<23; i++){
-            Assert.assertTrue(i==luvut.getSolmu(i).getAvain());
+            Assert.assertTrue(i==luvut.getSolmu(23-i).getAvain());
         }
         uusi.lisaa(23);
         uusi.poista(22);
         luvut = uusi.esijarjestys();
-        for(int i=0; i<23; i++){
-            if(i!=22) Assert.assertTrue(i==luvut.getSolmu(i).getAvain());
+        for(int i=0; i<luvut.getKoko(); i++){
+            System.out.println(i + " " + luvut.getSolmu(i).getAvain());
+            if(i>1) Assert.assertTrue((22-i)==luvut.getSolmu(i).getAvain());
         }        
         uusi.lisaa(22);
         luvut = uusi.esijarjestys();
@@ -155,6 +161,15 @@ public class PuuTest {
         Assert.assertTrue(puu.etsi(1).getAvain()==1);
         Assert.assertNotNull(puu.etsi(6));
         Assert.assertTrue(puu.etsi(6).getAvain()==6);
+    }
+    
+    @Test
+    public void teeKopioTest(){
+        Puu kopio = puu.teeKopio();
+        Lista solmut = puu.esijarjestys();
+        for(int i=0; i<puu.getKoko(); i++){
+            Assert.assertNotNull(kopio.etsi(solmut.getSolmu(i).getAvain()));
+        }
     }
    
 }

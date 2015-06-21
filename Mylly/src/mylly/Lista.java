@@ -60,11 +60,19 @@ public class Lista {
             this.vika = uusi;       //ensimmäinen lisättävä on listan viimeinen alkio
         }else{
             uusi = new ListaSolmu(puusolmu, this.eka);      //edellinen eka solmun seuraajaksi
+   //         System.out.println("Lisatty: " + puusolmu.getAvain());
+   //         System.out.println(uusi.getAvain()==puusolmu.getAvain());
+   //         System.out.println(uusi.getPuuSolmu().getAvain() + ", seur: " + uusi.getSeuraava().getAvain());
         }
         this.eka = uusi;            //lisätty alkio on listan ensimmäinen
         this.koko++;                //listan koko kasvaa yhdellä 
     }
     
+    /**
+     * lisaa -metodi lisää listaan uuden ListaSolmu -olion, jonka avain on parametrina annettu 
+     * kokonaisluku. 
+     * @param avain kokonaisluku, joka lisätään listasolmun avaimeksi
+     */
     public void lisaa(int avain){
         ListaSolmu uusi;
         if(eka==null){
@@ -115,9 +123,10 @@ public class Lista {
      */
     public Solmu getSolmu(int monesko){
         ListaSolmu x = this.eka;        //aloitetaan etsiminen listan ensimmäisestä alkiosta
-        while(monesko>0 && x!=null){               
+        int i = 0;
+        while(x!=null && i<monesko){               
             x = x.getSeuraava();        //siirrytään listassa eteenpäin     
-            monesko--;                  //niin kauan kunnes saavutetaan haluttu järjestysnumero
+            i++;                  //niin kauan kunnes saavutetaan haluttu järjestysnumero
         }
         if(x==null) return null;
         return x.getPuuSolmu();         //palautetaan listan alkion sisältämä Solmu -olio

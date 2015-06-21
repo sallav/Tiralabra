@@ -33,6 +33,7 @@ public class SijaintiPuu implements Puu{
     /**
      * Puu -luokan konstruktori alustaa puun juureksi parametrina saamansa solmun
      * @param juuri Solmu luokan ilmentymä
+     * @param koko
      */
     public SijaintiPuu(Solmu juuri, int koko){
         this.koko = koko;
@@ -47,6 +48,11 @@ public class SijaintiPuu implements Puu{
         this.juuri = null;
     }
     
+    /**
+     * SijaintiPuu -luokan konstruktori luo uuden puun, joka sisältää parametrina
+     * annetun listan sisältämät avaimet solmuissaan.
+     * @param solmut lista avaimista, jotka halutaan lisätä puuhun
+     */
     public SijaintiPuu(Lista solmut){
         ListaSolmu x = solmut.getEka();
         this.juuri = new Solmu(x.getPuuSolmu().getAvain());
@@ -253,6 +259,12 @@ public class SijaintiPuu implements Puu{
         return new SijaintiPuu(juuri, this.koko);
     }
     
+    /**
+     * kopioiPuu -metodi tekee kopion parametrina annetusta solmusta lähtevästä alipuusta
+     * ja palauttaa tämän kopiopuun juuren.
+     * @param juuri juurisolmu, josta alkava alipuu kopioidaan
+     * @return puukopion juurisolmu
+     */
     public Solmu kopioiPuu(Solmu juuri){
         if(juuri!=null){
             Solmu v = kopioiPuu(juuri.getVasen());

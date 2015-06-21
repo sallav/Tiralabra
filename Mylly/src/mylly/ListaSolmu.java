@@ -39,12 +39,24 @@ public class ListaSolmu {
         this.avain = solmu.getAvain();
     }
     
+    /**
+     * ListaSolmu -luokan konstruktori asettaa solmun avaimeksi parametrina annetun
+     * kokonaisluvun. Puusolmuksi ja seuraavaksi listasolmuksi asetetaan null.
+     * @param avain kokonaisluku joka asetetaan solmun avaimeksi
+     */
     public ListaSolmu(int avain){
         this.avain = avain;
         this.puusolmu = null;
         this.seur = null;
     }
     
+    /**
+     * ListaSolmu -luokan konstruktori asettaa solmun avaimeksi parametrina annetun
+     * kokonaisluvun sekä listasolmun seuraajaksi listassa parametrina annetun 
+     * ListaSolmu -olion. Listasolmun puusolmu saa arvon null.
+     * @param avain kokonaisluku, joka asetetaan listasolmun avaimeksi
+     * @param seuraava ListaSolmu -luokan ilmentymä, josta tehdään tämän solmun seuraaja
+     */
     public ListaSolmu(int avain, ListaSolmu seuraava){
         this.avain = avain;
         this.puusolmu = null;
@@ -79,13 +91,18 @@ public class ListaSolmu {
     
     /**
      * getArvo -metodi palauttaa tähän listasolmuun talletetun Solmu -luokan ilmentymän
-     * arvon
+     * arvon. Jos puusolmua ei ole, palautetaan arvo 0.
      * @return tähän listasolmuun talletetun Solmu -olion sen hetkinen arvo
      */
     public int getArvo(){
+        if(puusolmu==null)  return 0;
         return this.puusolmu.getArvo();
     }
     
+    /**
+     * getAvain -metodi palauttaa listasolmun avaimen
+     * @return
+     */
     public int getAvain(){
         return this.avain;
     }

@@ -55,7 +55,9 @@ public class Perus implements Heuristiikka{
     /**
      * myllyt -metodi saa parametrinaan pelilaudan arvon syödyt napit huomioituna ja lisää 
      * tai vähentää siihen arvoa pelilaudalla olevat pelaajan ja vastapuolen pelaajan myllyt 
-     * sekä melkein myllyt huomioiden. Myllyt -metodi palauttaa pelilaudan lopullisen arvon.   
+     * sekä melkein myllyt huomioiden. Myllyn arvo on 3, yhdellä napilla vajaan myllyn arvo 2, 
+     * jos kolmas paikka ei ole vastapuolen merkin "blokkaama" tai 1, jos vastapuoli on onnistunut
+     * sen blokkaamaaan. Myllyt -metodi palauttaa pelilaudan lopullisen arvon.   
      * @param lauta Lauta -luokan ilmentymä, jossa peliä pelataan
      * @param vari Pelaajan väri (1=musta, 2=valkoinen), jonka mahdollisuuksia arvioidaan
      * @param edel viimeinen siirto

@@ -18,8 +18,23 @@ public interface Kayttoliittyma {
      */
     public abstract int pelinValinta();
     
+    /**
+     * valitseTaso -metodissa käyttäjä voi valita pelin tason ts. kuinka syvälle pelipuuta
+     * pelissä generoidaan (taso 1=syvyys 3, taso 2=syvyys 4, taso 3=syvyys 5)
+     * @return pelipuun generointisyvyyttä vastaava kokonaisluku
+     */
+    public abstract int valitseTaso();
+    
+    /**
+     * ilmotaVuoro -metodi ilmoittaa käyttäjälle kumpi pelaajista on vuorossa
+     * @param pelaajanvari vuorossa olevan pelaajan väriä vastaava kokonaisluku
+     */
     public abstract void ilmoitaVuoro(int pelaajanvari);
     
+    /**
+     * ilmoitaMylly -metodi ilmoittaa pelaajalle laudalle muodostuneesta myllystä
+     * @param pelaajanvari myllyn saaneen pelaajan väriä vastaava kokonaisluku
+     */
     public abstract void ilmoitaMylly(int pelaajanvari);
     
     /**

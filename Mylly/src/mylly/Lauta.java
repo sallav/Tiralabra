@@ -7,8 +7,8 @@ package mylly;
 import java.util.*;
 
 /**
- * Lauta -luokassa luodaan ilmentymä pelilaudasta jolla pelataan. Se tarjoaa erilaisia metodeja 
- * pelilaudalla olevien nappuloiden operointiin.
+ * Lauta -luokassa luodaan ilmentymä pelilaudasta jolla peliä pelataan. Se tarjoaa erilaisia 
+ * metodeja pelilaudalla olevien nappuloiden operointiin.
  * @author Salla
  */
 public class Lauta {
@@ -55,6 +55,13 @@ public class Lauta {
         this.valkoiset = new SijaintiPuu2();     //tyhjä puu
     }
     
+    /**
+     * Konstruktori alustaa lauta matriisin parametrina annetuilla sijainneilla ja asettaa
+     * syötyjen merkkien määrät parametrien mukaisiksi.
+     * @param sijainnit pelilaudan sijainnit matriisina
+     * @param msyoty kuinka monta mustia on syöty
+     * @param vsyoty kuinka monta valkoisia on syöty
+     */
     public Lauta(int[][] sijainnit, int msyoty, int vsyoty){
         this.lauta = new int[3][8];
         this.mustia = 0;
@@ -90,14 +97,28 @@ public class Lauta {
         return this.lauta;
     }
     
+    /**
+     * getTyhjat -metodi palauttaa puun, jossa on tämän pelilaudan tyhjät sijainnit solmujen avaimina
+     * @return tyhjät sijainnit sisältävä Puu -luokan ilmentymä
+     */
     public Puu getTyhjat(){
         return this.tyhjat;
     }
     
+    /**
+     * getMustat -metodi palauttaa puun, jossa on tällä pelilaudalla olevien mustien merkkien sijainnit 
+     * solmujen avaimina.
+     * @return mustien merkkien sijainnit sisältävä Puu -luokan ilmentymä
+     */
     public Puu getMustat(){
         return this.mustat;
     }
     
+    /**
+     * getValkoiset -metodi palauttaa puun, jossa on tällä pelilaudalla olevien valkoisten merkkien
+     * sijainnit solmujen avaimina.
+     * @return valkoisten merkkien sijainnit sisältävä Puu -luokan ilmentymä
+     */
     public Puu getValkoiset(){
         return this.valkoiset;
     }
@@ -124,11 +145,10 @@ public class Lauta {
      * @param j rivi eli neliö jolle merkki asetetaan
      * @param i paikka rivillä
      * @param vari asetettavan merkin väri
-     * @throws Exception jos paikan arvo on 1 tai 2
+     * @return true jos merkin laittaminen sijaintiin onnistui, false jos sijainnissa on jo merkki
      */
     public boolean laitaMerkki(int j, int i, int vari) {
         if(this.lauta[j][i]==1 || this.lauta[j][i]==2)  return false; 
-            //throw new Exception();   //jos paikassa on jo merkki
         else{
             this.lauta[j][i] = vari;     //uudeksi arvoksi 1 tai 2 varista riippuen
             if(vari==1){
@@ -142,17 +162,16 @@ public class Lauta {
     
     /**
      * poista -metodi poistaa parametrina annetun värisen nappulan parametrina annetusta 
-     * sijainnista, sekä vähentää sen väristen nappuloiden määrää laudalla yhdellä. Metodi heittää 
-     * poikkeuksen, jos annetussa sijainnissa ei ole annetun väristä nappulaa. Muuten metodi asettaa 
-     * kyseisen paikan arvoksi 0.
+     * sijainnista, sekä vähentää sen väristen nappuloiden määrää laudalla yhdellä. Metodi 
+     * palauttaa false, jos annetussa sijainnissa ei ole annetun väristä nappulaa, eikä 
+     * poistoa tehdä. Muuten metodi asettaa kyseisen paikan arvoksi 0 ja palauttaa true.
      * @param j rivi, jolta merkki poistetaan
      * @param i paikka rivillä, josta poistetaan
      * @param vari poistettavan merkin väri
-     * @throws Exception jos paikan arvo ei vastaa poistettavan merkin väriä
+     * @return true, jos poisto onnistui, false jos paikassa ei ole oikean väristä nappulaa
      */
     public boolean poista(int j, int i, int vari) {
         if(this.lauta[j][i]!=vari)  return false;  
-            //throw new Exception(); //ei oikean väristä merkkiä
         else{
             if(vari==1){
                 puuSiirto(((j*8)+i), this.mustat, this.tyhjat, 1,(-1)); //siirretään mustista tyhjiin ja vähennetään mustien määrää
@@ -169,22 +188,21 @@ public class Lauta {
      * syo -metodi poistaa parametrina annetun värisen nappulan parametrina annetusta
      * sijainnista, vähentää sen väristen nappuloiden määrää laudalla yhdellä ja merkitsee
      * yhden sen värisen nappulan syödyksi lisäämällä mustien syötyjen nappejen määrää yhdellä.
-     * Metodi heittää poikkeuksen, jos annetussa sijainnissa ei ole annetun väristä nappulaa. 
-     * Muuten metodi asettaa kyseisen paikan arvoksi 0.
+     * Metodi palauttaa false, jos annetussa sijainnissa ei ole annetun väristä nappulaa eikä 
+     * syöntiä tehdä. Muuten metodi asettaa kyseisen paikan arvoksi 0 ja palauttaa true.
      * @param j rivi, jolta merkki syödään
      * @param i paikka rivillä, josta merkki syödään
      * @param vari minkä värinen merkki on tarkoitus syödä
-     * @throws Exception jos paikassa ei ole oikean väristä merkkiä
+     * @return true, jos syönti onnistui, false, jos paikassa ei ole oikean väristä nappulaa
      */
     public boolean syo(int j, int i, int vari) {
-        if(this.lauta[j][i]!=vari)  return false;  
-            //throw new Exception();  //ei oikean väristä merkkiä
+        if(this.lauta[j][i]!=vari)  return false;  //ei oikean väristä merkkiä
         else {
             if(vari==1){
-                puuSiirto(((j*8)+i), this.mustat, this.tyhjat, 1, (-1));
+                puuSiirto(((j*8)+i), this.mustat, this.tyhjat, 1, (-1));    //siirretään sijainti mustista tyhjiin
                 msyoty++;
             }if(vari==2){
-                puuSiirto(((j*8)+i), this.valkoiset, this.tyhjat, 2, (-1));
+                puuSiirto(((j*8)+i), this.valkoiset, this.tyhjat, 2, (-1)); //siirretään sijainti valkoisista tyhjiin
                 vsyoty++;
             }
             this.lauta[j][i] = 0;
@@ -195,25 +213,22 @@ public class Lauta {
     /**
      * peruSyonti -metodi peruu syo metodin tekemät toimet eli lisää parametrina annetun 
      * väristen merkkien määrää yhdellä ja vähentää sen väristen syötyjen nappien määrää.
-     * Lopuksi metodi asettaa parametrina annetun kohdan arvoksi laudalla parametrina
-     * annetun väriä ilmaisevan kokonaisluvun (1 tai 2). Jos luku on väärä eli <1 tai >2
-     * metodi heittää poikkeuksen. Samoin jos laudalla on kyseisessä kohdassa jo merkki
-     * metodi heittää poikkeuksen.
+     * Jos laudalla on kuitenkin jo kyseisessä kohdassa joku merkki, metodi palauttaa false 
+     * eikä mitään tehdä. Muuten palautetaan true ja metodi asettaa parametrina annetun 
+     * kohdan arvoksi laudalla parametrina annetun väriä ilmaisevan kokonaisluvun (1 tai 2).
      * @param j rivi, jolta syönti perutaan
      * @param i paikka rivillä, josta syönti perutaan
      * @param vari minkä värisen merkin syönti perutaan
-     * @throws Exception jos vari parametri on virheellinen tai parametrina annetun paikan
-     * arvo on 1 tai 2
+     * @return true, jos peruminen onnistui, false jos paikka ei ole tyhjä
      */
     public boolean peruSyonti(int j, int i, int vari) {
         if(this.lauta[j][i]==1 || this.lauta[j][i]==2)  return false;  
-            //throw new Exception();
         else {
             if(vari==1){
-                puuSiirto(((j*8)+i), this.tyhjat, this.mustat, 1, 1);
+                puuSiirto(((j*8)+i), this.tyhjat, this.mustat, 1, 1);   //siirretään sijainti tyhjistä mustiin
                 msyoty--;
             }else if(vari==2){
-                puuSiirto(((j*8)+i), this.tyhjat, this.valkoiset, 2,1);
+                puuSiirto(((j*8)+i), this.tyhjat, this.valkoiset, 2,1); //siirretään sijainti tyhjistä valkoisiin
                 vsyoty--;
             }
             this.lauta[j][i] = vari;
@@ -221,14 +236,24 @@ public class Lauta {
         }
     }
     
+    /**
+     * puuSiirto -metodi poistaa parametrina annetun avaimen sisältävän solmun parametrina
+     * annetusta puusta sekä lisää sen parametrina annettuun toiseen puuhun. Sen jälkeen 
+     * tehdään parametrina annettu muutos parametrina annetun väristen nappien määrään 
+     * laudalla.
+     * @param avain sijainti, joka halutaan siirtää puusta toiseen
+     * @param poistettava puu, josta avaimen sisältävä solmu poistetaan
+     * @param lisattava puu, johon avaimen sisältävä solmu lisätään
+     * @param vari minkä väristen merkkien määrää muutetaan
+     * @param muutos muutos, joka lisätään merkkien määrään (+1 tai -1)
+     */
     public void puuSiirto(int avain, Puu poistettava, Puu lisattava, int vari, int muutos){
         try{
             Solmu lisa = poistettava.poista(avain);
             lisattava.lisaa(lisa);
             if(vari==1) this.mustia = this.mustia + muutos;
-            if(vari==2) this.valkoisia = this.valkoisia + muutos;
+            else if(vari==2) this.valkoisia = this.valkoisia + muutos;
         }catch(Exception e){
-            System.out.println("Puusiirtovirhe");
             System.out.println(e.getMessage());
         }
     }
@@ -238,41 +263,61 @@ public class Lauta {
      * nappulalle, joka on parametrina annetussa sijainnissa. Nappulaa voi siirtää neliön sisällä 
      * eli yhdellä rivillä yhden siirron vasemmalle tai oikealle ja neliön sivun keskipaikoilla, 
      * eli paikoilla joiden indeksi on pariton, sijainnin mukaan ylös tai alas, eli riviltä 
-     * toiselle. Metodi heittää poikkeuksen jos yritetään siirtää laudan ulkopuolelle tai 
-     * varattuun paikkaan.
+     * toiselle. Metodi palauttaa arvonaan uuden sijainnin (0-23). Jos kuitenkin yritetään siirtää 
+     * laudan ulkopuolelle tai varattuun paikkaan, palauttaa metodi vanhan sijainnin.
      * @param j rivi, jossa siirrettävä nappi sijaitsee
      * @param i paikka rivillä, jossa siirrettävä nappi sijaitsee
      * @param suunta y=ylös, a=alas, v=vasemmalle, o=oikealle
-     * @return nappulan uusi sijaintipaikka, eli paikka johon siirrettiin 
-     * @throws Exception jos uudessa paikassa on jo nappi tai siirto on laiton.
+     * @param vari siirrettävän nappulan väri (1=musta, 2=valkoinen)
+     * @return nappulan uusi sijaintipaikka, eli paikka johon siirrettiin tai jos siirto ei onnistunut
+     * palautetaan vanha sijainti
      */
-    public int siirra(int j, int i, char suunta){
-            if(suunta=='a' && (j>0 && i%2!=0))   return siirto(j, i, j-1, i);    //riveillä 1 ja 0 voi siirtyä ylös eli ulommille neliöille keskipaikoilta 
-            if(suunta=='y' && (j<2 && i%2!=0))   return siirto(j, i, j+1, i);    //riveillä 1 ja 2 voi siirtyä alas eli sisemmille neliöille keskipaikoilta
-            if(suunta=='v')   return siirto(j, i, j, vas(i));                 //vasemmalle neliön sisällä
-            if(suunta=='o')   return siirto(j, i, j, oik(i));                 //oikealle neliön sisällä
+    public int siirra(int j, int i, char suunta, int vari){
+            if(suunta=='a' && (j>0 && i%2!=0))   return siirto(j, i, j-1, i, vari);    //riveillä 1 ja 0 voi siirtyä ylös eli ulommille neliöille keskipaikoilta 
+            if(suunta=='y' && (j<2 && i%2!=0))   return siirto(j, i, j+1, i, vari);    //riveillä 1 ja 2 voi siirtyä alas eli sisemmille neliöille keskipaikoilta
+            if(suunta=='v')   return siirto(j, i, j, vas(i), vari);                 //vasemmalle neliön sisällä
+            if(suunta=='o')   return siirto(j, i, j, oik(i), vari);                 //oikealle neliön sisällä
             else return (8*j)+i;
     }
     
     /**
      * siirto -metodi tekee yhden siirron nappulalle vanhasta sijainnista uuteen sijaintiin. 
-     * Metodi heittää poikkeuksen, jos parametrina annetussa uudessa sijainnissa on jo jokin
-     * merkki, muuten uusi sijainti saa arvokseen parametrina annetun vanhan sijainnin arvon, 
+     * Metodi palauttaa vanhan sijainnin, jos parametrina annetussa uudessa sijainnissa on jo 
+     * jokin merkki, muuten uusi sijainti saa arvokseen parametrina annetun vanhan sijainnin arvon, 
      * joka puolestaan nollaantuu. Metodi palauttaa siirron onnistuessa uuden paikan numeron.
      * @param vanhaj rivi, jolla siirrettävä nappi sijaitsee
      * @param vanhai rivin paikka, jossa siirrettävä nappi sijaitsee 
      * @param uusij rivi, johon siirrettävä nappi siirretään
      * @param uusii paikka rivillä, johon siirrettävä nappi siirretään
      * @return uuden paikan numero (0-23)
-     * @throws Exception jos paikka, johon yritetään siirtää on jo varattu
      */
-    public int siirto(int vanhaj, int vanhai, int uusij, int uusii) {
+    public int siirto(int vanhaj, int vanhai, int uusij, int uusii, int vari) {
         if(this.lauta[uusij][uusii]==1 || this.lauta[uusij][uusii]==2)  return (vanhaj*8)+vanhai;  //paikalla on jo merkki
         else{
             if(this.lauta[vanhaj][vanhai]==0)   return (vanhaj*8)+vanhai;
             this.lauta[uusij][uusii] = this.lauta[vanhaj][vanhai];
+            puuVaihto(((vanhaj*8)+vanhai), ((uusij*8)+uusii), vari);        //sijainnit oikeisiin puihin
             this.lauta[vanhaj][vanhai] = 0;     //vanha sijainti jää tyhjäksi
             return (uusij*8) + uusii;           //palautetaan uusi sijainti
+        }
+    }
+    
+    /**
+     * puuVaihto -metodi poistaa parametrina annetun vanhan sijainnin avaimenaan sisältävän 
+     * solmun parametrina annettua väriä vastaavasta puusta ja siirtää sen tyhjiä sijainteja 
+     * sisältävään puuhun. Sen jälkeen parametrina annettua uutta sijaintia vastaava solmu
+     * siirretään tyhjien puusta parametrina annetun väristen merkkien sijaintien puuhun.
+     * @param vanha vanha sijainti, joka tyhjenee
+     * @param uusi uusi sijainti johon laitetaan merkki
+     * @param vari minkä värinen merkki on siirretty (1=musta, 2=valkoinen)
+     */
+    public void puuVaihto(int vanha, int uusi, int vari){
+        if(vari==1){
+            puuSiirto(vanha, this.mustat, this.tyhjat, 0, 0);
+            puuSiirto(uusi, this.tyhjat, this.mustat, 0, 0);
+        }else if(vari==2){
+            puuSiirto(vanha, this.valkoiset, this.tyhjat, 0, 0);
+            puuSiirto(uusi, this.tyhjat, this.valkoiset, 0, 0);
         }
     }
     
@@ -291,7 +336,6 @@ public class Lauta {
      * montakoNappia -metodi palauttaa parametrina annetun väristen merkkien määrän laudalla.
      * @param vari minkä väristen merkkien määrä halutaan tietää
      * @return kysytyn väristen merkkien määrä
-     * @throws Exception jos annettu väri on tuntematon eli ei 1 tai 2
      */
     public int montakoNappia(int vari){
         if(vari==1) return this.mustat.getKoko();
@@ -320,10 +364,44 @@ public class Lauta {
     }
     
     /**
+     * eiMyllyssa -metodi tutkii, onko laudalla parametrina annetun värisiä merkkejä, jotka
+     * eivät ole myllyssä
+     * @param vari minkä värisiä merkkejä tutkitaan (1=musta, 2=valkoinen)
+     * @return true, jos laudalla on annetun värisiä merkkejä, jotka eivät ole myllyssä, muuten false
+     */
+    public boolean eiMyllyssa(int vari){
+        Solmu juuri = null;
+        if(vari==1) juuri = this.mustat.getJuuri();
+        if(vari==2) juuri = this.valkoiset.getJuuri();
+        if(eiMyllyssaOlevia(juuri, vari))   return true;
+        else return false;
+    }
+    
+    /**
+     * eiMyllyssaOlevia -metodi tutkii onko parametrina annetusta juuresta alkavassa 
+     * alipuussa sijainteja, joissa olevat merkit eivät ole parametrina annetun värisessä 
+     * myllyssä
+     * @param juuri Solmu -olio, joka on tutkittavan alipuun juuri
+     * @param vari minkä väristen merkkien muodostamia myllyjä tutkitaan
+     * @return true, jos alipuussa on merkkejä, jotka eivät ole myllyssä, false jos kaikki
+     * alipuun merkit ovat myllyssä
+     */
+    public boolean eiMyllyssaOlevia(Solmu juuri, int vari){
+        if(juuri!=null){
+            boolean vas = eiMyllyssaOlevia(juuri.getVasen(), vari);
+            boolean oik = eiMyllyssaOlevia(juuri.getOikea(), vari);
+            if(vas) return true;
+            if(oik) return true;
+            if(!mylly(vari, juuri.getAvain()))   return true;
+        }
+        return false;
+    }
+    
+    /**
      * myllyja -metodi tarkistaa onko parametrina annetun väriselle pelaajalle syntynyt laudalle 
      * myllyjä ja laskee sekä palauttaa niiden määrän.
      * @param vari minkä värisiä nappeja tarkastellaan
-     * @return laudalla oleva myllyjen määrä
+     * @return laudalla oleva väriä vastaavien myllyjen määrä
      */
     public int myllyja(int vari){
         int myllyt = 0;
@@ -391,20 +469,22 @@ public class Lauta {
     }
     
     /**
-     * melkeinMyllyja -metodi palauttaa laudalle muodostuvien melkein myllyjen määrän, 
-     * eli niiden kolmen suorien määrän, joista puuttuu vielä yksi nappula.
+     * melkeinMyllyja -metodi palauttaa listan, joka sisältää sijainnit, jotka täyttämällä
+     * parametrina annetun värinen nappula saisi myllyn.
      * @param vari minkä värisiä nappuloita tarkastellaan
-     * @return myllyjen määrä, joista puuttuu vielä yksi nappula
+     * @return Lista sijainneista, jotka täyttämällä väri saisi myllyn
      */
     public Lista melkeinMyllyja(int vari){
         Lista mmyllyt = new Lista();
         for(int i=1; i<24; i=i+2){      //käydään läpi vain keskipaikat
             int tyhjap = melkeinMyllySivulla(i, vari);
-            if(tyhjap!=-1)   mmyllyt.lisaa(tyhjap);           //neliön sivulla olevat melkein myllyt
-            tyhjap = melkeinMyllyKeskella(i, vari);
-            if(i<8 && tyhjap!=-1)  mmyllyt.lisaa(tyhjap);    //rivien väliset melkein myllyt        
+            if(tyhjap!=-1)   mmyllyt.lisaa(tyhjap);             //neliön sivulla olevat melkein myllyt
+            if(i<8){                                            //rivien väliset melkein myllyt ekalta riviltä
+                tyhjap = melkeinMyllyKeskella(i, vari);
+                if(tyhjap!=-1)  mmyllyt.lisaa(tyhjap);          
+            }
         }
-        return mmyllyt;     //melkein myllyjen määrä
+        return mmyllyt;     
     }
     
     /**
@@ -413,8 +493,8 @@ public class Lauta {
      * melkein mylly kyseisessä paikassa.
      * @param paikka (0-23) sijainti pelilaudalla 
      * @param vari minkä värisiä merkkejä tutkitaan
-     * @return true, jos neliön sivulla on melkein mylly eli kaksi saman väristä nappulaa, 
-     * muuten false
+     * @return sen paikan numero, jonka täyttämällä väri saisi myllyn tai -1 jos etsityllä paikalla
+     * ei ole kahta saman väristä nappulaa eli melkein myllyä
      */
     public int melkeinMyllySivulla(int paikka, int vari){
         int j = paikka/8;
@@ -424,7 +504,7 @@ public class Lauta {
             else if(lauta[j][vas(i)]==vari && lauta[j][oik(i)]!=vari)   return (j*8)+oik(i);
         }else{                  //jos paikassa ei ole etsityn väristä nappulaa
             if(i%2!=0 &&lauta[j][oik(i)]==vari && lauta[j][vas(i)]==vari) return paikka;  //keskipaikat
-            else if((lauta[j][oik(i)]==vari && lauta[j][ooik(i)]==vari) || (lauta[j][vas(i)]==vari && lauta[j][vvas(i)]==vari)) return paikka;
+            else if(i%2==0 && ((lauta[j][oik(i)]==vari && lauta[j][ooik(i)]==vari) || (lauta[j][vas(i)]==vari && lauta[j][vvas(i)]==vari))) return paikka;
         }
         return -1;
     }
@@ -433,35 +513,42 @@ public class Lauta {
      * melkeinMyllyKeskella -metodi tutkii onko parametrina annetussa sijainnissa
      * rivien välisellä suoralla kahta saman väristä nappulaa, eli onko neliön 
      * keskipaikoilla kahdella rivillä saman väriset nappulat samassa indeksissä.
-     * Metodi palauttaa true jos näin on ja false jos näin ei ole tai jos parametrina
-     * annettu sijainti on kulmapaikka.
+     * Metodi palauttaa arvonaan sen paikan, jonka täyttämällä parametrina annettu
+     * väri saisi myllyn tai -1, jos kohdassa ei ole kahta saman väristä nappulaa
+     * eli melkein myllyä.
      * @param paikka sijainti laudalla (0-23)
      * @param vari minkä värisiä nappuloita tutkitaan (1=musta, 2=valkoinen)
-     * @return true, jos kaksi samanväristä nappulaa ovat kahdella rivillä samoissa
-     * indekseissä neliön keskipaikoilla, false jos ei ole kahta samanväristä nappulaa
-     * tai sijainti on kulmapaikka
+     * @return sen paikan numero, jonka täyttämällä väri saisi myllyn tai -1 jos etsityllä paikalla
+     * ei ole kahta saman väristä nappulaa eli melkein myllyä
      */
     public int melkeinMyllyKeskella(int paikka, int vari){
         int j = paikka/8;
         int i = paikka%8;
         if(i%2==0)  return -1;   //kulmapaikoilla ei rivien välisiä myllyjä
         else if(lauta[j][i]==vari){
-            if(lauta[ala(j)][i]==vari) return (yla(j)*8)+i;
-            else if(lauta[yla(j)][i]==vari) return (ala(j)*8)+i;
+            if(lauta[ala(j)][i]==vari && lauta[yla(j)][i]!=vari) return (yla(j)*8)+i;
+            else if(lauta[yla(j)][i]==vari && lauta[ala(j)][i]!=vari) return (ala(j)*8)+i;
         }
         else if(lauta[j][i]!=vari && (lauta[ala(j)][i]==vari && lauta[yla(j)][i]==vari)) return paikka;
         return -1;
     }
     
+    /**
+     * getSuunnat -metodi palauttaa merkkijonoesityksenä ne suunnat joihin parametrina 
+     * annetusta sijainnista voidaan siirtyä ts. merkkijonon, jossa on vieressä olevia 
+     * tyhjiä paikkoja vastaavat kirkaimet (v=vasen, o=oikea, y=ylä, a=ala).
+     * @param paikka sijainti laudalla
+     * @return merkkijono, jossa on mahdollisia siirtymissuuntia vastaavat kirjaimet
+     */
     public String getSuunnat(int paikka){
         String suunnat = "";
         int j = paikka/8;
         int i = paikka%8;
-        if(lauta[j][vas(i)]==0) suunnat += 'v';
-        if(lauta[j][oik(i)]==0) suunnat += 'o';
-        if(i%2!=0 && j<2 && lauta[yla(j)][i]==0) suunnat += 'y';
-        if(i%2!=0 && j>0 && lauta[ala(j)][i]==0) suunnat += 'a';
-        return suunnat;
+        if(lauta[j][vas(i)]==0) suunnat += 'v';     //jos voidaan liikkua vasemmalle
+        if(lauta[j][oik(i)]==0) suunnat += 'o';     //jos voidaan liikkua oikealle
+        if(i%2!=0 && j<2 && lauta[yla(j)][i]==0) suunnat += 'y';    //jos voidaan liikkua yläriville
+        if(i%2!=0 && j>0 && lauta[ala(j)][i]==0) suunnat += 'a';    //jos voidaan liikkua alariville
+        return suunnat; //esim. "voya" (kun kaikkiin suuntiin voidaan liikkua)
     }
     
     /**

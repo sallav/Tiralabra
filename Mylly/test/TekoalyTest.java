@@ -116,7 +116,7 @@ public class TekoalyTest {
         Assert.assertFalse(poistop==6);
         Solmu siirrettava = AI.parasSiirto(lauta, 2);
         int paikka = siirrettava.getAvain();
-        lauta.siirra(paikka/8, paikka%8, siirrettava.getSuunta());
+        lauta.siirra(paikka/8, paikka%8, siirrettava.getSuunta(), 2);
         Assert.assertFalse(lauta.mylly(1, 1));
     }
     

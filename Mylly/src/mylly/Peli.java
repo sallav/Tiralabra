@@ -18,9 +18,11 @@ public class Peli {
     
     /**
      * Konstruktori asettaa ekan ja tokan arvoiksi parametreina saadut Pelaaja -oliot sekä
-     * asettaa pelin käyttöliittymäksi parametrina annetun Käyttöliittymä -olion.
+     * asettaa pelin käyttöliittymäksi parametrina annetun Käyttöliittymä -olion. 
+     * Konstruktori luo myös uuden Lauta -luokan ilmentymän, jossa peliä pelataan.
      * @param eka   pelaaja joka aloittaa
      * @param toka  toisena vuorossa oleva pelaaja
+     * @param kl Kayttoliittyma rajapinnan toteuttava olio
      */
     public Peli(Pelaaja eka, Pelaaja toka, Kayttoliittyma kl){
         this.eka = eka;                 
@@ -29,6 +31,13 @@ public class Peli {
         this.kayttol = kl;
     }
     
+    /**
+     * Peli -luokan konstruktori asettaa ekan ja tokan arvoiksi parametrina saadut Pelaaja
+     * -oliot sekä luo uuden Lauta -olion, jossa peliä pelataan. Konstruktori asettaa pelin 
+     * käyttöliittymäksi null.
+     * @param eka pelaaja, joka aloittaa
+     * @param toka toisena vuorossa oleva pelaaja
+     */
     public Peli(Pelaaja eka, Pelaaja toka){
         this.eka = eka;
         this.toka = toka;
@@ -83,7 +92,7 @@ public class Peli {
     }
         
     /**
-     * selvitaVoittaja -metodia kutsutaan, kun molemmat pelaajat ovat asettaneet kaikki merkkinsä 
+     * pelaaLoppuun -metodia kutsutaan, kun molemmat pelaajat ovat asettaneet kaikki merkkinsä 
      * pelilaudalle. Pelaajat tekevät vuorotellen siirtoja laudalla, niin kauan kunnes jompi 
      * kumpi voittaa tai peli päättyy tasapeliin.
      * @return 1 jos ensimmäinen pelaaja voitti, 2 jos toinen pelaaja voitti, 0 jos peli päättyi tasapeliin
@@ -101,6 +110,10 @@ public class Peli {
     return selvitaVoittaja();    
 }
     
+    /**
+     * selvitaVoittaja -metodi palauttaa pelin voittajan numeron tai 0, jos peli päättyi tasan.
+     * @return 1=ensimmäinen pelaaja voitti, 2=toinen pelaaja voitti, 0=tasapeli
+     */
     public int selvitaVoittaja(){
         if(!lauta.voikoLiikkua(eka.vari()) && lauta.voikoLiikkua(toka.vari())) {
             System.out.println("Musta ei voi liikkua");
@@ -118,24 +131,26 @@ public class Peli {
     /**
      * pelaaLaudalle -metodissa parametrina annettu pelaaja tekee siirtonsa laudalle, jonka jälkeen tarkistetaan 
      * onko syntynyt mylly. Jos pelaaja saa myllyn, tulee hänen poistaa yksi vastapuolen napeista.
-     * @param pelaaja
+     * @param pelaaja Pelaaja -olio, jonka vuoro on tehdä siirto
+     * @param pelaamatta kuinka monta nappulaa pelaajilla on vielä pelaamatta laudalle
      */
     public void pelaaLaudalle(Pelaaja pelaaja, int pelaamatta){
         if(kayttol!=null)   this.kayttol.ilmoitaVuoro(pelaaja.vari());
         int sij = pelaaja.siirraLaudalle(lauta, pelaamatta);        //siirretään uusi nappula laudalle
         laudanPaivitys(sij, -1, pelaaja.vari());
         if(lauta.mylly(pelaaja.vari(), sij)){
-            poistaLaudalta(pelaaja, pelaamatta, sij);
+            poistaLaudalta(pelaaja, pelaamatta);
         }
     }
     
     /**
      * pelaaLaudalla -metodia käytetään silloin kun kaikki pelaajan napit ovat jo laudalla. Tällöin pelaaja voi
      * siirtää jotain laudalla jo olevaa nappia vieressä olevaan tyhjään sijaintiin. Jos pelaajalla on kuitenkin 
-     * jäljellä vain kolme nappia laudalla, voi uusi sijainti olla mikä tahansa laudalla oleva tyhjä sijainti, 
+     * jäljellä enää vain kolme nappia laudalla, voi uusi sijainti olla mikä tahansa laudalla oleva tyhjä sijainti, 
      * eli pelaaja saa "lentää". Siirron jälkeen tarkistetaan syntyikö kyseiseen kohtaan mylly ja jos näin on 
      * tapahtunut, tulee pelaajan poistaa yksi vastapuolen napeista.
-     * @param pelaaja
+     * @param pelaaja Pelaaja -olio, jonka vuoro on siirtää laudalla olevaa nappia
+     * @return true, jos nappulan liikuttaminen onnistui, false, jos pelaaja ei voi enää liikuttaa nappejaan
      */
     public boolean pelaaLaudalla(Pelaaja pelaaja){
         int[] sij;
@@ -145,17 +160,31 @@ public class Peli {
         if(sij[1]==-1)  return false;                   //uutta paikkaa ei ole, koska merkkiä ei voitu siirtää
         laudanPaivitys(sij[1], sij[0], pelaaja.vari());
         if(lauta.mylly(pelaaja.vari(), sij[1])){
-            poistaLaudalta(pelaaja, 0, sij[1]);    // poistetaan vastapuolen nappi
+            poistaLaudalta(pelaaja, 0);    // poistetaan vastapuolen nappi
         }
         return true;
     }
     
-    public void poistaLaudalta(Pelaaja pelaaja, int pelaamatta, int edel){
+    /**
+     * poistaLaudalta -metodia kutsutaan, kun pelaaja on saanut myllyn ja metodissa
+     * pelaaja poistaa jonkun vastapuolen nappuloista ja tämän jälkeen lauta
+     * päivitetään ja tulostetaan käyttäjälle.
+     * @param pelaaja Pelaaja -olio, joka on vuorossa
+     * @param pelaamatta kuinka monta nappulaa pelaajilla on vielä siirtämättä laudalle
+     */
+    public void poistaLaudalta(Pelaaja pelaaja, int pelaamatta){
         if(kayttol!=null) this.kayttol.ilmoitaMylly(pelaaja.vari());
-        int psij = pelaaja.poistaLaudalta(lauta, pelaamatta, edel);
+        int psij = pelaaja.poistaLaudalta(lauta, pelaamatta);
         laudanPaivitys(-1, psij, 3-pelaaja.vari());
     }
     
+    /**
+     * laudanPaivitys metodi päivittää pelilautaa edustavaa näkymää käyttöliittymässä
+     * sekä tulostaa laudan näkymän käyttäjän näkyville.
+     * @param siirto tehty siirto, joka päivitetään laudalle
+     * @param poisto tehty poisto, joka päivitetään laudalle
+     * @param vari kokonaisluku, joka edustaa siirron tehneen nappulan väriä (1=musta, 2=valkoinen)
+     */
     public void laudanPaivitys(int siirto, int poisto, int vari){
         if(kayttol!=null){
         this.kayttol.paivitaLauta(poisto, vari, true);      //nappulan poisto

@@ -150,37 +150,37 @@ public class LautaTest {
     
     @Test
     public void siirraTest() throws Exception{
-        pelilauta.siirra(2, 0, 'y');
+        pelilauta.siirra(2, 0, 'y', 1);
         Assert.assertEquals(0, pelilauta.getLauta()[2][0]);
         Assert.assertEquals(1, pelilauta.getLauta()[1][0]);
-        pelilauta.siirra(1, 0, 'a');
+        pelilauta.siirra(1, 0, 'a', 1);
         Assert.assertEquals(0, pelilauta.getLauta()[1][0]);
         Assert.assertEquals(1, pelilauta.getLauta()[2][0]);
     }
     
     @Test
     public void siirraTest2() throws Exception{
-        pelilauta.siirra(2, 0, 'v');
+        pelilauta.siirra(2, 0, 'v', 1);
         Assert.assertEquals(0, pelilauta.getLauta()[2][0]);
         Assert.assertEquals(1, pelilauta.getLauta()[2][7]);
-        pelilauta.siirra(2, 7, 'o');
+        pelilauta.siirra(2, 7, 'o', 1);
         Assert.assertEquals(1, pelilauta.getLauta()[2][0]);
         Assert.assertEquals(0, pelilauta.getLauta()[2][7]);
     }
     
     @Test
     public void siirraTestVaarallaSyotteella() throws Exception{
-        pelilauta.siirra(2, 0, 'y');
+        pelilauta.siirra(2, 0, 'y', 1);
         Assert.assertFalse(1==pelilauta.getLauta()[2][0]);
         Assert.assertFalse(0==pelilauta.getLauta()[1][0]);
-        pelilauta.siirra(1, 0, 'v');
+        pelilauta.siirra(1, 0, 'v', 1);
         Assert.assertFalse(0==pelilauta.getLauta()[1][7]);
         Assert.assertFalse(1==pelilauta.getLauta()[1][0]);
     }
     
     @Test
     public void siirtoTest() throws Exception{
-        int x = pelilauta.siirto(2, 0, 1, 6);
+        int x = pelilauta.siirto(2, 0, 1, 6, 1);
         Assert.assertEquals(x, 14);
         Assert.assertEquals(1, pelilauta.getLauta()[1][6]);
         Assert.assertEquals(0, pelilauta.getLauta()[2][0]);
@@ -188,7 +188,7 @@ public class LautaTest {
     
     @Test
     public void siirtoTestVaarallaSyotteella() throws Exception{
-        int x = pelilauta.siirto(2, 0, 1, 7);
+        int x = pelilauta.siirto(2, 0, 1, 7, 1);
         Assert.assertFalse(x==16);
         Assert.assertFalse(pelilauta.getLauta()[2][0]==1);
         Assert.assertFalse(pelilauta.getLauta()[1][7]==0);
@@ -317,16 +317,16 @@ public class LautaTest {
     
     @Test
     public void melkeinMyllyjaTest() throws Exception{
-        Assert.assertFalse(0<pelilauta.melkeinMyllyja(1));
+        Assert.assertTrue(0==pelilauta.melkeinMyllyja(1).getKoko());
         pelilauta.laitaMerkki(2, 1, 1);
-        Assert.assertTrue(0<pelilauta.melkeinMyllyja(1));
+        Assert.assertTrue(1==pelilauta.melkeinMyllyja(1).getKoko());
     }
     
     @Test
     public void melkeinMyllySivullaTest() throws Exception{
-        Assert.assertFalse(pelilauta.melkeinMyllySivulla(17, 1));
+        Assert.assertEquals(-1, pelilauta.melkeinMyllySivulla(17, 1));
         pelilauta.laitaMerkki(2, 2, 1);
-        Assert.assertTrue(pelilauta.melkeinMyllySivulla(17, 1));   
+        Assert.assertEquals(17, pelilauta.melkeinMyllySivulla(17, 1));   
     }
     
     @Test

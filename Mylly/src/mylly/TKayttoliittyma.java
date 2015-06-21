@@ -45,7 +45,7 @@ public class TKayttoliittyma implements Kayttoliittyma{
     @Override
     public int pelinValinta(){
         System.out.println("Valitse peli: ");
-        System.out.println("1 Tekoäly vs. tekoäly \n 2 Pelaaja vs. tekoäly \n3 Pelaaja vs. pelaaja");
+        System.out.println("1 Tekoäly vs. tekoäly \n2 Pelaaja vs. tekoäly \n3 Pelaaja vs. pelaaja");
         String vastaus = lukija.nextLine();
         int vast;
         try{
@@ -53,6 +53,22 @@ public class TKayttoliittyma implements Kayttoliittyma{
             return vast;
         }catch(Exception e){
             return 1;
+        }
+    }
+    
+    @Override
+    public int valitseTaso(){
+        System.out.println("Valitse vaikeustaso: ");
+        System.out.println(" 1: taso 1 (syvyys 3) \n 2: taso 2 (syvyys 4) \n 3: taso 3 (syvyys 5) \n 4: taso 4 (syvyys 6) ");
+        String vastaus = lukija.nextLine();
+        try{
+            int vast = Integer.valueOf(vastaus);
+            if(vast<=1) return 3;
+            else if(vast==2)    return 4;
+            else if(vast==4)    return 6;
+            else return 5;
+        }catch(Exception e){
+            return 4;
         }
     }
     
