@@ -5,8 +5,8 @@
  */
 
 import junit.framework.Assert;
-import mylly.ListaSolmu;
-import mylly.Solmu;
+import tietorakenteet.ListaSolmu;
+import tietorakenteet.Solmu;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

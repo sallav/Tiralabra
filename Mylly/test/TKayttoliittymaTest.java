@@ -5,7 +5,7 @@
  */
 
 import java.util.Scanner;
-import mylly.TKayttoliittyma;
+import ui.TKayttoliittyma;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;

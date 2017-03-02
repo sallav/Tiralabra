@@ -5,8 +5,8 @@
  */
 
 import mylly.Lauta;
-import mylly.Puu;
-import mylly.SijaintiPuu;
+import tietorakenteet.Puu;
+import tietorakenteet.SijaintiPuu;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;

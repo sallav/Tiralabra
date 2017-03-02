@@ -4,6 +4,10 @@
  * and open the template in the editor.
  */
 package mylly;
+import tietorakenteet.SijaintiPuu2;
+import tietorakenteet.Solmu;
+import tietorakenteet.Puu;
+import tietorakenteet.Lista;
 import java.util.*;
 
 /**

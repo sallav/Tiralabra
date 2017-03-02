@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mylly;
+package tietorakenteet;
 
+import tietorakenteet.Puu;
+import tietorakenteet.ListaSolmu;
+import tietorakenteet.Lista;
 import java.util.ArrayList;
 
 /**

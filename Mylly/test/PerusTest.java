@@ -5,8 +5,8 @@
  */
 
 import mylly.Lauta;
-import mylly.Perus;
-import mylly.Lista;
+import heuristiikat.Perus;
+import tietorakenteet.Lista;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;

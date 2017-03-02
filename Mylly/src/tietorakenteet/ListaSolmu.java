@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mylly;
+package tietorakenteet;
 
 /**
  * ListaSolmu -luokka määrittelee listan alkion, joka voidaan lisätä Lista -luokan

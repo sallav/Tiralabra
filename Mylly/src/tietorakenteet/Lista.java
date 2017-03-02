@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mylly;
+package tietorakenteet;
 
 /**
  * Lista -luokka toteuttaa yhteen suuntaan linkitetyn listan, joka koostuu 

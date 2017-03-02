@@ -5,9 +5,9 @@
  */
 
 import mylly.AIPelaaja;
-import mylly.Heuristiikka;
+import heuristiikat.Heuristiikka;
 import mylly.Lauta;
-import mylly.Perus;
+import heuristiikat.Perus;
 import mylly.Tekoaly;
 import org.junit.After;
 import org.junit.AfterClass;

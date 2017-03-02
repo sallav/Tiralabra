@@ -5,11 +5,11 @@
  */
 
 import java.util.ArrayList;
-import mylly.Lista;
-import mylly.Puu;
-import mylly.SijaintiPuu;
-import mylly.SijaintiPuu2;
-import mylly.Solmu;
+import tietorakenteet.Lista;
+import tietorakenteet.Puu;
+import tietorakenteet.SijaintiPuu;
+import tietorakenteet.SijaintiPuu2;
+import tietorakenteet.Solmu;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;

@@ -4,13 +4,13 @@
  * and open the template in the editor.
  */
 
-import mylly.Heuristiikka;
+import heuristiikat.Heuristiikka;
 import mylly.Lauta;
-import mylly.Lista;
-import mylly.Perus;
-import mylly.Puu;
-import mylly.SijaintiPuu;
-import mylly.Solmu;
+import tietorakenteet.Lista;
+import heuristiikat.Perus;
+import tietorakenteet.Puu;
+import tietorakenteet.SijaintiPuu;
+import tietorakenteet.Solmu;
 import mylly.Tekoaly;
 import org.junit.After;
 import org.junit.AfterClass;

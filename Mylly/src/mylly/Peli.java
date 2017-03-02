@@ -5,6 +5,8 @@
  */
 package mylly;
 
+import ui.Kayttoliittyma;
+
 /**
  * Peli -luokka luo uuden pelin, jossa on kaksi pelaajaa sekä pelilauta. 
  * Pelaajat tekevät vuorollaan siirtonsa laudalle ja lopulta selvitetään voittaja.

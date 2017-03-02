@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package mylly;
+import tietorakenteet.Solmu;
 import java.util.*;
 
 /**
@@ -69,7 +70,6 @@ public class AIPelaaja implements Pelaaja{
         int vanhap = solmu.getAvain();          //paikka jossa olevaa nappulaa siirretään
         if(solmu.getArvo()!=-1000) uusip = lauta.siirra(vanhap/8, vanhap%8, solmu.getSuunta(), this.vari);  //tehdään siirto haluttuun suuntaan (ylös, alas, vasemmalle tai oikealle mahdollisuuksien mukaan) 
         if(uusip==vanhap){
-            System.out.println("virhe, yritettiin siirtää virheellisesti");
             uusip = -1;
         }
         int[] pal = {vanhap, uusip};

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-import mylly.Solmu;
+import tietorakenteet.Solmu;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;

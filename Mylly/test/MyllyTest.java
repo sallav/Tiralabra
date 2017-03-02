@@ -7,11 +7,11 @@
 import java.util.Scanner;
 import junit.framework.Assert;
 import mylly.AIPelaaja;
-import mylly.Kayttoliittyma;
+import ui.Kayttoliittyma;
 import mylly.Mylly;
 import mylly.Pelaaja;
 import mylly.Peli;
-import mylly.TKayttoliittyma;
+import ui.TKayttoliittyma;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

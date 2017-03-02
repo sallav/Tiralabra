@@ -3,7 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mylly;
+package heuristiikat;
+
+import heuristiikat.Heuristiikka;
+import mylly.Lauta;
+import tietorakenteet.ListaSolmu;
+import tietorakenteet.Lista;
 
 /**
  * Perus -luokka tarjoaa yksinkertaisen heuristiikan pelitilanteiden arvioimiseen
@@ -49,7 +54,7 @@ public class Perus implements Heuristiikka{
     public int syodyt(Lauta lauta, int vari){
         if(lauta.syoty(vari)>6)     return -100;
         if(lauta.syoty(3-vari)>6)   return 100;
-        else    return (lauta.syoty(3-vari)-lauta.syoty(vari))*10;
+        else    return (lauta.syoty(3-vari)-lauta.syoty(vari))*20;
     }
     
     /**
@@ -65,15 +70,15 @@ public class Perus implements Heuristiikka{
      * @return pelilaudan lopullinen arvo
      */
     public int myllyt(Lauta lauta, int vari, int arvo){
-        arvo = arvo + (lauta.myllyja(vari)-lauta.myllyja(3-vari))*3;    
+        arvo = arvo + (lauta.myllyja(vari)-lauta.myllyja(3-vari))*10;    
         Lista omat = lauta.melkeinMyllyja(vari);            //sijainnit, jotka täyttäämällä pelaaja saisi myllyn
         Lista vastap = lauta.melkeinMyllyja(3-vari);        //sijainnit, jotka täyttämällä vastapuoli saisi myllyn
         int vastapblokit = blokatut(omat, lauta, vari);     //vastapuolen blokkaamat myllyt
         int omatblokit = blokatut(vastap, lauta, 3-vari);   //omat blokit
-        int omatmm = omat.getKoko()*2 - vastapblokit;
-        int vastapmm = vastap.getKoko()*2 - omatblokit; 
-        arvo = arvo + omatmm - vastapmm + omatblokit;
-        return arvo;
+//        int omatmm = omat.getKoko() - vastapblokit;
+//        int vastapmm = vastap.getKoko() - omatblokit; 
+//        arvo = arvo + omatmm - vastapmm;
+        return arvo + (omatblokit*30);
     }
     
     /**

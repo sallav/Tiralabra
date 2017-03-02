@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mylly;
+package heuristiikat;
+
+import mylly.Lauta;
 
 /**
  * Heuristiikka -rajapinnan ilmentymä määrittelee heuristiikan, jolla arvioidaan 

@@ -5,6 +5,10 @@
  */
 package mylly;
 
+import ui.TKayttoliittyma;
+import ui.Kayttoliittyma;
+import heuristiikat.Perus;
+import heuristiikat.Heuristiikka;
 import java.util.Scanner;
 
 /**

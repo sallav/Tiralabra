@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-import mylly.Lista;
-import mylly.ListaSolmu;
-import mylly.Solmu;
+import tietorakenteet.Lista;
+import tietorakenteet.ListaSolmu;
+import tietorakenteet.Solmu;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;

@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mylly;
+package ui;
 
+import ui.Kayttoliittyma;
 import java.util.Scanner;
 
 /**
